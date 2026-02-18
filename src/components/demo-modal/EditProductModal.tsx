@@ -1,86 +1,167 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./modal.css";
 
-const variants = [
-  { colorCode: "WHT", size: "8", available: true },
-  { colorCode: "WHT", size: "9", available: false },
-  { colorCode: "GPH", size: "8", available: false },
-  { colorCode: "GPH", size: "9", available: true },
-];
+type Sku = {
+  id: string;
+  colorCode: string;
+  size: string;
+  available: boolean;
+};
 
-const imageMap = {
+type SkuVariants = {
+  colors: { colorCode: string; displayName: string }[];
+  sizes: { size: string }[];
+  availableSkus: Sku[];
+};
+
+const skuVariants: SkuVariants = {
+  colors: [
+    { colorCode: "WHT", displayName: "White" },
+    { colorCode: "GPH", displayName: "Graphite" },
+  ],
+  sizes: [{ size: "8" }, { size: "9" }],
+  availableSkus: [
+    { id: "1", colorCode: "WHT", size: "8", available: true },
+    { id: "2", colorCode: "WHT", size: "9", available: false },
+    { id: "3", colorCode: "GPH", size: "8", available: false },
+    { id: "4", colorCode: "GPH", size: "9", available: true },
+  ],
+};
+
+const imageMap: Record<string, string> = {
   WHT: "/images/shoes-white.png",
   GPH: "/images/shoes-graphite.png",
 };
 
-function isAvailable(color: string, size: string) {
-  return variants.some(
-    (v) => v.colorCode === color && v.size === size && v.available
-  );
+function getSelectableSkus({
+  skuVariants,
+  selectedColorCode,
+  selectedSize,
+}: {
+  skuVariants: SkuVariants;
+  selectedColorCode?: string;
+  selectedSize?: string;
+}) {
+  return skuVariants.availableSkus.filter((sku) => {
+    const matchesColor =
+      !selectedColorCode || sku.colorCode === selectedColorCode;
+
+    const matchesSize =
+      !selectedSize || sku.size === selectedSize;
+
+    return matchesColor && matchesSize;
+  });
+}
+
+function getAvailableAttrValues({
+  selectableSkus,
+  attrKey,
+}: {
+  selectableSkus: Sku[];
+  attrKey: "colorCode" | "size";
+}) {
+  return selectableSkus
+    .filter((sku) => sku.available)
+    .map((sku) => sku[attrKey]);
 }
 
 function ModalContent({ deviceType }: { deviceType: "mobile" | "desktop" }) {
-  const [color, setColor] = useState("WHT");
-  const [size, setSize] = useState("8");
+  const [selectedColor, setSelectedColor] = useState("WHT");
+  const [selectedSize, setSelectedSize] = useState("8");
 
-  const sizes = ["8", "9"];
-  const colors = [
-    { code: "WHT", label: "White" },
-    { code: "GPH", label: "Graphite" },
-  ];
+  // Axis-independent derivation (original behavior)
+  const selectableForColors = useMemo(() => {
+    return getSelectableSkus({
+      skuVariants,
+      selectedSize,
+    });
+  }, [selectedSize]);
 
-  const available = isAvailable(color, size);
+  const selectableForSizes = useMemo(() => {
+    return getSelectableSkus({
+      skuVariants,
+      selectedColorCode: selectedColor,
+    });
+  }, [selectedColor]);
+
+  const availableColors = useMemo(() => {
+    return getAvailableAttrValues({
+      selectableSkus: selectableForColors,
+      attrKey: "colorCode",
+    });
+  }, [selectableForColors]);
+
+  const availableSizes = useMemo(() => {
+    return getAvailableAttrValues({
+      selectableSkus: selectableForSizes,
+      attrKey: "size",
+    });
+  }, [selectableForSizes]);
+
+  const isCurrentAvailable = skuVariants.availableSkus.some(
+    (sku) =>
+      sku.colorCode === selectedColor &&
+      sku.size === selectedSize &&
+      sku.available
+  );
 
   return (
     <div className={`modalCard ${deviceType}`}>
       <div className="layout">
         <div className="imageColumn">
-          <img src={imageMap[color]} alt="Product preview" />
+          <img src={imageMap[selectedColor]} alt="Product preview" />
         </div>
 
         <div className="contentColumn">
           <div className="section">
             <span className="label">Color</span>
             <div className="buttonGroup">
-              {colors.map((c) => (
-                <button
-                  key={c.code}
-                  onClick={() => setColor(c.code)}
-                  className={`optionButton ${color === c.code ? "selected" : ""}`}
-                  style={{
-                    background: c.code === "WHT" ? "#ffffff" : "#444444",
-                    color: c.code === "WHT" ? "#000000" : "#ffffff"
-                  }}
-                >
-                  {c.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="section">
-            <span className="label">Size</span>
-            <div className="buttonGroup">
-              {sizes.map((s) => {
-                const comboAvailable = isAvailable(color, s);
+              {skuVariants.colors.map((c) => {
+                const isUnavailable = !availableColors.includes(c.colorCode);
                 return (
                   <button
-                    key={s}
-                    onClick={() => comboAvailable && setSize(s)}
+                    key={c.colorCode}
+                    onClick={() => setSelectedColor(c.colorCode)}
                     className={`optionButton 
-                      ${size === s ? "selected" : ""} 
-                      ${!comboAvailable ? "disabled" : ""}`}
+                      ${selectedColor === c.colorCode ? "selected" : ""} 
+                      ${isUnavailable ? "unavailable" : ""}`}
+                    style={{
+                      background:
+                        c.colorCode === "WHT" ? "#ffffff" : "#444444",
+                      color:
+                        c.colorCode === "WHT" ? "#000000" : "#ffffff",
+                    }}
                   >
-                    {s}
+                    {c.displayName}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <button className="primaryButton" disabled={!available}>
-            {available ? "Add to Cart" : "Unavailable"}
+          <div className="section">
+            <span className="label">Size</span>
+            <div className="buttonGroup">
+              {skuVariants.sizes.map((s) => {
+                const isUnavailable = !availableSizes.includes(s.size);
+                return (
+                  <button
+                    key={s.size}
+                    onClick={() => setSelectedSize(s.size)}
+                    className={`optionButton 
+                      ${selectedSize === s.size ? "selected" : ""} 
+                      ${isUnavailable ? "unavailable" : ""}`}
+                  >
+                    {s.size}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button className="primaryButton" disabled={!isCurrentAvailable}>
+            {isCurrentAvailable ? "Add to Cart" : "Unavailable"}
           </button>
         </div>
       </div>
