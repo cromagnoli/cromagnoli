@@ -1,0 +1,13 @@
+
+.demoSection {
+  margin-top: 56px;
+}
+
+/* Distinct injected CTA color */
+.primaryButton.injectedCta {
+  background: #0f766e; /* teal-ish primary alternative */
+}
+
+.primaryButton.injectedCta:hover {
+  background: #0d5f59;
+}

@@ -1,33 +1,30 @@
 
-import LiveModalDemo from '@site/src/components/demo-modal/LiveModalDemo';
+import EditProductModal from '@site/src/components/demo-modal/EditProductModal';
 
-# Stateless Configurable Modal
+## Stateless Configurable Modal
 
-## Context
-
-Composable modal designed for SKU-driven updates under production constraints.
-
----
-
-## Architecture
-
-EditProductModal  
- ├─ prepareModalContext (pure logic)  
- ├─ resolveSecondChild (injection boundary)  
- └─ DefaultSecondChild  
+This demo showcases a stateless, configurable modal architecture using
+derived availability logic and render prop injection.
 
 ---
 
-## Demo
+<div className="demoSection">
+  <h3>Default Behavior</h3>
+  <EditProductModal />
+</div>
 
-<LiveModalDemo />
-
----
-
-## Contract
-
-```ts
-type RenderPrimaryCta = (context: ModalContext) => React.ReactNode
-```
-
-Separation of orchestration and business behavior via injection boundary.
+<div className="demoSection">
+  <h3>Injected CTA (Render Prop Override)</h3>
+  <EditProductModal
+    renderPrimaryCta={(context) => (
+      <button
+        className="primaryButton injectedCta"
+        disabled={!context.isAvailable}
+      >
+        {context.isAvailable
+          ? `Confirm ${context.selectedColor} / ${context.selectedSize}`
+          : "Select a valid combination"}
+      </button>
+    )}
+  />
+</div>

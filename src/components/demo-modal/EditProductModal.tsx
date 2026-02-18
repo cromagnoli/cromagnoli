@@ -15,6 +15,16 @@ type SkuVariants = {
   availableSkus: Sku[];
 };
 
+type RenderContext = {
+  selectedColor: string;
+  selectedSize: string;
+  isAvailable: boolean;
+};
+
+type Props = {
+  renderPrimaryCta?: (context: RenderContext) => React.ReactNode;
+};
+
 const skuVariants: SkuVariants = {
   colors: [
     { colorCode: "WHT", displayName: "White" },
@@ -66,11 +76,16 @@ function getAvailableAttrValues({
     .map((sku) => sku[attrKey]);
 }
 
-function ModalContent({ deviceType }: { deviceType: "mobile" | "desktop" }) {
+function ModalContent({
+  deviceType,
+  renderPrimaryCta,
+}: {
+  deviceType: "mobile" | "desktop";
+  renderPrimaryCta?: (context: RenderContext) => React.ReactNode;
+}) {
   const [selectedColor, setSelectedColor] = useState("WHT");
   const [selectedSize, setSelectedSize] = useState("8");
 
-  // Axis-independent derivation (original behavior)
   const selectableForColors = useMemo(() => {
     return getSelectableSkus({
       skuVariants,
@@ -105,6 +120,12 @@ function ModalContent({ deviceType }: { deviceType: "mobile" | "desktop" }) {
       sku.size === selectedSize &&
       sku.available
   );
+
+  const context: RenderContext = {
+    selectedColor,
+    selectedSize,
+    isAvailable: isCurrentAvailable,
+  };
 
   return (
     <div className={`modalCard ${deviceType}`}>
@@ -160,29 +181,39 @@ function ModalContent({ deviceType }: { deviceType: "mobile" | "desktop" }) {
             </div>
           </div>
 
-          <button className="primaryButton" disabled={!isCurrentAvailable}>
-            {isCurrentAvailable ? "Add to Cart" : "Unavailable"}
-          </button>
+          {renderPrimaryCta ? (
+            renderPrimaryCta(context)
+          ) : (
+            <button className="primaryButton" disabled={!isCurrentAvailable}>
+              {isCurrentAvailable ? "Add to Cart" : "Unavailable"}
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default function EditProductModal() {
+export default function EditProductModal({ renderPrimaryCta }: Props) {
   return (
     <div className="modalWrapper">
       <div className="deviceContainer">
         <div className="deviceLabel">Mobile view (simulated)</div>
         <div className="device mobile">
-          <ModalContent deviceType="mobile" />
+          <ModalContent
+            deviceType="mobile"
+            renderPrimaryCta={renderPrimaryCta}
+          />
         </div>
       </div>
 
       <div className="deviceContainer">
         <div className="deviceLabel">Desktop view (simulated)</div>
         <div className="device desktop">
-          <ModalContent deviceType="desktop" />
+          <ModalContent
+            deviceType="desktop"
+            renderPrimaryCta={renderPrimaryCta}
+          />
         </div>
       </div>
     </div>
