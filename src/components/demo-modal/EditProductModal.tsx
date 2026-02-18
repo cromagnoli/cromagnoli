@@ -1,45 +1,36 @@
 
 import React, { useState } from "react";
-import { SkuVariants } from "./types";
-import { prepareModalContext, ModalContext } from "./prepareModalContext";
-import { resolveSecondChild } from "./resolveSecondChild";
 import "./modal.css";
 
-type RenderFn = (context: ModalContext) => React.ReactNode;
+const variants = [
+  { colorCode: "WHT", size: "8", available: true },
+  { colorCode: "WHT", size: "9", available: false },
+  { colorCode: "GPH", size: "8", available: false },
+  { colorCode: "GPH", size: "9", available: true },
+];
 
-type Props = {
-  variants: SkuVariants;
-  renderPrimaryCta?: RenderFn;
-};
-
-const imageMap: Record<string, string> = {
+const imageMap = {
   WHT: "/images/shoes-white.png",
   GPH: "/images/shoes-graphite.png",
 };
 
-function ModalContent({
-  variants,
-  renderPrimaryCta,
-  deviceType,
-}: Props & { deviceType: "mobile" | "desktop" }) {
-  const [color, setColor] = useState(variants.colors[0].colorCode);
-  const [size, setSize] = useState(variants.sizes[0].size);
-
-  const { currentSku, isAvailable } = prepareModalContext(
-    variants,
-    color,
-    size
+function isAvailable(color: string, size: string) {
+  return variants.some(
+    (v) => v.colorCode === color && v.size === size && v.available
   );
+}
 
-  const context: ModalContext = {
-    selectedColor: color,
-    selectedSize: size,
-    setColor,
-    setSize,
-    currentSku,
-    isAvailable,
-    variants,
-  };
+function ModalContent({ deviceType }: { deviceType: "mobile" | "desktop" }) {
+  const [color, setColor] = useState("WHT");
+  const [size, setSize] = useState("8");
+
+  const sizes = ["8", "9"];
+  const colors = [
+    { code: "WHT", label: "White" },
+    { code: "GPH", label: "Graphite" },
+  ];
+
+  const available = isAvailable(color, size);
 
   return (
     <div className={`modalCard ${deviceType}`}>
@@ -52,22 +43,17 @@ function ModalContent({
           <div className="section">
             <span className="label">Color</span>
             <div className="buttonGroup">
-              {variants.colors.map((c) => (
+              {colors.map((c) => (
                 <button
-                  key={c.colorCode}
-                  onClick={() => setColor(c.colorCode)}
-                  className={`optionButton ${
-                    color === c.colorCode ? "optionButtonSelected" : ""
-                  }`}
+                  key={c.code}
+                  onClick={() => setColor(c.code)}
+                  className={`optionButton ${color === c.code ? "selected" : ""}`}
                   style={{
-                    background:
-                      c.colorCode === "WHT" ? "#ffffff" : "#444444",
-                    color:
-                      c.colorCode === "WHT" ? "#000000" : "#ffffff",
-                    border: "1px solid #cbd5e1"
+                    background: c.code === "WHT" ? "#ffffff" : "#444444",
+                    color: c.code === "WHT" ? "#000000" : "#ffffff"
                   }}
                 >
-                  {c.displayName}
+                  {c.label}
                 </button>
               ))}
             </div>
@@ -76,41 +62,46 @@ function ModalContent({
           <div className="section">
             <span className="label">Size</span>
             <div className="buttonGroup">
-              {variants.sizes.map((s) => (
-                <button
-                  key={s.size}
-                  onClick={() => setSize(s.size)}
-                  className={`optionButton ${
-                    size === s.size ? "optionButtonSelected" : ""
-                  }`}
-                >
-                  {s.size}
-                </button>
-              ))}
+              {sizes.map((s) => {
+                const comboAvailable = isAvailable(color, s);
+                return (
+                  <button
+                    key={s}
+                    onClick={() => comboAvailable && setSize(s)}
+                    className={`optionButton 
+                      ${size === s ? "selected" : ""} 
+                      ${!comboAvailable ? "disabled" : ""}`}
+                  >
+                    {s}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {resolveSecondChild(context, renderPrimaryCta)}
+          <button className="primaryButton" disabled={!available}>
+            {available ? "Add to Cart" : "Unavailable"}
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-export default function EditProductModal(props: Props) {
+export default function EditProductModal() {
   return (
     <div className="modalWrapper">
       <div className="deviceContainer">
         <div className="deviceLabel">Mobile view (simulated)</div>
         <div className="device mobile">
-          <ModalContent {...props} deviceType="mobile" />
+          <ModalContent deviceType="mobile" />
         </div>
       </div>
 
       <div className="deviceContainer">
         <div className="deviceLabel">Desktop view (simulated)</div>
         <div className="device desktop">
-          <ModalContent {...props} deviceType="desktop" />
+          <ModalContent deviceType="desktop" />
         </div>
       </div>
     </div>

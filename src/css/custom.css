@@ -1,9 +1,9 @@
 
-/* DARK MODE */
-html[data-theme='dark'] {
+html[data-theme='dark'],
+html[data-theme='high-contrast'] {
   --ifm-background-color: #0b1220;
   --ifm-background-surface-color: #111827;
-  --ifm-navbar-background-color: #0e1627;
+  --ifm-navbar-background-color: #172950;
   --ifm-font-color-base: #e6edf7;
   --ifm-heading-color: #ffffff;
   --ifm-link-color: #60a5fa;
@@ -19,7 +19,6 @@ html[data-theme='dark'] {
   border-right: 1px solid #1f2937;
 }
 
-/* LIGHT MODE (unchanged, readable) */
 html[data-theme='light'] {
   --ifm-background-color: #f8fafc;
   --ifm-background-surface-color: #ffffff;

@@ -3,6 +3,7 @@
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
+  margin-top: 24px;
 }
 
 .deviceContainer {
@@ -23,7 +24,7 @@
 
 .deviceLabel {
   font-size: 13px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   color: #94a3b8;
 }
 
@@ -58,40 +59,43 @@
 
 .desktop .contentColumn { width: 50%; }
 
-.section { margin-bottom: 18px; }
+.section { margin-bottom: 20px; }
 
 .label {
   font-size: 14px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: block;
   color: #334155;
 }
 
 .buttonGroup {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-/* FIXED SELECTOR STYLES */
 .optionButton {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   color: #0f172a;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.optionButton:hover {
-  border-color: #3b82f6;
+.optionButton:hover:not(.disabled) {
+  border-color: #2563eb;
 }
 
-.optionButtonSelected {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #ffffff;
+.optionButton.selected {
+  border: 2px solid #2563eb;
+}
+
+.optionButton.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-style: dashed;
 }
 
 .primaryButton {
