@@ -10,7 +10,7 @@ const config: Config = {
   trailingSlash: true,
   favicon: 'img/favicon.ico',
   organizationName: 'cromagnoli',
-  projectName: 'cromagnoli-portfolio',
+  projectName: 'cromagnoli',
   presets: [
     [
       'classic',
@@ -31,6 +31,7 @@ const config: Config = {
       title: 'Cristian Romagnoli',
       items: [
         { to: '/', label: 'Case Studies', position: 'left' },
+
         { to: '/about', label: 'About', position: 'left' },
         {
           href: 'https://www.linkedin.com/in/cristianromagnoli/',
