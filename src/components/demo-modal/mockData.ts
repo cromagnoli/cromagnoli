@@ -3,8 +3,8 @@ import { SkuVariants } from "./types";
 
 export const mockVariants: SkuVariants = {
   colors: [
-    { colorCode: "BLK", displayName: "Black" },
-    { colorCode: "GRY", displayName: "Graphite" },
+    { colorCode: "WHT", displayName: "White" },
+    { colorCode: "GPH", displayName: "Graphite" }
   ],
   sizes: [{ size: "S" }, { size: "M" }, { size: "L" }],
   availableSkus: [

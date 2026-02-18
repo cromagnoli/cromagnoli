@@ -12,30 +12,24 @@
 }
 
 .device {
-  border-radius: 16px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
   width: 100%;
 }
 
-.device.mobile {
-  max-width: 360px;
-}
-
-.device.desktop {
-  max-width: 1000px;
-}
+.device.mobile { max-width: 360px; }
+.device.desktop { max-width: 1000px; }
 
 .deviceLabel {
   font-size: 13px;
   margin-bottom: 8px;
-  color: #cbd5e1;
+  color: #94a3b8;
 }
 
 .modalCard {
   background: #ffffff;
   color: #0f172a;
-  width: 100%;
 }
 
 .layout {
@@ -47,13 +41,8 @@
   flex-direction: row;
 }
 
-.imageColumn {
-  width: 100%;
-}
-
-.desktop .imageColumn {
-  width: 50%;
-}
+.imageColumn { width: 100%; }
+.desktop .imageColumn { width: 50%; }
 
 .imageColumn img {
   width: 100%;
@@ -67,19 +56,15 @@
   padding: 24px;
 }
 
-.desktop .contentColumn {
-  width: 50%;
-}
+.desktop .contentColumn { width: 50%; }
 
-.section {
-  margin-bottom: 18px;
-}
+.section { margin-bottom: 18px; }
 
 .label {
   font-size: 14px;
   margin-bottom: 6px;
   display: block;
-  color: #475569;
+  color: #334155;
 }
 
 .buttonGroup {
@@ -88,21 +73,29 @@
   flex-wrap: wrap;
 }
 
+/* FIXED SELECTOR STYLES */
 .optionButton {
-  background: #e2e8f0;
+  background: #ffffff;
   border: 1px solid #cbd5e1;
+  color: #0f172a;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.optionButton:hover {
+  border-color: #3b82f6;
 }
 
 .optionButtonSelected {
-  background: #bfdbfe;
-  border-color: #60a5fa;
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
 }
 
 .primaryButton {
-  background: #3b82f6;
+  background: #2563eb;
   color: white;
   padding: 10px 18px;
   border-radius: 8px;

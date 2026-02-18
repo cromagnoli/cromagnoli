@@ -13,8 +13,8 @@ type Props = {
 };
 
 const imageMap: Record<string, string> = {
-  BLK: "https://picsum.photos/seed/black/1200/800",
-  GRY: "https://picsum.photos/seed/gray/1200/800",
+  WHT: "/images/shoes-white.png",
+  GPH: "/images/shoes-graphite.png",
 };
 
 function ModalContent({
@@ -59,6 +59,13 @@ function ModalContent({
                   className={`optionButton ${
                     color === c.colorCode ? "optionButtonSelected" : ""
                   }`}
+                  style={{
+                    background:
+                      c.colorCode === "WHT" ? "#ffffff" : "#444444",
+                    color:
+                      c.colorCode === "WHT" ? "#000000" : "#ffffff",
+                    border: "1px solid #cbd5e1"
+                  }}
                 >
                   {c.displayName}
                 </button>
