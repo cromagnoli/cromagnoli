@@ -6,7 +6,7 @@ const config: Config = {
   title: 'Cristian Romagnoli',
   tagline: 'Production Engineering Case Studies',
   url: 'https://cromagnoli.github.io',
-  baseUrl: '/',
+  baseUrl: '/cromagnoli/',
   trailingSlash: true,
   favicon: 'img/favicon.ico',
   organizationName: 'cromagnoli',
