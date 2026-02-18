@@ -1,0 +1,8 @@
+
+:root {
+  --ifm-color-primary: #7f1d1d;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}

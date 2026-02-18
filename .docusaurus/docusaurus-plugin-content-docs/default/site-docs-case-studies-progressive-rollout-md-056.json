@@ -1,0 +1,23 @@
+{
+  "id": "case-studies/progressive-rollout",
+  "title": "Progressive Rollout on Legacy Systems",
+  "description": "Incremental modernization strategy for introducing a new React-based stack",
+  "source": "@site/docs/case-studies/progressive-rollout.md",
+  "sourceDirName": "case-studies",
+  "slug": "/case-studies/progressive-rollout",
+  "permalink": "/case-studies/progressive-rollout",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Stateless Configurable Modal",
+    "permalink": "/case-studies/stateless-configurable-modal"
+  },
+  "next": {
+    "title": "Transactional Email Framework",
+    "permalink": "/case-studies/transactional-email"
+  }
+}

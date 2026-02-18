@@ -1,0 +1,23 @@
+{
+  "id": "case-studies/transactional-email",
+  "title": "Transactional Email Framework",
+  "description": "Composable, responsive transactional email system designed to support",
+  "source": "@site/docs/case-studies/transactional-email.md",
+  "sourceDirName": "case-studies",
+  "slug": "/case-studies/transactional-email",
+  "permalink": "/case-studies/transactional-email",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Progressive Rollout on Legacy Systems",
+    "permalink": "/case-studies/progressive-rollout"
+  },
+  "next": {
+    "title": "About",
+    "permalink": "/about"
+  }
+}
