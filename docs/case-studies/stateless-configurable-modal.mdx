@@ -1,0 +1,33 @@
+
+import LiveModalDemo from '@site/src/components/demo-modal/LiveModalDemo';
+
+# Stateless Configurable Modal
+
+## Context
+
+Composable modal designed for SKU-driven updates under production constraints.
+
+---
+
+## Architecture
+
+EditProductModal  
+ ├─ prepareModalContext (pure logic)  
+ ├─ resolveSecondChild (injection boundary)  
+ └─ DefaultSecondChild  
+
+---
+
+## Demo
+
+<LiveModalDemo />
+
+---
+
+## Contract
+
+```ts
+type RenderPrimaryCta = (context: ModalContext) => React.ReactNode
+```
+
+Separation of orchestration and business behavior via injection boundary.

@@ -1,0 +1,116 @@
+
+.modalWrapper {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.deviceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.device {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  width: 100%;
+}
+
+.device.mobile {
+  max-width: 360px;
+}
+
+.device.desktop {
+  max-width: 1000px;
+}
+
+.deviceLabel {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #cbd5e1;
+}
+
+.modalCard {
+  background: #ffffff;
+  color: #0f172a;
+  width: 100%;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop .layout {
+  flex-direction: row;
+}
+
+.imageColumn {
+  width: 100%;
+}
+
+.desktop .imageColumn {
+  width: 50%;
+}
+
+.imageColumn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.contentColumn {
+  width: 100%;
+  padding: 24px;
+}
+
+.desktop .contentColumn {
+  width: 50%;
+}
+
+.section {
+  margin-bottom: 18px;
+}
+
+.label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+  color: #475569;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.optionButton {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.optionButtonSelected {
+  background: #bfdbfe;
+  border-color: #60a5fa;
+}
+
+.primaryButton {
+  background: #3b82f6;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
