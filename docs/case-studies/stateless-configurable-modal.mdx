@@ -1,5 +1,21 @@
 
-import EditProductModal from '@site/src/components/demo-modal/EditProductModal';
+import VariantsEditProductModal from '@site/src/components/demo-modal/variants-edit-modal';
+
+export const demoItem = {
+  productName: "BestBrand Sneakers",
+  productUrl: "/products/bestbrand-sneakers",
+  imageUrl: "/images/shoes-white.png",
+  colorCode: "WHT",
+  size: "8",
+};
+
+export const demoItemAlt = {
+  productName: "BestBrand Sneakers",
+  productUrl: "/products/bestbrand-sneakers",
+  imageUrl: "/images/shoes-graphite.png",
+  colorCode: "GPH",
+  size: "9",
+};
 
 ## Stateless Configurable Modal
 
@@ -10,21 +26,16 @@ derived availability logic and render prop injection.
 
 <div className="demoSection">
   <h3>Default Behavior</h3>
-  <EditProductModal />
+  <VariantsEditProductModal
+    editingItem={demoItem}
+    editingItemIndex={0}
+  />
 </div>
 
 <div className="demoSection">
-  <h3>Injected CTA (Render Prop Override)</h3>
-  <EditProductModal
-    renderPrimaryCta={(context) => (
-      <button
-        className="primaryButton injectedCta"
-        disabled={!context.isAvailable}
-      >
-        {context.isAvailable
-          ? `Confirm ${context.selectedColor} / ${context.selectedSize}`
-          : "Select a valid combination"}
-      </button>
-    )}
+  <h3>Second Scenario</h3>
+  <VariantsEditProductModal
+    editingItem={demoItemAlt}
+    editingItemIndex={1}
   />
 </div>

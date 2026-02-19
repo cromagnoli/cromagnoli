@@ -26,6 +26,7 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
+  plugins: ['docusaurus-plugin-sass'],
   themeConfig: {
     navbar: {
       title: 'Cristian Romagnoli',

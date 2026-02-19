@@ -1,0 +1,60 @@
+@import "../mqs.module.scss";
+
+.modalContainer {
+  align-items: baseline;
+}
+
+// Double class to avoid specificity issue on build time.
+.splitViewModalContainer.splitViewModalContainer {
+  @media screen and (max-width: $small) {
+    display: block;
+    padding: 0;
+  }
+}
+
+// Double class to avoid specificity issue on build time.
+.splitViewModal.splitViewModal {
+  background-color: #d1d1d1;
+  max-width: rem(375);
+  padding: 0;
+
+  @include mq($desktop-and-above) {
+    max-width: rem(1050);
+  }
+
+  @media only screen and (max-width: $small) {
+    border-radius: 0;
+    height: fit-content;
+    min-height: 100vh;
+    min-width: 100%;
+  }
+
+  [class^="closeButton"] {
+    @media screen and (max-width: $med) {
+      z-index: 10;
+    }
+  }
+}
+
+.splitViewModalContentContainer {
+  @include mq($desktop-and-above) {
+    display: flex;
+    flex-direction: row;
+    max-height: rem(658);
+  }
+}
+
+.splitViewModalSecondChild {
+  margin: 0 rem(10);
+
+  @include mq($desktop-and-above) {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    flex-basis: 0;
+  }
+}

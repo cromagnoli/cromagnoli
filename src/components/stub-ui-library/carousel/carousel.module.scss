@@ -1,4 +1,5 @@
 @import '../../../../node_modules/react-multi-carousel/lib/styles.css';
+@import '../mqs.module.scss';
 
 .wrapper {
   display: flex;
@@ -28,7 +29,7 @@ ul.dots {
   }
 
   &Inner {
-    background-color: $grey25;
+    background-color: #4a4a4a;
     border-radius: 50%;
     display: inline-block;
     height: rem(8);
@@ -40,7 +41,7 @@ ul.dots {
     opacity: 1;
 
     .dotInner {
-      background-color: $grey100;
+      background-color: #2c2c2c;
     }
   }
 }
@@ -54,7 +55,7 @@ ul.dots {
 
 .carouselArrows {
   align-items: center;
-  background: $white;
+  background: #fff;
   border: 0;
   border-radius: rem(4);
   cursor: pointer;

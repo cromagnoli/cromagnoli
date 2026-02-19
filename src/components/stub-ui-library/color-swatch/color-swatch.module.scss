@@ -3,7 +3,7 @@
 .colorSwatch {
   align-items: center;
   border-radius: 50%;
-  box-shadow: 0 0 0 rem(1.5) $grey25;
+  box-shadow: 0 0 0 rem(1.5) #4a4a4a;
   display: flex;
   height: rem(34);
   justify-content: center;
@@ -31,15 +31,15 @@
   }
 
   &Active {
-    box-shadow: 0 0 0 rem(1.5) $grey25, 0 0 0 rem(4) $white,
-    0 0 0 rem(5.5) $black;
+    box-shadow: 0 0 0 rem(1.5) #4a4a4a, 0 0 0 rem(4) #fff,
+    0 0 0 rem(5.5) #000;
   }
 
   &Disabled {
     position: relative;
 
     &::after {
-      border: rem(1) solid $black;
+      border: rem(1) solid #000;
       bottom: 0;
       content: '';
       // stylelint-disable-next-line unit-disallowed-list
@@ -54,7 +54,7 @@
       width: 0;
 
       @media (min-resolution: 192dpi) {
-        border: rem(0.75) solid $black;
+        border: rem(0.75) solid #000;
       }
     }
 
@@ -65,12 +65,12 @@
 
   &:hover:not([class*='colorSwatchActive']) {
     [role='radio'] & {
-      box-shadow: 0 0 0 rem(1.5) $grey25, 0 0 0 rem(4) $white,
-      0 0 0 rem(6) $grey25;
+      box-shadow: 0 0 0 rem(1.5) #4a4a4a, 0 0 0 rem(4) #fff,
+      0 0 0 rem(6) #4a4a4a;
 
       @media (min-resolution: 192dpi) {
-        box-shadow: 0 0 0 rem(1.5) $grey25, 0 0 0 rem(4) $white,
-        0 0 0 rem(5.5) $grey25;
+        box-shadow: 0 0 0 rem(1.5) #4a4a4a, 0 0 0 rem(4) #fff,
+        0 0 0 rem(5.5) #4a4a4a;
       }
     }
   }

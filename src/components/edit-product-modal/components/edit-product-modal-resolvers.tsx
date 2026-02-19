@@ -9,17 +9,51 @@ import {
 } from "./partials";
 import { isDefinedFn, getMatchingSku } from "../utils/edit-product-modal-utils";
 import styles from "./edit-product-modal.module.scss";
+import {
+  ColorOption,
+  ColorToSizeMap,
+  Locale,
+  MaybeSku,
+  SizeOption,
+  SizeToColorMap,
+  Sku,
+} from "../types";
 
-const getImagesAlt = (productName) => `${productName ?? "Product"} image`;
+const getImagesAlt = (productName?: string) => `${productName ?? "Product"} image`;
+
+type CommonRenderArgs = {
+  locale: Locale;
+};
+
+type RestRenderArgs = {
+  currentColorDetails: ColorOption | undefined;
+  currentSizeDetails: SizeOption | undefined;
+  currentColorIndex: number;
+  prevColorIndex: number | undefined;
+  setCurrentColorIndex: (index: number) => void;
+  currentSizeIndex: number;
+  prevSizeIndex: number | undefined;
+  setCurrentSizeIndex: (index: number) => void;
+  availableSkus: Sku[];
+  colors: ColorOption[];
+  sizes: SizeOption[];
+  colorToSizeMap: ColorToSizeMap;
+  sizeToColorMap: SizeToColorMap;
+};
 
 export const resolveLoadingFirstChildRender = ({
   productName,
   currentImagesUrls,
   commonRenderArgs,
-  renderLoadingFirstChild,
+  renderFirstChild,
+}: {
+  productName: string;
+  currentImagesUrls: Array<string | null | undefined>;
+  commonRenderArgs: CommonRenderArgs;
+  renderFirstChild?: (args: CommonRenderArgs) => React.ReactNode;
 }) => {
-  return isDefinedFn(renderLoadingFirstChild) ? (
-    renderLoadingFirstChild(commonRenderArgs)
+  return isDefinedFn(renderFirstChild) ? (
+    renderFirstChild(commonRenderArgs)
   ) : (
     <EditProductImages
       imageUrls={currentImagesUrls}
@@ -34,6 +68,12 @@ export const resolveFirstChildRender = ({
   commonRenderArgs,
   restRenderArgs,
   renderFirstChild,
+}: {
+  productName: string;
+  currentImagesUrls: string[] | undefined;
+  commonRenderArgs: CommonRenderArgs;
+  restRenderArgs: RestRenderArgs;
+  renderFirstChild?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
 }) => {
   const firstChildRenderArgs = {
     ...commonRenderArgs,
@@ -63,6 +103,20 @@ export const resolveLoadingSecondChildRender = ({
   renderLoadingPrice,
   commonRenderArgs,
   enableStickySecondChildFooter,
+}: {
+  mainHeading: string;
+  initialListPrice?: string | null;
+  initialSalePrice?: string | null;
+  currencyCode?: string | null;
+  renderLoadingSecondChildHeader?: (args: CommonRenderArgs) => React.ReactNode;
+  renderLoadingSecondChildFooterExtra?: (args: CommonRenderArgs) => React.ReactNode;
+  renderLoadingSecondChild?: (args: CommonRenderArgs) => React.ReactNode;
+  renderSpinner?: () => React.ReactNode;
+  renderLoadingHeading?: () => React.ReactNode;
+  renderLoadingAfterHeading?: () => React.ReactNode;
+  renderLoadingPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
+  commonRenderArgs: CommonRenderArgs;
+  enableStickySecondChildFooter?: boolean;
 }) => {
   let secondChild;
   if (isDefinedFn(renderLoadingSecondChild)) {
@@ -122,6 +176,56 @@ export const resolveSecondChildRender = ({
   commonRenderArgs,
   restRenderArgs,
   enableStickySecondChildFooter,
+}: {
+  mainHeading: string;
+  currencyCode?: string | null;
+  renderSecondChildHeader?: (args: CommonRenderArgs & RestRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
+  renderAttrsSelectors?: (args: CommonRenderArgs & RestRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
+  renderAfterAttrsSelectors?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
+  renderNotifications?: (args: {
+    locale: Locale;
+    isCurrentSkuAvailable: boolean | undefined;
+    currentMatchingSkuId: string | undefined;
+    currentColorDetails: ColorOption | undefined;
+    currentColorIndex: number;
+    currentSizeDetails: SizeOption | undefined;
+    currentSizeIndex: number;
+    prevColorIndex: number | undefined;
+    prevSizeIndex: number | undefined;
+    availableSkus: Sku[];
+  }) => React.ReactNode;
+  renderPrimaryCta?: (args: {
+    locale: Locale;
+    isCurrentSkuAvailable: boolean | undefined;
+    currentMatchingSkuId: string | undefined;
+    currentColorDetails: ColorOption | undefined;
+    currentColorIndex: number;
+    currentSizeDetails: SizeOption | undefined;
+    currentSizeIndex: number;
+    prevColorIndex: number | undefined;
+    prevSizeIndex: number | undefined;
+    currentMatchingSku: MaybeSku;
+  }) => React.ReactNode;
+  renderSecondaryCta?: (args: {
+    locale: Locale;
+    isCurrentSkuAvailable: boolean | undefined;
+    currentMatchingSkuId: string | undefined;
+    currentColorDetails: ColorOption | undefined;
+    currentColorIndex: number;
+    currentSizeDetails: SizeOption | undefined;
+    currentSizeIndex: number;
+    prevColorIndex: number | undefined;
+    prevSizeIndex: number | undefined;
+    currentMatchingSku: MaybeSku;
+  }) => React.ReactNode;
+  renderSecondChildFooterExtra?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
+  renderSecondChild?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
+  renderHeading?: () => React.ReactNode;
+  renderAfterHeading?: () => React.ReactNode;
+  renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
+  commonRenderArgs: CommonRenderArgs;
+  restRenderArgs: RestRenderArgs;
+  enableStickySecondChildFooter?: boolean;
 }) => {
   const {
     currentColorDetails,
@@ -139,7 +243,7 @@ export const resolveSecondChildRender = ({
     sizeToColorMap,
   } = restRenderArgs;
 
-  const currentMatchingSku =
+  const currentMatchingSku: MaybeSku =
     getMatchingSku({
       skus: availableSkus,
       colorCodeToMatch: currentColorDetails?.colorCode,
@@ -147,7 +251,7 @@ export const resolveSecondChildRender = ({
     }) || {};
 
   const { id: currentMatchingSkuId, available: isCurrentSkuAvailable } =
-    currentMatchingSku;
+    currentMatchingSku as Partial<Sku>;
 
   const secondChildRenderArgs = {
     ...commonRenderArgs,

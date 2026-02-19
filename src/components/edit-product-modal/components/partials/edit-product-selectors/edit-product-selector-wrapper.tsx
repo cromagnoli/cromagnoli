@@ -1,8 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { ButtonTileGroup } from "../../../../stub-ui-library/button-tile-group/button-tile-group";
 import cs from "classnames";
 import sharedStyles from "./edit-product-selectors-shared.module.scss";
+
+type Props = {
+  type: string;
+  label: string;
+  children: React.ReactNode;
+  currentIndex: number;
+  onSelectCallback: (index: number) => void;
+  extraLabelClassName?: string;
+  extraGroupClassName?: string;
+};
 
 const EditProductSelectorWrapper = ({
   type,
@@ -12,7 +21,7 @@ const EditProductSelectorWrapper = ({
   onSelectCallback,
   extraLabelClassName,
   extraGroupClassName,
-}) => {
+}: Props) => {
   return (
     <div className={sharedStyles.container}>
       <label
@@ -32,14 +41,6 @@ const EditProductSelectorWrapper = ({
       </ButtonTileGroup>
     </div>
   );
-};
-
-EditProductSelectorWrapper.propTypes = {
-  type: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-  currentIndex: PropTypes.number.isRequired,
-  onSelectCallback: PropTypes.func.isRequired,
 };
 
 export default EditProductSelectorWrapper;

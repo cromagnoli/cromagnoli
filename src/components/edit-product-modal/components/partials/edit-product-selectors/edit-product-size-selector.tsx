@@ -1,12 +1,21 @@
 import React from "react";
-import PropTypes from "prop-types";
 import EditProductSelectorWrapper from "./edit-product-selector-wrapper";
 import { ButtonTile } from "../../../../stub-ui-library/button-tile/button-tile";
 import { SizeTile } from "../../../../stub-ui-library/size-tile/size-tile";
 import cs from "classnames";
 import sharedStyles from "./edit-product-selectors-shared.module.scss";
+import { SizeOption } from "../../../types";
 
 const SIZE_SELECTOR_TYPE = "size";
+
+type Props = {
+  currentSize?: string;
+  currentIndex: number;
+  selectorState: SizeOption[];
+  onSelectCallback: (index: number) => void;
+  label?: string;
+  extraLabelClassName?: string;
+};
 
 const EditProductSizeSelector = ({
   currentSize,
@@ -15,7 +24,7 @@ const EditProductSizeSelector = ({
   onSelectCallback,
   label = `Size: ${currentSize || "--"}`,
   extraLabelClassName,
-}) => {
+}: Props) => {
   return (
     <EditProductSelectorWrapper
       currentIndex={currentIndex}
@@ -35,18 +44,6 @@ const EditProductSizeSelector = ({
       ))}
     </EditProductSelectorWrapper>
   );
-};
-
-EditProductSizeSelector.propTypes = {
-  currentSize: PropTypes.string.isRequired,
-  currentIndex: PropTypes.number.isRequired,
-  selectorState: PropTypes.arrayOf(
-    PropTypes.shape({
-      size: PropTypes.string,
-      available: PropTypes.bool,
-    })
-  ).isRequired,
-  onSelectCallback: PropTypes.func.isRequired,
 };
 
 export default EditProductSizeSelector;

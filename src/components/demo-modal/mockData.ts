@@ -1,7 +1,8 @@
 
-import { SkuVariants } from "./types";
+import { SkuVariants as DemoSkuVariants } from "./types";
+import { SkuVariants as ModalSkuVariants } from "../edit-product-modal/types";
 
-export const mockVariants: SkuVariants = {
+export const mockVariants: DemoSkuVariants = {
   colors: [
     { code: "fff", name: "White" },
     { code: "444", name: "Graphite" }
@@ -17,6 +18,41 @@ export const mockVariants: SkuVariants = {
     displayName: "BestBrand Sneakers"
   }
 };
+
+const modalMockData: {
+  skuVariants: ModalSkuVariants;
+  productSummary: { productId: string; displayName: string };
+} = {
+  skuVariants: {
+    colors: [
+      { colorCode: "WHT", displayName: "White", available: true },
+      { colorCode: "GPH", displayName: "Graphite", available: true },
+    ],
+    sizes: [
+      { size: "8", available: true },
+      { size: "9", available: true },
+      { size: "10", available: true },
+    ],
+    availableSkus: [
+      { id: "1", colorCode: "WHT", size: "8", listPrice: "128.00", available: true },
+      { id: "2", colorCode: "WHT", size: "9", listPrice: "128.00", available: false },
+      { id: "3", colorCode: "WHT", size: "10", listPrice: "128.00", available: true },
+      { id: "4", colorCode: "GPH", size: "8", listPrice: "128.00", available: false },
+      { id: "5", colorCode: "GPH", size: "9", listPrice: "128.00", available: true },
+      { id: "6", colorCode: "GPH", size: "10", listPrice: "128.00", available: true },
+    ],
+    imagesByColorCode: {
+      WHT: ["/images/shoes-white.png"],
+      GPH: ["/images/shoes-graphite.png"],
+    },
+  },
+  productSummary: {
+    productId: "prod1234",
+    displayName: "BestBrand Sneakers",
+  },
+};
+
+export default modalMockData;
 
 
 // product: {

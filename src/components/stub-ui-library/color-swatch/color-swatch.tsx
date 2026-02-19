@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
-import styles from './index.module.scss';
+import styles from './color-swatch.module.scss';
 
 const ColorSwatch = ({
      className,

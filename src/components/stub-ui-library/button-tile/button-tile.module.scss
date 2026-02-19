@@ -1,4 +1,4 @@
-@import '../mqs.module';
+@import '../mqs.module.scss';
 
 .buttonTile {
   background-color: transparent;
@@ -9,7 +9,7 @@
   padding: 0;
 
   @include focusVisible {
-    outline: rem(1) dotted $grey65; // FF style
+    outline: rem(1) dotted #232323; // FF style
     outline: -webkit-focus-ring-color auto rem(5);
   }
 

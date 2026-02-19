@@ -1,0 +1,92 @@
+@import '../mqs.module.scss';
+
+$quadraticEaseOut: cubic-bezier(0.55, 0.09, 0.68, 0.53);
+$modalPadding: 20;
+
+@mixin modalFullScreenContainer {
+  padding: 0;
+}
+
+@mixin modalFullScreen {
+  border-radius: 0;
+  height: auto;
+  min-height: 100%;
+  min-width: 100%;
+  width: 100%;
+}
+
+.modalContainer {
+  align-items: center;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  overflow: auto;
+  padding: rem(24);
+  padding-bottom: rem(100);
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 106; // meganav banner is 105
+}
+
+.modal {
+  align-self: flex-start;
+  animation: 200ms $quadraticEaseOut forwards;
+  background: #fff;
+  border-radius: rem(4);
+  box-shadow: 0 rem(8) rem(12) 0 rgb(0 0 0 / 20%);
+  margin-bottom: auto;
+  margin-top: auto;
+  max-width: rem(336);
+  padding: $modalPadding;
+  padding-top: rem(36);
+  position: relative;
+  width: 100%;
+  z-index: 107; // meganav banner is 105
+}
+
+.fullScreenContainer {
+  @include modalFullScreenContainer;
+}
+
+.fullScreenModal {
+  @include modalFullScreen;
+}
+
+@media (max-width: rem(768)) {
+  .fullScreenMobileContainer {
+    @include modalFullScreenContainer;
+  }
+
+  .fullScreenMobileModal {
+    @include modalFullScreen;
+  }
+}
+
+.backdrop {
+  animation: 300ms linear forwards;
+  background: rgb(0 0 0 / 30%);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 106; // meganav banner is 105
+
+  :global {
+    animation-name: lll-fadeIn;
+  }
+}
+
+.closeButton {
+  background-color: transparent;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  margin: 0;
+  padding: rem(12);
+  position: absolute;
+  right: 0;
+  top: 0;
+}

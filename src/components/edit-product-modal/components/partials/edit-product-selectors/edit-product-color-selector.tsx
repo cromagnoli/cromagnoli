@@ -1,13 +1,21 @@
 import React from "react";
-import PropTypes from "prop-types";
 import EditProductSelectorWrapper from "./edit-product-selector-wrapper";
 import { ButtonTile } from "../../../../stub-ui-library/button-tile/button-tile";
 import { ColorSwatch } from "../../../../stub-ui-library/color-swatch/color-swatch";
 import cs from "classnames";
 import sharedStyles from "./edit-product-selectors-shared.module.scss";
 import styles from "./edit-product-color-selector.module.scss";
+import { ColorOption } from "../../../types";
 
 const COLOR_SELECTOR_TYPE = "color";
+
+type Props = {
+  currentName?: string;
+  currentIndex: number;
+  selectorState: ColorOption[];
+  onSelectCallback: (index: number) => void;
+  extraLabelClassName?: string;
+};
 
 const EditProductColorSelector = ({
   currentName,
@@ -15,7 +23,7 @@ const EditProductColorSelector = ({
   selectorState,
   onSelectCallback,
   extraLabelClassName,
-}) => {
+}: Props) => {
   const label = `Color: ${currentName || "--"}`;
 
   return (
@@ -42,19 +50,6 @@ const EditProductColorSelector = ({
       ))}
     </EditProductSelectorWrapper>
   );
-};
-
-EditProductColorSelector.propTypes = {
-  currentName: PropTypes.string.isRequired,
-  currentIndex: PropTypes.number.isRequired,
-  selectorState: PropTypes.arrayOf(
-    PropTypes.shape({
-      colorCode: PropTypes.string,
-      name: PropTypes.string,
-      available: PropTypes.bool,
-    })
-  ).isRequired,
-  onSelectCallback: PropTypes.func.isRequired,
 };
 
 export default EditProductColorSelector;

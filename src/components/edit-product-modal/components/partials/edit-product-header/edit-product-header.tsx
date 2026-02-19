@@ -1,20 +1,31 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { isDefinedFn } from "../../../utils/edit-product-modal-utils";
 import EditProductHeading from "./edit-product-heading";
 import EditProductPrice from "./edit-product-price";
 import sharedStyles from "../edit-product-selectors/edit-product-selectors-shared.module.scss";
+import { Locale } from "../../../types";
+
+type Props = {
+  headingChildren?: React.ReactNode;
+  listPrice?: string | null;
+  salePrice?: string | null;
+  currencyCode?: string | null;
+  locale?: Locale | null;
+  renderHeading?: () => React.ReactNode;
+  renderAfterHeading?: () => React.ReactNode;
+  renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
+};
 
 const EditProductHeader = ({
-  headingChildren,
-  listPrice,
-  salePrice,
-  currencyCode,
-  locale,
-  renderHeading,
-  renderAfterHeading,
-  renderPrice,
-}) => (
+  headingChildren = null,
+  listPrice = null,
+  salePrice = null,
+  currencyCode = null,
+  locale = null,
+  renderHeading = null,
+  renderAfterHeading = null,
+  renderPrice = null,
+}: Props) => (
   <div className={sharedStyles.container}>
     {isDefinedFn(renderHeading) ? (
       renderHeading()
@@ -36,30 +47,5 @@ const EditProductHeader = ({
     )}
   </div>
 );
-
-EditProductHeader.propTypes = {
-  headingChildren: PropTypes.node,
-  listPrice: PropTypes.string,
-  salePrice: PropTypes.string,
-  currencyCode: PropTypes.string,
-  locale: PropTypes.shape({
-    lang: PropTypes.string,
-    countryCode: PropTypes.string,
-  }),
-  renderHeading: PropTypes.func,
-  renderAfterHeading: PropTypes.func,
-  renderPrice: PropTypes.func,
-};
-
-EditProductHeader.defaultProps = {
-  headingChildren: null,
-  listPrice: null,
-  salePrice: null,
-  currencyCode: null,
-  locale: null,
-  renderHeading: null,
-  renderAfterHeading: null,
-  renderPrice: null,
-};
 
 export default EditProductHeader;

@@ -8,35 +8,78 @@ import {
   EditProductErrorNotification,
 } from "../edit-product-modal/components/partials";
 import mockData from "./mockData";
+import { Locale, MaybeSku, SkuVariants } from "../edit-product-modal/types";
 
 const PRIMARY_BUTTON_LABEL = "Add to cart";
 const SECONDARY_CTA_LABEL = "View product details";
 const OOS_NOTIFICATION = "Sold out";
 
+type ProductSummary = Record<string, unknown>;
+
+type TrackUserInteractionArgs = {
+  userAction: string;
+  productSummary: ProductSummary;
+  activeSku: MaybeSku | null | undefined;
+};
+
+type EditingItem = {
+  productName: string;
+  productUrl: string;
+  imageUrl: string;
+  colorCode: string;
+  size: string;
+};
+
+type Props = {
+  editingItem: EditingItem;
+  editingItemIndex: number;
+  onModalDismiss?: () => void;
+};
+
+type PriceInfo = {
+  currencyCode: string;
+};
+
 const trackUserInteraction = ({
   userAction,
   productSummary,
   activeSku,
-}) => {
-  console.log(`Tracking user interaction: ${userAction}`, { productSummary, activeSku });
+}: TrackUserInteractionArgs) => {
+  console.log(`Tracking user interaction: ${userAction}`, {
+    productSummary,
+    activeSku,
+  });
 };
 
-const fakeModalDataFetch = () => new Promise((resolve, reject) => setTimeout(resolve(mockData), 500));
+const fakeModalDataFetch = ():
+  Promise<{ skuVariants: SkuVariants; productSummary: ProductSummary }> =>
+  new Promise((resolve) => setTimeout(() => resolve(mockData), 500));
+
+const useLocaleStandard = (): Locale => ({ lang: "en", countryCode: "US" });
+const usePriceInfo = (): PriceInfo => ({ currencyCode: "USD" });
+const getParsedLocale = (): Locale => ({ lang: "en", countryCode: "US" });
+const getPriceProps = (priceInfo?: PriceInfo) => priceInfo ?? { currencyCode: "USD" };
+const useRouter = () => ({ push: () => {} });
 
 const VariantsEditProductModal = ({
   editingItem,
   editingItemIndex,
-  onModalDismiss,
-}) => {
+  onModalDismiss = () => {},
+}: Props) => {
   const standardLocale = useLocaleStandard();
   const priceInfo = usePriceInfo();
   const locale = getParsedLocale();
   const router = useRouter();
-  const [skuVariants, setSkuVariants] = useState({});
-  const [productSummary, setProductSummary] = useState({});
+  const [skuVariants, setSkuVariants] = useState<SkuVariants>({});
+  const [productSummary, setProductSummary] = useState<ProductSummary>({});
   const isMount = useRef(true);
 
-  const onDismiss = ({ currentMatchingSku }) => {
+  const onDismiss = ({
+    currentMatchingSku,
+  }: {
+    event: React.SyntheticEvent;
+    currentMatchingSku: MaybeSku | null;
+  }) => {
     trackUserInteraction({
       userAction: "modal:close",
       productSummary,
@@ -46,9 +89,11 @@ const VariantsEditProductModal = ({
     onModalDismiss();
   };
 
-  const handleAddToBagClick = async (activeSku) => {
+  const handleAddToBagClick = async (
+    activeSku: MaybeSku | null | undefined
+  ) => {
     try {
-      alert("Item added to cart!")
+      alert("Item added to cart!");
 
       trackUserInteraction({
         userAction: "modal:addToCart",
@@ -64,6 +109,8 @@ const VariantsEditProductModal = ({
   const { currencyCode } = getPriceProps(priceInfo);
 
   const { productName, productUrl, imageUrl, colorCode, size } = editingItem;
+  void productUrl;
+  void router;
 
   useEffect(() => {
     if (isMount.current) {
@@ -130,6 +177,8 @@ const VariantsEditProductModal = ({
         currentSizeDetails,
         currentMatchingSku,
       }) => {
+        void currentColorDetails;
+        void currentSizeDetails;
         const onClick = () => {
           trackUserInteraction({
             userAction: "modal:navigate-product-details",
@@ -158,7 +207,8 @@ const VariantsEditProductModal = ({
         setCurrentColorIndex,
         availableSkus,
       }) => {
-        const onSelectCallback = (index) => {
+        void availableSkus;
+        const onSelectCallback = (index: number) => {
           setCurrentColorIndex(index);
         };
 
@@ -185,20 +235,6 @@ const VariantsEditProductModal = ({
       renderAfterHeading={<Pill>NEW</Pill>}
     />
   );
-};
-VariantsEditProductModal.propTypes = {
-  editingItem: shape({
-    productName: string.isRequired,
-    productUrl: string.isRequired,
-    imageUrl: string.isRequired,
-    colorCode: string.isRequired,
-    size: string.isRequired,
-  }).isRequired,
-  editingItemIndex: number.isRequired,
-  onModalDismiss: func,
-};
-VariantsEditProductModal.defaultProps = {
-  onModalDismiss: () => {},
 };
 
 export default VariantsEditProductModal;
