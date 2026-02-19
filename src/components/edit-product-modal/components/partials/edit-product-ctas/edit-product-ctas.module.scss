@@ -1,0 +1,15 @@
+@import "../../mqs.module";
+
+.primaryButton {
+  width: 100%;
+
+  @include mq($desktop-and-above) {
+    margin-bottom: 0;
+  }
+}
+
+.secondaryCta {
+  display: inline-flex;
+  font-size: rem(17);
+  margin-top: rem(16);
+}

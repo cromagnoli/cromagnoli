@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import Pill from "../abstract/pill";
-import EditProductModal from "../abstract/edit-product-modal/components/edit-product-modal";
+import Pill from "../stub-ui-library/pill";
+import EditProductModal from "../edit-product-modal/components/edit-product-modal";
 import {
   EditProductPrimaryButton,
   EditProductSecondaryCta,
   EditProductColorSelector,
   EditProductErrorNotification,
-} from "../abstract/edit-product-modal/components/partials";
+} from "../edit-product-modal/components/partials";
 import mockData from "./mockData";
 
 const PRIMARY_BUTTON_LABEL = "Add to cart";

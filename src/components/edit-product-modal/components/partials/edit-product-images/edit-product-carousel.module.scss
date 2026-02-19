@@ -1,0 +1,39 @@
+@import "../../mqs.module";
+
+.imageSlide {
+  border-radius: rem(4) rem(4) 0 0;
+  width: 100%;
+
+  @include mq($desktop-and-above) {
+    border-radius: rem(4) 0 0 rem(4);
+  }
+}
+
+.pagination {
+  /**
+    * Due to how styles processing behave during on build time, an extra class to add specificity weight is required.
+    * Otherwise default carousel styles from Pattern Lib coming later in import precedence order will override our custom style,
+    * since both would have the same weight. This trick is preferred over "!important" rule.
+    */
+  &.extraSelectorWeight {
+    bottom: 0;
+    left: 0;
+    margin-top: rem(0.5);
+    position: absolute;
+    right: 0;
+
+    @include mq($desktop-and-above) {
+      display: none;
+    }
+  }
+}
+
+.arrow {
+  &.extraSelectorWeight {
+    display: none;
+
+    @include mq($desktop-and-above) {
+      display: block;
+    }
+  }
+}
