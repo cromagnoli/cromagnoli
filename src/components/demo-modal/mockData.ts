@@ -1,6 +1,8 @@
 import { SkuVariants as ModalSkuVariants } from "../edit-product-modal/types";
-import shoesWhite from "@site/static/images/shoes-white.png";
-import shoesGraphite from "@site/static/images/shoes-graphite.png";
+import shoesWhite1 from "@site/static/images/shoes-white1.png";
+import shoesWhite2 from "@site/static/images/shoes-white2.png";
+import shoesGraphite1 from "@site/static/images/shoes-graphite1.png";
+import shoesGraphite2 from "@site/static/images/shoes-graphite2.png";
 
 const modalMockData: {
   skuVariants: ModalSkuVariants;
@@ -25,8 +27,8 @@ const modalMockData: {
       { id: "6", colorCode: "444444", size: "10", listPrice: "128.00", available: true },
     ],
     imagesByColorCode: {
-      "ffffff": [shoesWhite],
-      "444444": [shoesGraphite],
+      "ffffff": [shoesWhite1, shoesWhite2],
+      "444444": [shoesGraphite1, shoesGraphite2],
     },
   },
   productSummary: {
