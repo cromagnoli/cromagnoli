@@ -1,0 +1,67 @@
+@import './edit-product-modal/components/mqs.module.scss';
+
+.sizeTile {
+  align-items: center;
+  background-color: $white;
+  border-color: $grey25;
+  border-radius: rem(4);
+  border-style: solid;
+  border-width: rem(1);
+  color: $black;
+  display: inline-flex;
+  font-size: rem(19);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
+  height: rem(36);
+  justify-content: center;
+  line-height: 0;
+  min-width: rem(36);
+  padding: 0 rem(8.5);
+
+  &:hover {
+    [role='radio'] & {
+      border-color: $black;
+    }
+  }
+
+  &Active:not([class*='sizeTileDisabled']) {
+    background-color: $black;
+    border-color: $black;
+    color: $white;
+  }
+
+  &Disabled:not([class*='sizeTileActive']) {
+    background: linear-gradient(
+                    to top left,
+                    $grey03 calc(50% - #{rem(1)}),
+                    $grey25,
+                    $grey03 calc(50% + #{rem(1.5)})
+    );
+    color: $grey100;
+
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      background: linear-gradient(to top left, transparent 51%, $grey03 52%),
+      linear-gradient(to bottom right, transparent 51%, $grey03 0), $grey25;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+  }
+
+  &Active[class*='sizeTileDisabled'] {
+    background: linear-gradient(
+                    to top left,
+                    $grey25 calc(50% - #{rem(1)}),
+                    $black,
+                    $grey25 calc(50% + #{rem(1.5)})
+    );
+    border-color: $black;
+
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      background: linear-gradient(to top left, transparent 51%, $grey25 52%),
+      linear-gradient(to bottom right, transparent 51%, $grey25 0), $black;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+  }
+}

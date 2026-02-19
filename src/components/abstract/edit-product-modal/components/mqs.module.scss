@@ -1,0 +1,7 @@
+@function rem($pixel-value, $rem-base: 16) {
+  @return $pixel-value / $rem-base * 1rem;
+}
+
+$med: rem(992);
+
+$desktop-and-above: "min-width:" + $med;

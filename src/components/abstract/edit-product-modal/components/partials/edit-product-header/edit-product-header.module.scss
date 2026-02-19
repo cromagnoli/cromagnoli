@@ -1,0 +1,15 @@
+@import "../../mqs.module.scss";
+
+.heading {
+  margin: rem(0.5) 0;
+
+  @include mq($desktop-and-above) {
+    margin: 0;
+  }
+}
+
+.currency {
+  font-size: rem(19);
+  margin: rem(8) 0 0;
+  min-height: rem(22.8); // Prevent vertical jump when no prices super edge case
+}
