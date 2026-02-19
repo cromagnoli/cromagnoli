@@ -20,9 +20,9 @@ const SizeTile = ({
             {...otherProps}
         >
       {text}
-            {isDisabled && (
-                <span className="lll-hidden-visually">&nbsp;(not available)</span>
-            )}
+      {isDisabled && (
+          <span className={styles.visuallyHidden}>&nbsp;(not available)</span>
+      )}
     </span>
     );
 };

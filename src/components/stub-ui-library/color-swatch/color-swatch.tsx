@@ -10,21 +10,19 @@ const ColorSwatch = ({
      isSelected,
      name,
      ...otherProps
- }) => {
-    return (
-        <span
-            className={cs(styles.colorSwatch, {
-                [styles.colorSwatchActive]: isSelected,
-                [styles.colorSwatchDisabled]: isDisabled,
-                [className]: className,
-            })}
-        >
+ }) => (
+    <span
+        className={cs(styles.colorSwatch, {
+            [styles.colorSwatchActive]: isSelected,
+            [styles.colorSwatchDisabled]: isDisabled,
+            [className]: className,
+        })}
+    >
       <span className={styles.colorSwatchImgWrapper}>
-        <span className={styles.colorSwatchPicture} style={ { backgroundColor: colorCode } }></span>
+        <span className={styles.colorSwatchPicture} style={ { backgroundColor: `#${colorCode}` } }></span>
       </span>
     </span>
-    );
-};
+);
 
 const propTypes = {
     className: PropTypes.string,

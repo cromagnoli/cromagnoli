@@ -5,10 +5,12 @@ import {
   EditProductPrimaryButton,
   EditProductSecondaryCta,
   EditProductColorSelector,
+  EditProductSizeSelector,
   EditProductErrorNotification,
 } from "../edit-product-modal/components/partials";
 import mockData from "./mockData";
 import { Locale, MaybeSku, SkuVariants } from "../edit-product-modal/types";
+import { configurePanelByCurrentSelection } from "../edit-product-modal/utils/edit-product-modal-utils";
 
 const PRIMARY_BUTTON_LABEL = "Add to cart";
 const SECONDARY_CTA_LABEL = "View product details";
@@ -204,12 +206,30 @@ const VariantsEditProductModal = ({
         currentColorIndex,
         prevColorIndex,
         colors,
+        sizes,
+        currentSizeDetails,
+        currentSizeIndex,
         setCurrentColorIndex,
+        setCurrentSizeIndex,
+        colorToSizeMap,
+        sizeToColorMap,
         availableSkus,
       }) => {
         void availableSkus;
+        const { sizeSelectorState, colorSelectorState } =
+          configurePanelByCurrentSelection(
+            currentColorDetails?.colorCode,
+            currentSizeDetails?.size,
+            colors,
+            sizes,
+            colorToSizeMap,
+            sizeToColorMap
+          );
         const onSelectCallback = (index: number) => {
           setCurrentColorIndex(index);
+        };
+        const onSelectSizeCallback = (index: number) => {
+          setCurrentSizeIndex(index);
         };
 
         if (
@@ -224,12 +244,20 @@ const VariantsEditProductModal = ({
         }
 
         return (
-          <EditProductColorSelector
-            currentName={currentColorDetails?.displayName}
-            currentIndex={currentColorIndex}
-            selectorState={colors}
-            onSelectCallback={onSelectCallback}
-          />
+          <>
+            <EditProductColorSelector
+              currentName={currentColorDetails?.displayName}
+              currentIndex={currentColorIndex}
+              selectorState={colorSelectorState}
+              onSelectCallback={onSelectCallback}
+            />
+            <EditProductSizeSelector
+              currentSize={currentSizeDetails?.size}
+              currentIndex={currentSizeIndex}
+              selectorState={sizeSelectorState}
+              onSelectCallback={onSelectSizeCallback}
+            />
+          </>
         );
       }}
       renderAfterHeading={<Pill>NEW</Pill>}

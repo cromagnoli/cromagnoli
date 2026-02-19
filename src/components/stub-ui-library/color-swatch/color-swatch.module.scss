@@ -1,4 +1,4 @@
-@import '../mqs.module';
+@import '../utils.module';
 
 .colorSwatch {
   align-items: center;
@@ -21,6 +21,7 @@
   &Picture {
     height: 100%;
     width: 100%;
+    display: block;
   }
 
   &ImgWrapper {

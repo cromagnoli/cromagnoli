@@ -1,23 +1,6 @@
-
-import { SkuVariants as DemoSkuVariants } from "./types";
 import { SkuVariants as ModalSkuVariants } from "../edit-product-modal/types";
-
-export const mockVariants: DemoSkuVariants = {
-  colors: [
-    { code: "fff", name: "White" },
-    { code: "444", name: "Graphite" }
-  ],
-  sizes: [{ size: "S" }, { size: "M" }, { size: "L" }],
-  skus: [
-    { id: "1", color: { code: "fff", name: "White" }, size: "S", price: { listPrice: "58.00", currency: { code: "USD" } }, available: true },
-    { id: "2", color: { code: "fff", name: "White" }, size: "M", price: { listPrice: "48.00", currency: { code: "USD" } }, available: true },
-    { id: "3", color: { code: "444", name: "Graphite" }, size: "M", price: { listPrice: "38.00", currency: { code: "USD" } }, available: true },
-  ],
-  productSummary: {
-    productId: "prod1234",
-    displayName: "BestBrand Sneakers"
-  }
-};
+import shoesWhite from "@site/static/images/shoes-white.png";
+import shoesGraphite from "@site/static/images/shoes-graphite.png";
 
 const modalMockData: {
   skuVariants: ModalSkuVariants;
@@ -25,8 +8,8 @@ const modalMockData: {
 } = {
   skuVariants: {
     colors: [
-      { colorCode: "WHT", displayName: "White", available: true },
-      { colorCode: "GPH", displayName: "Graphite", available: true },
+      { colorCode: "ffffff", displayName: "White", available: true },
+      { colorCode: "444444", displayName: "Graphite", available: true },
     ],
     sizes: [
       { size: "8", available: true },
@@ -34,16 +17,16 @@ const modalMockData: {
       { size: "10", available: true },
     ],
     availableSkus: [
-      { id: "1", colorCode: "WHT", size: "8", listPrice: "128.00", available: true },
-      { id: "2", colorCode: "WHT", size: "9", listPrice: "128.00", available: false },
-      { id: "3", colorCode: "WHT", size: "10", listPrice: "128.00", available: true },
-      { id: "4", colorCode: "GPH", size: "8", listPrice: "128.00", available: false },
-      { id: "5", colorCode: "GPH", size: "9", listPrice: "128.00", available: true },
-      { id: "6", colorCode: "GPH", size: "10", listPrice: "128.00", available: true },
+      { id: "1", colorCode: "ffffff", size: "8", listPrice: "128.00", available: true },
+      { id: "2", colorCode: "ffffff", size: "9", listPrice: "128.00", available: false },
+      { id: "3", colorCode: "ffffff", size: "10", listPrice: "128.00", available: true },
+      { id: "4", colorCode: "444444", size: "8", listPrice: "128.00", available: false },
+      { id: "5", colorCode: "444444", size: "9", listPrice: "128.00", available: true },
+      { id: "6", colorCode: "444444", size: "10", listPrice: "128.00", available: true },
     ],
     imagesByColorCode: {
-      WHT: ["/images/shoes-white.png"],
-      GPH: ["/images/shoes-graphite.png"],
+      "ffffff": [shoesWhite],
+      "444444": [shoesGraphite],
     },
   },
   productSummary: {

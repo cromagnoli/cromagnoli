@@ -45,7 +45,7 @@ const EditProductColorSelector = ({
           id={`${colorCode}_color_code`}
           className={cs(sharedStyles.buttonTile)}
         >
-          <ColorSwatch id={colorCode} name={displayName} />
+          <ColorSwatch colorCode={colorCode} name={displayName} />
         </ButtonTile>
       ))}
     </EditProductSelectorWrapper>

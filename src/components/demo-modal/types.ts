@@ -1,4 +1,3 @@
-
 export type Sku = {
   id: string;
   colorCode: string;
