@@ -3,6 +3,8 @@
 .imageSlide {
   border-radius: rem(4) rem(4) 0 0;
   width: 100%;
+  display: block;
+  object-fit: cover;
 
   @include mq($desktop-and-above) {
     border-radius: rem(4) 0 0 rem(4);
@@ -19,12 +21,7 @@
     bottom: 0;
     left: 0;
     margin-top: rem(0.5);
-    position: absolute;
     right: 0;
-
-    @include mq($desktop-and-above) {
-      display: none;
-    }
   }
 }
 

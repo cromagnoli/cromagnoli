@@ -1,8 +1,8 @@
 import { SkuVariants as ModalSkuVariants } from "../edit-product-modal/types";
-import shoesWhite1 from "@site/static/images/shoes-white1.png";
-import shoesWhite2 from "@site/static/images/shoes-white2.png";
-import shoesGraphite1 from "@site/static/images/shoes-graphite1.png";
-import shoesGraphite2 from "@site/static/images/shoes-graphite2.png";
+import shoesWhite1 from "@site/static/images/shoes-white1-548.png";
+import shoesWhite2 from "@site/static/images/shoes-white2-548.png";
+import shoesGraphite1 from "@site/static/images/shoes-graphite1-548.png";
+import shoesGraphite2 from "@site/static/images/shoes-graphite2-548.png";
 
 const modalMockData: {
   skuVariants: ModalSkuVariants;
