@@ -143,7 +143,7 @@ export const resolveLoadingSecondChildRender = ({
           {isDefinedFn(renderSpinner) ? (
             renderSpinner()
           ) : (
-            <LoadingIndicator className={styles.loadingIndicator} color="red" />
+            <LoadingIndicator className={styles.loadingIndicator} color="blue" />
           )}
         </EditProductScrollableFrame>
         <EditProductStickyFrame

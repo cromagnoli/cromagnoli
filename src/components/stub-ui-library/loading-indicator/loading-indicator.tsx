@@ -29,7 +29,7 @@ const LoadingIndicator = ({ className, color, ...otherProps }) => {
 };
 
 const propTypes = {
-    color: PropTypes.oneOf(['red', 'gray', 'white']),
+    color: PropTypes.oneOf(['red', 'gray', 'white', 'blue']),
     className: PropTypes.string,
 };
 const defaultProps = {
