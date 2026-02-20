@@ -235,6 +235,24 @@ const Modal = ({
    voiceOver,
    ...otherProps
 }) => {
+    const closeIcon = (
+        <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <path
+                d="M3.5 3.5 L12.5 12.5 M12.5 3.5 L3.5 12.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+            />
+        </svg>
+    );
+
     const portalContainerRef = usePortal();
     const shouldUseOverlay = visible && !inline;
 
@@ -293,7 +311,7 @@ const Modal = ({
                         onClick={onRequestClose}
                         {...cancelProps}
                     >
-                        x
+                        {closeIcon}
                     </button>
                     <div className={classes.modalContent}>{children}</div>
                 </div>
@@ -352,7 +370,7 @@ const Modal = ({
                                     onClick={onRequestClose}
                                     {...cancelProps}
                                 >
-                                    x
+                                    {closeIcon}
                                 </button>
                                 <div className={classes.modalContent}>{children}</div>
                             </div>

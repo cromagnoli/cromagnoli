@@ -19,7 +19,7 @@ const modalMockData: {
       { size: "12", available: true },
     ],
     availableSkus: [
-      { id: "1", colorCode: "ffffff", size: "10", listPrice: "128.00", available: true },
+      { id: "1", colorCode: "ffffff", size: "10", listPrice: "128.00", salePrice: "98.00", available: true },
       { id: "2", colorCode: "ffffff", size: "11", listPrice: "128.00", available: false },
       { id: "3", colorCode: "ffffff", size: "12", listPrice: "128.00", available: true },
       { id: "4", colorCode: "444444", size: "10", listPrice: "128.00", available: false },
