@@ -317,7 +317,7 @@ const EditProductModal = ({
       onDismiss={onUiCompleteModalDismiss}
       firstChild={firstChild}
       secondChild={secondChild}
-      classes={{ container: styles.containner }}
+      classes={{ container: styles.container }}
     />
   );
 };
