@@ -1,6 +1,6 @@
 import React from "react";
 import cs from "classnames";
-// import { Notification } from "../../../../stub-ui-library/notification/notification";
+import { Notification } from "../../../../stub-ui-library/notification/notification";
 import styles from "./edit-product-notifications.module.scss";
 
 type BaseProps = {
@@ -15,17 +15,16 @@ const EditProductNotification = ({
   children,
   type,
   className,
-}: BaseProps) => null;
-
-  //  children ? (
-    //<Notification
-    //  type={type}
-    //  visible={visible}
-    //  className={cs(styles.notification, className)}
-    //>
-    //  {children}
-    //</Notification>
-  // ) : null;
+}: BaseProps) =>
+  children ? (
+    <Notification
+      type={type}
+      visible={visible}
+      className={cs(styles.notification, className)}
+    >
+      {children}
+    </Notification>
+  ) : null;
 
 type NotificationProps = {
   children: React.ReactNode;

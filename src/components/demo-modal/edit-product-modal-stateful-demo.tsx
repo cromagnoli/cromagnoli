@@ -1,5 +1,7 @@
 import React from "react";
-import EditProductModal from "../edit-product-modal/components/edit-product-modal";
+import EditProductModal, {
+  EditProductModalProps,
+} from "../edit-product-modal/components/edit-product-modal";
 import {
   EditProductPrimaryButton,
   EditProductSecondaryCta,
@@ -18,6 +20,7 @@ type Props = {
   editingItem: EditingItem;
   editingItemIndex: number;
   renderAfterHeading?: () => React.ReactNode;
+  renderNotifications?: EditProductModalProps["renderNotifications"];
   onModalDismiss?: () => void;
 };
 
@@ -25,6 +28,7 @@ const EditProductModalStatefulDemo = ({
   editingItem,
   editingItemIndex,
   renderAfterHeading,
+  renderNotifications,
   onModalDismiss = () => {},
 }: Props) => {
   const {
@@ -56,11 +60,14 @@ const EditProductModalStatefulDemo = ({
       skuVariants={skuVariants}
       locale={locale}
       onDismiss={onDismiss}
-      renderNotifications={({ isCurrentSkuAvailable }) => (
-        <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-          {OOS_NOTIFICATION}3
-        </EditProductErrorNotification>
-      )}
+      renderNotifications={
+        renderNotifications ??
+        (({ isCurrentSkuAvailable }) => (
+          <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+            {OOS_NOTIFICATION}
+          </EditProductErrorNotification>
+        ))
+      }
       renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
         <EditProductPrimaryButton
           label={PRIMARY_BUTTON_LABEL}

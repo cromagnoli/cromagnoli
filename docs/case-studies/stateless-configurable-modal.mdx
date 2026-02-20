@@ -3,6 +3,7 @@ import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-p
 import EditProductModal from '@site/src/components/edit-product-modal/components/edit-product-modal';
 import mockData from '@site/src/components/demo-modal/mockData';
 import Pill from '@site/src/components/stub-ui-library/pill/pill';
+import { EditProductErrorNotification, EditProductWarningNotification } from '@site/src/components/edit-product-modal/components/partials';
 
 export const firstSku = mockData.skuVariants.availableSkus[0];
 export const secondSku = mockData.skuVariants.availableSkus[4];
@@ -30,7 +31,8 @@ derived availability logic and render prop injection.
 
 > Note: This modal's visual styles were adjusted to work inline inside documentation.  
 > The production implementation used a different presentation and should not be inferred from this demo styling.  
-> External dependencies that are not accessible in this environment are lightly stubbed for demo purposes.
+> External dependencies that are not accessible in this environment are lightly stubbed for demo purposes.  
+> Data fetching is mocked for demonstration, and latency is simulated with a timer.
 
 ---
 
@@ -41,6 +43,11 @@ derived availability logic and render prop injection.
     editingItem={demoItem}
     editingItemIndex={0}
     renderAfterHeading={() => <Pill>NEW</Pill>}
+    renderNotifications={({ isCurrentSkuAvailable }) => (
+      <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+        Sold out. Please select another combination.
+      </EditProductErrorNotification>
+    )}
   />
 </div>
 
@@ -50,11 +57,24 @@ derived availability logic and render prop injection.
   <EditProductModalStatefulDemo
     editingItem={demoItemAlt}
     editingItemIndex={1}
+    renderNotifications={({ isCurrentSkuAvailable, currentMatchingSkuId }) => (
+      <>
+        <EditProductWarningNotification visible={currentMatchingSkuId === '5'}>
+          Hurry up! Limited units remaining!
+        </EditProductWarningNotification>
+        <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+          Sold out. Please select another combination.
+        </EditProductErrorNotification>
+      </>
+    )}
   />
 </div>
 
 <div className="demoSection">
   <h3>Loading State Demo</h3>
+  <small>
+    Available information is rendered immediately, while the section that depends on remote data is hidden until the response arrives and that part can be fully composed. Because users already have content to scan, they begin engaging right away, which reduces perceived waiting time and lowers anxiety about loading delays.
+  </small>
   <EditProductModal
     mainHeading="BuyMeNot"
     productName="BuyMeNot"

@@ -3,17 +3,29 @@
 /* stylelint-disable selector-max-type */
 .notificationBlock {
   @include textBody1();
+  align-items: center;
 
   background-color: #fff;
   border: rem(1) solid #000;
+  border-radius: rem(6);
   display: flex;
-  padding: rem(12);
+  padding: rem(8) rem(10);
 
   .iconBlock {
+    align-items: center;
+    display: inline-flex;
     flex-shrink: 0;
-    height: rem(24);
+    height: rem(18);
+    justify-content: center;
+    line-height: 0;
     margin-right: rem(8);
-    width: rem(24);
+    width: rem(18);
+
+    svg {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
   }
 
   a {
@@ -41,20 +53,22 @@
 }
 
 .errorNotification {
-  background-color: #a54444;
-  border: solid rem(1) #b80000;
+  background-color: #f2dada;
+  border: solid rem(1) #cb8f8f;
+  color: #5f2a2a;
 
   .iconBlock {
-    color: #b80000;
+    color: #8e3f3f;
   }
 }
 
 .warningNotification {
-  background-color: #e8e863;
-  border: solid rem(1) #f6e015;
+  background-color: #f4ebdb;
+  border: solid rem(1) #d7be96;
+  color: #5f4a2a;
 
   .iconBlock {
-    color: #f6e015;
+    color: #8f6f3a;
   }
 }
 
