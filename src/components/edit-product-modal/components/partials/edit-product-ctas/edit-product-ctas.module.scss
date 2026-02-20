@@ -1,7 +1,27 @@
 @import "../../../../stub-ui-library/utils.module";
 
 .primaryButton {
+  background: #3578e5;
+  border: rem(1) solid #3578e5;
+  border-radius: rem(8);
+  color: #fff;
+  cursor: pointer;
+  font-size: rem(14);
+  font-weight: 600;
+  min-height: rem(44);
+  transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
   width: 100%;
+
+  &:hover,
+  &:focus-visible {
+    background: #2f6fd6;
+    border-color: #2f6fd6;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
 
   @include mq($desktop-and-above) {
     margin-bottom: 0;

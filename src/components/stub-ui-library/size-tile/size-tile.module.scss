@@ -4,20 +4,22 @@
   align-items: center;
   background-color: #fff;
   border-color: #4a4a4a;
-  border-radius: rem(4);
+  border-radius: rem(3);
   border-style: solid;
   border-width: rem(1);
   color: #000;
   display: inline-flex;
-  font-size: rem(19);
+  font-size: rem(15);
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   font-weight: 600;
-  height: rem(36);
+  height: rem(29);
   justify-content: center;
   line-height: 0;
-  min-width: rem(36);
-  padding: 0 rem(8.5);
+  min-width: rem(29);
+  padding: 0 rem(7);
+  opacity: 0.8;
+  transition: opacity 120ms ease;
 
   &:hover {
     [role='radio'] & {
@@ -26,40 +28,28 @@
   }
 
   &Active:not([class*='sizeTileDisabled']) {
-    background-color: #000;
-    border-color: #000;
+    background-color: #3558a5;
+    border-color: #3558a5;
     color: #fff;
+    opacity: 1;
   }
 
   &Disabled:not([class*='sizeTileActive']) {
-    background: linear-gradient(
-                    to top left,
-                    #777777 calc(50% - #{rem(1)}),
-                    #4a4a4a,
-                    #777777 calc(50% + #{rem(1.5)})
-    );
-    color: #2c2c2c;
-
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-      background: linear-gradient(to top left, transparent 51%, #777777 52%),
-      linear-gradient(to bottom right, transparent 51%, #777777 0), #4a4a4a;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-    }
+    opacity: 0.75;
   }
 
   &Active[class*='sizeTileDisabled'] {
     background: linear-gradient(
       to top left,
-      #4a4a4a calc(50% - #{rem(1)}),
-      #000,
-      #4a4a4a calc(50% + #{rem(1.5)})
+      #ccc calc(50% - #{rem(1)}),
+      #4e4e4e,
+      #ccc calc(50% + #{rem(1.5)})
     );
-    border-color: #000;
+    border-color: #3558a5;
 
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       background: linear-gradient(to top left, transparent 51%, #4a4a4a 52%),
-      linear-gradient(to bottom right, transparent 51%, #4a4a4a 0), #000;
+      linear-gradient(to bottom right, transparent 51%, #4a4a4a 0), #3558a5;
       background-repeat: no-repeat;
       background-size: 100% 100%;
     }

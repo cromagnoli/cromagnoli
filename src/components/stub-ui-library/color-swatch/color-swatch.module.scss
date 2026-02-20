@@ -5,12 +5,14 @@
   border-radius: 50%;
   box-shadow: 0 0 0 rem(1.5) #4a4a4a;
   display: flex;
-  height: rem(34);
+  height: rem(27);
   justify-content: center;
   line-height: 0;
-  margin: rem(5) 0;
+  margin: rem(4) 0;
   position: relative;
-  width: rem(34);
+  width: rem(27);
+  opacity: 0.8;
+  transition: opacity 120ms ease;
 
   &::after,
   &::before {
@@ -33,14 +35,16 @@
 
   &Active {
     box-shadow: 0 0 0 rem(1.5) #4a4a4a, 0 0 0 rem(4) #fff,
-    0 0 0 rem(5.5) #000;
+    0 0 0 rem(5.5) #3558a5;
+    opacity: 1;
   }
 
   &Disabled {
     position: relative;
+    opacity: 0.7;
 
     &::after {
-      border: rem(1) solid #000;
+      border: rem(1) solid #4e4e4e;
       bottom: 0;
       content: '';
       // stylelint-disable-next-line unit-disallowed-list
@@ -53,10 +57,6 @@
       transform: rotate(45deg);
       transform-origin: center;
       width: 0;
-
-      @media (min-resolution: 192dpi) {
-        border: rem(0.75) solid #000;
-      }
     }
 
     .colorSwatchImg {

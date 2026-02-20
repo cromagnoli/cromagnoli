@@ -1,5 +1,9 @@
 @import "../../stub-ui-library/utils.module";
 
+.container {
+  background-color: #f0f0f0;
+}
+
 .editProductModalInfo {
   overflow: auto;
   padding-right: rem(8);

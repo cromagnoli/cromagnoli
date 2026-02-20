@@ -23,6 +23,7 @@ import {
   Sku,
   SkuVariants,
 } from "../types";
+import styles from "./edit-product-modal.module.scss";
 
 export type EditProductModalRenderArgs = {
   locale: Locale;
@@ -315,6 +316,7 @@ const EditProductModal = ({
       onDismiss={onUiCompleteModalDismiss}
       firstChild={firstChild}
       secondChild={secondChild}
+      classes={{ container: styles.container }}
     />
   );
 };
