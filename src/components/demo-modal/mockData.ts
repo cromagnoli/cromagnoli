@@ -33,7 +33,7 @@ const modalMockData: {
   },
   productSummary: {
     productId: "prod1234",
-    displayName: "BestBrand Sneakers",
+    displayName: "BuyMeNot Sneakers",
   },
 };
 

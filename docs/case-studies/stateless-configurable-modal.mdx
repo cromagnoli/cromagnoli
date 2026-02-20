@@ -1,24 +1,26 @@
 
-import VariantsEditProductModal from '@site/src/components/demo-modal/variants-edit-modal';
-import shoesWhite1 from '@site/static/images/shoes-white1.png';
-import shoesWhite2 from '@site/static/images/shoes-white2.png';
-import shoesGraphite1 from '@site/static/images/shoes-graphite1.png';
-import shoesGraphite2 from '@site/static/images/shoes-graphite2.png';
+import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import EditProductModal from '@site/src/components/edit-product-modal/components/edit-product-modal';
+import mockData from '@site/src/components/demo-modal/mockData';
+import Pill from '@site/src/components/stub-ui-library/pill/pill';
+
+export const firstSku = mockData.skuVariants.availableSkus[0];
+export const secondSku = mockData.skuVariants.availableSkus[4];
 
 export const demoItem = {
-  productName: "BestBrand Sneakers",
-  productUrl: "/products/bestbrand-sneakers",
-  imageUrl: shoesWhite1,
-  colorCode: "ffffff",
-  size: "10",
+  productName: mockData.productSummary.displayName,
+  productUrl: `/products/${mockData.productSummary.productId}`,
+  imageUrl: mockData.skuVariants.imagesByColorCode[firstSku.colorCode][0],
+  colorCode: firstSku.colorCode,
+  size: firstSku.size,
 };
 
 export const demoItemAlt = {
-  productName: "BestBrand Sneakers",
-  productUrl: "/products/bestbrand-sneakers",
-  imageUrl: shoesGraphite1,
-  colorCode: "444444",
-  size: "11",
+  productName: mockData.productSummary.displayName,
+  productUrl: `/products/${mockData.productSummary.productId}`,
+  imageUrl: mockData.skuVariants.imagesByColorCode[secondSku.colorCode][0],
+  colorCode: secondSku.colorCode,
+  size: secondSku.size,
 };
 
 ## Stateless Configurable Modal
@@ -26,22 +28,44 @@ export const demoItemAlt = {
 This demo showcases a stateless, configurable modal architecture using
 derived availability logic and render prop injection.
 
+> Note: This modal's visual styles were adjusted to work inline inside documentation.  
+> The production implementation used a different presentation and should not be inferred from this demo styling.  
+> External dependencies that are not accessible in this environment are lightly stubbed for demo purposes.
+
 ---
 
 <div className="demoSection">
   <h3>Default Behavior</h3>
-  <small>Resize to experience single/dual columns modal</small>
-  <VariantsEditProductModal
+  <small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
+  <EditProductModalStatefulDemo
     editingItem={demoItem}
     editingItemIndex={0}
+    renderAfterHeading={() => <Pill>NEW</Pill>}
   />
 </div>
 
 <div className="demoSection">
   <h3>Second Scenario</h3>
-  <small>Resize to experience single/dual columns modal</small>
-  <VariantsEditProductModal
+  <small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
+  <EditProductModalStatefulDemo
     editingItem={demoItemAlt}
     editingItemIndex={1}
+  />
+</div>
+
+<div className="demoSection">
+  <h3>Loading State Only</h3>
+  <EditProductModal
+    mainHeading="BuyMeNot"
+    productName="BuyMeNot"
+    initialImageUrl={mockData.skuVariants.imagesByColorCode[firstSku.colorCode][0]}
+    initialColorCode={null}
+    initialSize={null}
+    initialListPrice={firstSku.listPrice}
+    initialSalePrice={firstSku.salePrice}
+    currencyCode="USD"
+    skuVariants={{}}
+    locale={{ lang: 'en', countryCode: 'US' }}
+    onDismiss={() => {}}
   />
 </div>

@@ -237,6 +237,7 @@ const EditProductModal = ({
         onDismiss={onUiLoadingModalDismiss}
         firstChild={loadingFirstChild}
         secondChild={loadingSecondChild}
+        classes={{ container: styles.container }}
       />
     );
   }
@@ -316,7 +317,7 @@ const EditProductModal = ({
       onDismiss={onUiCompleteModalDismiss}
       firstChild={firstChild}
       secondChild={secondChild}
-      classes={{ container: styles.container }}
+      classes={{ container: styles.containner }}
     />
   );
 };

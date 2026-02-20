@@ -14,6 +14,8 @@
 
 // Double class to avoid specificity issue on build time.
 .splitViewModal.splitViewModal {
+  border-radius: rem(8);
+  overflow: hidden;
   padding: 0;
 
   @media screen and (min-width: $small) {
@@ -21,7 +23,6 @@
   }
 
   @media only screen and (max-width: $small) {
-    border-radius: 0;
     height: fit-content;
     min-width: 100%;
   }

@@ -6,11 +6,13 @@
 
 .editProductModalInfo {
   overflow: auto;
+  padding-top: rem(8);
   padding-right: rem(8);
 
   @media screen and (min-width: $small) {
     flex: 0 1 auto;
     margin: rem(32) rem(40) rem(8);
+    padding-top: 0;
   }
 
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
