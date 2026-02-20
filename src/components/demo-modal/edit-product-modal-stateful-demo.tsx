@@ -11,10 +11,11 @@ import {
 } from "../edit-product-modal/components/partials";
 import { configurePanelByCurrentSelection } from "../edit-product-modal/utils/edit-product-modal-utils";
 import { useEditProductModalDemo, EditingItem } from "./use-edit-product-modal-demo";
+import { ModalMockData } from "./mockData";
 
 const PRIMARY_BUTTON_LABEL = "Add to cart";
 const SECONDARY_CTA_LABEL = "Go to product overview";
-const OOS_NOTIFICATION = "Sold out";
+const OOS_NOTIFICATION = "Sold out. Please select another combination.";
 
 type Props = {
   editingItem: EditingItem;
@@ -22,6 +23,8 @@ type Props = {
   renderAfterHeading?: () => React.ReactNode;
   renderNotifications?: EditProductModalProps["renderNotifications"];
   onModalDismiss?: () => void;
+  mockModalData?: ModalMockData;
+  fetchDelayMs?: number;
 };
 
 const EditProductModalStatefulDemo = ({
@@ -30,6 +33,8 @@ const EditProductModalStatefulDemo = ({
   renderAfterHeading,
   renderNotifications,
   onModalDismiss = () => {},
+  mockModalData,
+  fetchDelayMs,
 }: Props) => {
   const {
     currencyCode,
@@ -47,6 +52,8 @@ const EditProductModalStatefulDemo = ({
     editingItem,
     editingItemIndex,
     onModalDismiss,
+    mockModalData,
+    fetchDelayMs,
   });
 
   return (
@@ -61,7 +68,6 @@ const EditProductModalStatefulDemo = ({
       locale={locale}
       onDismiss={onDismiss}
       renderNotifications={
-        renderNotifications ??
         (({ isCurrentSkuAvailable }) => (
           <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
             {OOS_NOTIFICATION}

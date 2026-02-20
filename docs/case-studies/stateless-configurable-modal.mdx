@@ -1,7 +1,7 @@
 
 import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
 import EditProductModal from '@site/src/components/edit-product-modal/components/edit-product-modal';
-import mockData from '@site/src/components/demo-modal/mockData';
+import mockData, { highVolumeEditingItem, highVolumeModalMockData } from '@site/src/components/demo-modal/mockData';
 import Pill from '@site/src/components/stub-ui-library/pill/pill';
 import { EditProductErrorNotification, EditProductWarningNotification } from '@site/src/components/edit-product-modal/components/partials';
 
@@ -43,11 +43,6 @@ derived availability logic and render prop injection.
     editingItem={demoItem}
     editingItemIndex={0}
     renderAfterHeading={() => <Pill>NEW</Pill>}
-    renderNotifications={({ isCurrentSkuAvailable }) => (
-      <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-        Sold out. Please select another combination.
-      </EditProductErrorNotification>
-    )}
   />
 </div>
 
@@ -67,6 +62,16 @@ derived availability logic and render prop injection.
         </EditProductErrorNotification>
       </>
     )}
+  />
+</div>
+
+<div className="demoSection">
+  <h3>High-Volume Options Demo</h3>
+  <small>Fake fetch with 12 colors x 40 sizes (US 5.0-24.5) to stress selector overflow and composition.</small>
+  <EditProductModalStatefulDemo
+    editingItem={highVolumeEditingItem}
+    editingItemIndex={2}
+    mockModalData={highVolumeModalMockData}
   />
 </div>
 

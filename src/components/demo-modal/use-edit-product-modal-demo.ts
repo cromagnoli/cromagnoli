@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import mockData from "./mockData";
 import { Locale, MaybeSku, SkuVariants } from "../edit-product-modal/types";
+import { ModalMockData } from "./mockData";
 
 export type ProductSummary = Record<string, unknown>;
 
@@ -26,6 +27,8 @@ type UseEditProductModalDemoArgs = {
   editingItem: EditingItem;
   editingItemIndex: number;
   onModalDismiss: () => void;
+  mockModalData?: ModalMockData;
+  fetchDelayMs?: number;
 };
 
 const trackUserInteraction = ({
@@ -39,9 +42,14 @@ const trackUserInteraction = ({
   });
 };
 
-const fakeModalDataFetch = ():
-  Promise<{ skuVariants: SkuVariants; productSummary: ProductSummary }> =>
-  new Promise((resolve) => setTimeout(() => resolve(mockData), 1200));
+const fakeModalDataFetch = ({
+  responseData = mockData,
+  delayMs = 1200,
+}: {
+  responseData?: ModalMockData;
+  delayMs?: number;
+}): Promise<{ skuVariants: SkuVariants; productSummary: ProductSummary }> =>
+  new Promise((resolve) => setTimeout(() => resolve(responseData), delayMs));
 
 const useLocaleStandard = (): Locale => ({ lang: "en", countryCode: "US" });
 const usePriceInfo = (): PriceInfo => ({ currencyCode: "USD" });
@@ -54,6 +62,8 @@ export const useEditProductModalDemo = ({
   editingItem,
   editingItemIndex,
   onModalDismiss,
+  mockModalData = mockData,
+  fetchDelayMs = 1200,
 }: UseEditProductModalDemoArgs) => {
   const standardLocale = useLocaleStandard();
   const priceInfo = usePriceInfo();
@@ -75,7 +85,10 @@ export const useEditProductModalDemo = ({
 
     isMount.current = false;
 
-    fakeModalDataFetch()
+    fakeModalDataFetch({
+      responseData: mockModalData,
+      delayMs: fetchDelayMs,
+    })
       .then(({ skuVariants, productSummary }) => {
         setSkuVariants(skuVariants);
         setProductSummary(productSummary);
@@ -99,6 +112,8 @@ export const useEditProductModalDemo = ({
     editingItemIndex,
     locale,
     onModalDismiss,
+    mockModalData,
+    fetchDelayMs,
     productName,
     size,
     standardLocale,
