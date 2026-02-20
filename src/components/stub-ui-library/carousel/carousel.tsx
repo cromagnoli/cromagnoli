@@ -41,6 +41,8 @@ const CarouselButton = ({
         onAfterClick();
     };
 
+    const arrowDirection = left ? "M11.5 3.5 L6 9 L11.5 14.5" : "M6.5 3.5 L12 9 L6.5 14.5";
+
     return (
         <button
             type="button"
@@ -57,7 +59,27 @@ const CarouselButton = ({
             onClick={handleClick}
             {...{ disabled, style }}
         >
-            {left ? "<" : ">"}
+            <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                aria-hidden="true"
+                focusable="false"
+                style={{
+                    position: "relative",
+                    top: "1px",
+                    left: left ? "-1px" : "1px",
+                }}
+            >
+                <path
+                    d={arrowDirection}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
         </button>
     );
 };

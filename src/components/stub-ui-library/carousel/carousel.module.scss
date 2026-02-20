@@ -78,20 +78,21 @@
 
 .carouselArrows {
   align-items: center;
-  background: #fff;
+  background: rgba(17, 24, 39, 0.28);
   border: 0;
   border-radius: rem(4);
   cursor: pointer;
   display: flex;
   height: rem(48);
   justify-content: center;
+  color: #fff;
+  backdrop-filter: blur(6px);
   padding: 0;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: rem(48);
   z-index: 2;
-  color: #000;
 
   &Right {
     right: rem(8);
@@ -99,6 +100,15 @@
 
   &Left {
     left: rem(8);
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(17, 24, 39, 0.45);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.98);
   }
 }
 
