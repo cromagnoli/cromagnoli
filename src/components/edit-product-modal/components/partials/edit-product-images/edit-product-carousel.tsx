@@ -48,6 +48,8 @@ const EditProductCarousel = ({
       slideIndex={slideIndex}
       onSlideIndexChange={(value) => setSlideIndex(value)}
       classes={{
+        carousel: cs(styles.carousel),
+        unorderedList: cs(styles.unorderedList),
         pagination: cs(styles.pagination, styles.extraSelectorWeight),
         leftArrow: cs(styles.arrow, styles.extraSelectorWeight),
         rightArrow: cs(styles.arrow, styles.extraSelectorWeight),

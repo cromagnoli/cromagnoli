@@ -1,33 +1,38 @@
 @import "../../../../stub-ui-library/utils.module";
 
-$editProductImagesTablet: rem(375);
-$editProductImagesDesktop: rem(548);
-$aspectRatioBoxParentDesktop: rem(657);
-
 .editProductImages {
-  max-width: $editProductImagesTablet;
+  background: #fff;
   overflow: hidden;
 
-  @include mq($desktop-and-above) {
+  border-radius: 0;
+  max-height: 100%;
+  max-width: 100%;
+
+  @media screen and (min-width: $small) {
     flex-shrink: 0;
     margin-bottom: 0;
-    max-width: $editProductImagesDesktop;
-    min-width: $editProductImagesDesktop;
-  }
-
-  @media screen and (max-width: $small) {
-    border-radius: 0;
-    max-height: 100%;
-    max-width: 100%;
+    width: 50%;
   }
 
   .aspectRatioBoxParent {
     height: 0;
-    padding-top: calc(120% + rem(16));
+    padding-top: 31.5rem;
     position: relative;
 
-    @include mq($desktop-and-above) {
-      padding-top: $aspectRatioBoxParentDesktop;
+    @media screen and (min-width: $small) {
+      padding-top: 27.2rem;
+    }
+
+    @media screen and (min-width: $med) {
+      padding-top: 26.6rem;
+    }
+
+    @media screen and (min-width: $med-lg) {
+      padding-top: 25rem;
+    }
+
+    @media screen and (min-width: $xlarge-max) {
+      padding-top: 36rem;
     }
   }
 
@@ -65,5 +70,10 @@ $aspectRatioBoxParentDesktop: rem(657);
     @include mq($desktop-and-above) {
       height: rem(657);
     }
+  }
+
+  // Override docusaurus' MDX li styles
+  li + li {
+    margin: 0;
   }
 }

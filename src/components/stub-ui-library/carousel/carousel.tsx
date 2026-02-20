@@ -285,6 +285,7 @@ const Carousel = forwardRef(
                     beforeChange={beforeChange}
                     centerMode={centered}
                     containerClass={classes.carousel}
+                    sliderClass={classes.unorderedList}
                     customDot={
                         <Dot
                             pagination={pagination}

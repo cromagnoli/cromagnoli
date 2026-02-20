@@ -225,6 +225,7 @@ const Modal = ({
    closeFocusRef,
    fullScreen,
    fullScreenMobile,
+   inline,
    messages,
    onClose,
    onRequestClose,
@@ -235,10 +236,12 @@ const Modal = ({
    ...otherProps
 }) => {
     const portalContainerRef = usePortal();
-    useHandleEscapeKey(visible, onRequestClose);
-    usePreventBodyScroll(visible);
+    const shouldUseOverlay = visible && !inline;
+
+    useHandleEscapeKey(shouldUseOverlay, onRequestClose);
+    usePreventBodyScroll(shouldUseOverlay);
     useAriaHideSiblings(
-        visible,
+        shouldUseOverlay,
         primaryContentSelector,
         portalContainerRef.current
     );
@@ -254,7 +257,51 @@ const Modal = ({
         };
     }, [visible, onClose]);
 
-    if (!visible || !canUseDOM) {
+    if (!visible) {
+        return null;
+    }
+
+    if (inline) {
+        return (
+            <div
+                data-testid="container"
+                className={cs(styles.modalContainer, styles.inlineModalContainer, classes.container, {
+                    [styles.fullScreenContainer]: fullScreen,
+                    [styles.fullScreenMobileContainer]: fullScreenMobile,
+                })}
+                onClick={(ev) => {
+                    if (ev.target === ev.currentTarget) {
+                        onRequestClose(ev);
+                    }
+                }}
+            >
+                <div
+                    aria-label={voiceOver.title}
+                    aria-modal="true"
+                    role="dialog"
+                    className={cs(styles.modal, styles.inlineModal, classes.modal, {
+                        [styles.fullScreenModal]: fullScreen,
+                        [styles.fullScreenMobileModal]: fullScreenMobile,
+                    })}
+                    ref={modalRef}
+                    {...otherProps}
+                >
+                    <button
+                        type="button"
+                        aria-label={messages.close}
+                        className={styles.closeButton}
+                        onClick={onRequestClose}
+                        {...cancelProps}
+                    >
+                        x
+                    </button>
+                    <div className={classes.modalContent}>{children}</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!canUseDOM) {
         return null;
     }
 
@@ -345,6 +392,8 @@ const propTypes = {
     fullScreen: PropTypes.bool,
     /**  Flag to enable fullscreen styles on mobile browsers */
     fullScreenMobile: PropTypes.bool,
+    /** Render in place without portal/backdrop/focus trap */
+    inline: PropTypes.bool,
     messages: PropTypes.shape({
         /** Label for the close button */
         close: PropTypes.string.isRequired,
@@ -381,6 +430,7 @@ const defaultProps = {
     closeFocusRef: undefined,
     fullScreenMobile: false,
     fullScreen: false,
+    inline: false,
     messages: { close: 'Close' },
     onClose: undefined,
     onRequestClose: undefined,

@@ -1,7 +1,7 @@
 @import '../utils.module';
 
 $quadraticEaseOut: cubic-bezier(0.55, 0.09, 0.68, 0.53);
-$modalPadding: 20;
+$modalPadding: 20px;
 
 @mixin modalFullScreenContainer {
   padding: 0;
@@ -30,6 +30,21 @@ $modalPadding: 20;
   z-index: 106; // meganav banner is 105
 }
 
+.inlineModalContainer {
+  align-items: stretch;
+  bottom: auto;
+  display: block;
+  justify-content: initial;
+  left: auto;
+  overflow: visible;
+  padding: 0;
+  padding-bottom: 0;
+  position: static;
+  right: auto;
+  top: auto;
+  z-index: auto;
+}
+
 .modal {
   align-self: flex-start;
   animation: 200ms $quadraticEaseOut forwards;
@@ -38,12 +53,22 @@ $modalPadding: 20;
   box-shadow: 0 rem(8) rem(12) 0 rgb(0 0 0 / 20%);
   margin-bottom: auto;
   margin-top: auto;
-  max-width: rem(336);
+  //max-width: rem(336);
   padding: $modalPadding;
   padding-top: rem(36);
   position: relative;
   width: 100%;
   z-index: 107; // meganav banner is 105
+}
+
+.inlineModal {
+  align-self: initial;
+  animation: none;
+  box-shadow: none;
+  margin: 0;
+  //max-width: 100%;
+  width: 100%;
+  z-index: auto;
 }
 
 .fullScreenContainer {

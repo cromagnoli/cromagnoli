@@ -1,5 +1,9 @@
 @import "../../../../stub-ui-library/utils.module";
 
+.carousel, .unorderedList, .imageSlide {
+  height: 100%;
+}
+
 .imageSlide {
   border-radius: rem(4) rem(4) 0 0;
   width: 100%;
@@ -29,7 +33,7 @@
   &.extraSelectorWeight {
     display: none;
 
-    @include mq($desktop-and-above) {
+    @media screen and (min-width: $small) {
       display: block;
     }
   }

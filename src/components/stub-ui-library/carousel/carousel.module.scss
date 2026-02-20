@@ -3,6 +3,7 @@
 
 .wrapper {
   display: flex;
+  height: 100%;
   flex-direction: column;
   position: relative;
 
@@ -83,15 +84,15 @@
   border-radius: rem(4);
   cursor: pointer;
   display: flex;
-  height: rem(48);
+  height: rem(40);
   justify-content: center;
   color: #fff;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(1px);
   padding: 0;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: rem(48);
+  width: rem(40);
   z-index: 2;
 
   &Right {

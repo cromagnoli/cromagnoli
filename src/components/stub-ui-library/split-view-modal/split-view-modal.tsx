@@ -29,6 +29,7 @@ const SplitViewModal = ({
   return (
     <Modal
       visible
+      inline
       messages={{ close: "Close" }}
       classes={{
         container: cs(styles.splitViewModalContainer),
@@ -39,7 +40,7 @@ const SplitViewModal = ({
       <div
         className={cs(styles.splitViewModalContentContainer, containerClass)}
       >
-        <div className={firstChildClass}>{firstChild}</div>
+        {firstChildClass ? <div className={firstChildClass}>{firstChild}</div> : firstChild}
         <div className={cs(styles.splitViewModalSecondChild, secondChildClass)}>
           {secondChild}
         </div>
