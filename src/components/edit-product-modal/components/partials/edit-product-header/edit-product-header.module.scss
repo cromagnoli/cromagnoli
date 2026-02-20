@@ -1,6 +1,7 @@
 @import "../../../../stub-ui-library/utils.module";
 
 .heading {
+  color: #3e3e3e;
   margin: rem(0.5) 0;
 
   @include mq($desktop-and-above) {

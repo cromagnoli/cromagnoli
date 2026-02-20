@@ -13,7 +13,7 @@ import { Locale, MaybeSku, SkuVariants } from "../edit-product-modal/types";
 import { configurePanelByCurrentSelection } from "../edit-product-modal/utils/edit-product-modal-utils";
 
 const PRIMARY_BUTTON_LABEL = "Add to cart";
-const SECONDARY_CTA_LABEL = "View product details";
+const SECONDARY_CTA_LABEL = "Go to product overview";
 const OOS_NOTIFICATION = "Sold out";
 
 type ProductSummary = Record<string, unknown>;
