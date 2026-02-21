@@ -9,7 +9,10 @@ import {
   EditProductSizeSelector,
   EditProductErrorNotification,
 } from "../edit-product-modal/components/partials";
-import { configurePanelByCurrentSelection } from "../edit-product-modal/utils/edit-product-modal-utils";
+import {
+  configurePanelByCurrentSelection,
+  isDefinedFn,
+} from "../edit-product-modal/utils/edit-product-modal-utils";
 import { useEditProductModalDemo, EditingItem } from "./use-edit-product-modal-demo";
 import { ModalMockData } from "./mockData";
 
@@ -65,11 +68,13 @@ const EditProductModalStatefulDemo = ({
       locale={locale}
       onDismiss={onDismiss}
       renderNotifications={
-        (({ isCurrentSkuAvailable }) => (
-          <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-            {OOS_NOTIFICATION}
-          </EditProductErrorNotification>
-        ))
+        isDefinedFn(renderNotifications)
+          ? renderNotifications
+          : ({ isCurrentSkuAvailable }) => (
+              <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+                {OOS_NOTIFICATION}
+              </EditProductErrorNotification>
+            )
       }
       renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
         <EditProductPrimaryButton

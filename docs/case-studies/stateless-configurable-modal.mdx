@@ -71,11 +71,6 @@ export const defaultScenarioPlaygroundCode = `() => {
       editingItem={demoItem}
       mockModalData={localData}
       renderAfterHeading={() => <Pill>NEW</Pill>}
-      renderNotifications={({ isCurrentSkuAvailable }) => (
-        <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-          Sold out. Please select another combination.
-        </EditProductErrorNotification>
-      )}
     />
   );
 }`;
@@ -134,7 +129,6 @@ derived availability logic and render prop injection.
   initialCode={defaultScenarioPlaygroundCode}
   scope={{
     EditProductModalStatefulDemo,
-    EditProductErrorNotification,
     Pill,
     mockData,
   }}
