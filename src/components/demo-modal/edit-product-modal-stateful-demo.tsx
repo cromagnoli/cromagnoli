@@ -20,10 +20,20 @@ const PRIMARY_BUTTON_LABEL = "Add to cart";
 const SECONDARY_CTA_LABEL = "Go to product overview";
 const OOS_NOTIFICATION = "Sold out. Please select another combination.";
 
+const defaultRenderNotifications: NonNullable<
+  EditProductModalProps["renderNotifications"]
+> = ({ isCurrentSkuAvailable }) => (
+  <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+    {OOS_NOTIFICATION}
+  </EditProductErrorNotification>
+);
+
 type Props = {
   editingItem: EditingItem;
   renderAfterHeading?: () => React.ReactNode;
   renderNotifications?: EditProductModalProps["renderNotifications"];
+  renderPrimaryCta?: EditProductModalProps["renderPrimaryCta"];
+  renderSecondaryCta?: EditProductModalProps["renderSecondaryCta"];
   onModalDismiss?: () => void;
   mockModalData?: ModalMockData;
   fetchDelayMs?: number;
@@ -33,6 +43,8 @@ const EditProductModalStatefulDemo = ({
   editingItem,
   renderAfterHeading,
   renderNotifications,
+  renderPrimaryCta,
+  renderSecondaryCta,
   onModalDismiss = () => {},
   mockModalData,
   fetchDelayMs,
@@ -56,6 +68,43 @@ const EditProductModalStatefulDemo = ({
     fetchDelayMs,
   });
 
+  const defaultRenderPrimaryCta: NonNullable<
+    EditProductModalProps["renderPrimaryCta"]
+  > = ({ isCurrentSkuAvailable, currentMatchingSku }) => (
+    <EditProductPrimaryButton
+      label={PRIMARY_BUTTON_LABEL}
+      disabled={!isCurrentSkuAvailable}
+      onClick={() => handleAddToBagClick(currentMatchingSku)}
+    />
+  );
+
+  const defaultRenderSecondaryCta: NonNullable<
+    EditProductModalProps["renderSecondaryCta"]
+  > = ({ currentMatchingSku }) => {
+    const onClick = () => {
+      handleNavigateProductDetails(currentMatchingSku);
+    };
+
+    return (
+      <EditProductSecondaryCta
+        label={SECONDARY_CTA_LABEL}
+        onClick={onClick}
+      />
+    );
+  };
+
+  const resolvedRenderNotifications = isDefinedFn(renderNotifications)
+    ? renderNotifications
+    : defaultRenderNotifications;
+
+  const resolvedRenderPrimaryCta = isDefinedFn(renderPrimaryCta)
+    ? renderPrimaryCta
+    : defaultRenderPrimaryCta;
+
+  const resolvedRenderSecondaryCta = isDefinedFn(renderSecondaryCta)
+    ? renderSecondaryCta
+    : defaultRenderSecondaryCta;
+
   return (
     <EditProductModal
       mainHeading={productName}
@@ -67,34 +116,9 @@ const EditProductModalStatefulDemo = ({
       skuVariants={skuVariants}
       locale={locale}
       onDismiss={onDismiss}
-      renderNotifications={
-        isDefinedFn(renderNotifications)
-          ? renderNotifications
-          : ({ isCurrentSkuAvailable }) => (
-              <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-                {OOS_NOTIFICATION}
-              </EditProductErrorNotification>
-            )
-      }
-      renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
-        <EditProductPrimaryButton
-          label={PRIMARY_BUTTON_LABEL}
-          disabled={!isCurrentSkuAvailable}
-          onClick={() => handleAddToBagClick(currentMatchingSku)}
-        />
-      )}
-      renderSecondaryCta={({ currentMatchingSku }) => {
-        const onClick = () => {
-          handleNavigateProductDetails(currentMatchingSku);
-        };
-
-        return (
-          <EditProductSecondaryCta
-            label={SECONDARY_CTA_LABEL}
-            onClick={onClick}
-          />
-        );
-      }}
+      renderNotifications={resolvedRenderNotifications}
+      renderPrimaryCta={resolvedRenderPrimaryCta}
+      renderSecondaryCta={resolvedRenderSecondaryCta}
       renderAttrsSelectors={({
         currentMatchingSku,
         currentColorDetails,

@@ -37,6 +37,19 @@
   background: #f5f7fb;
 }
 
+.editorBlock + .editorBlock {
+  margin-top: 10px;
+}
+
+.editorLabel {
+  color: #5b6375;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
 .editor {
   width: 100%;
   min-height: 190px;
@@ -49,6 +62,27 @@
   line-height: 1.45;
   color: #232323;
   background: #ffffff;
+  scrollbar-width: thin;
+  scrollbar-color: #9a9a9a #ececec;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #ececec;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #9a9a9a;
+    border-radius: 10px;
+    border: 2px solid #ececec;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #7a7a7a;
+  }
 }
 
 .preview {
