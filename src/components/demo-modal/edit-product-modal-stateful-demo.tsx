@@ -19,7 +19,6 @@ const OOS_NOTIFICATION = "Sold out. Please select another combination.";
 
 type Props = {
   editingItem: EditingItem;
-  editingItemIndex: number;
   renderAfterHeading?: () => React.ReactNode;
   renderNotifications?: EditProductModalProps["renderNotifications"];
   onModalDismiss?: () => void;
@@ -29,7 +28,6 @@ type Props = {
 
 const EditProductModalStatefulDemo = ({
   editingItem,
-  editingItemIndex,
   renderAfterHeading,
   renderNotifications,
   onModalDismiss = () => {},
@@ -50,7 +48,6 @@ const EditProductModalStatefulDemo = ({
     trackColorSelection,
   } = useEditProductModalDemo({
     editingItem,
-    editingItemIndex,
     onModalDismiss,
     mockModalData,
     fetchDelayMs,

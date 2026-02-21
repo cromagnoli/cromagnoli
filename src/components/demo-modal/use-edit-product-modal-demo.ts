@@ -25,7 +25,6 @@ type PriceInfo = {
 
 type UseEditProductModalDemoArgs = {
   editingItem: EditingItem;
-  editingItemIndex: number;
   onModalDismiss: () => void;
   mockModalData?: ModalMockData;
   fetchDelayMs?: number;
@@ -60,7 +59,6 @@ const useRouter = () => ({ push: () => {} });
 
 export const useEditProductModalDemo = ({
   editingItem,
-  editingItemIndex,
   onModalDismiss,
   mockModalData = mockData,
   fetchDelayMs = 1200,
@@ -109,7 +107,6 @@ export const useEditProductModalDemo = ({
   }, [
     colorCode,
     editingItem,
-    editingItemIndex,
     locale,
     onModalDismiss,
     mockModalData,

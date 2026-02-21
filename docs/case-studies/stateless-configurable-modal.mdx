@@ -4,6 +4,7 @@ import EditProductModal from '@site/src/components/edit-product-modal/components
 import mockData, { highVolumeEditingItem, highVolumeModalMockData } from '@site/src/components/demo-modal/mockData';
 import Pill from '@site/src/components/stub-ui-library/pill/pill';
 import { EditProductErrorNotification, EditProductWarningNotification } from '@site/src/components/edit-product-modal/components/partials';
+import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
 
 export const firstSku = mockData.skuVariants.availableSkus[0];
 export const secondSku = mockData.skuVariants.availableSkus[4];
@@ -24,6 +25,89 @@ export const demoItemAlt = {
   size: secondSku.size,
 };
 
+export const defaultScenarioPlaygroundCode = `() => {
+  const localData = {
+    productSummary: {
+      productId: "${mockData.productSummary.productId}",
+      displayName: "BuyMeNot Sneakers",
+    },
+    skuVariants: {
+      colors: [
+        { colorCode: "ffffff", displayName: "White", available: true },
+        { colorCode: "444444", displayName: "Graphite", available: true },
+      ],
+      sizes: [
+        { size: "10", available: true },
+        { size: "11", available: true },
+        { size: "12", available: true },
+      ],
+      availableSkus: [
+        { id: "1", colorCode: "ffffff", size: "10", listPrice: "128.00", salePrice: "98.00", available: true },
+        { id: "2", colorCode: "ffffff", size: "11", listPrice: "128.00", available: false },
+        { id: "3", colorCode: "ffffff", size: "12", listPrice: "128.00", available: true },
+        { id: "4", colorCode: "444444", size: "10", listPrice: "128.00", available: false },
+        { id: "5", colorCode: "444444", size: "11", listPrice: "128.00", available: true },
+        { id: "6", colorCode: "444444", size: "12", listPrice: "128.00", available: true },
+      ],
+      imagesByColorCode: {
+        "ffffff": [...mockData.skuVariants.imagesByColorCode["ffffff"]],
+        "444444": [...mockData.skuVariants.imagesByColorCode["444444"]],
+      },
+    },
+  };
+
+  const initialSku = localData.skuVariants.availableSkus[0];
+
+  const demoItem = {
+    productName: localData.productSummary.displayName,
+    productUrl: "/products/" + localData.productSummary.productId,
+    imageUrl: localData.skuVariants.imagesByColorCode[initialSku.colorCode][0],
+    colorCode: initialSku.colorCode,
+    size: initialSku.size,
+  };
+
+  return (
+    <EditProductModalStatefulDemo
+      editingItem={demoItem}
+      mockModalData={localData}
+      renderAfterHeading={() => <Pill>NEW</Pill>}
+      renderNotifications={({ isCurrentSkuAvailable }) => (
+        <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+          Sold out. Please select another combination.
+        </EditProductErrorNotification>
+      )}
+    />
+  );
+}`;
+
+export const highVolumeScenarioPlaygroundCode = `() => {
+  const localData = ${JSON.stringify(highVolumeModalMockData, null, 2)};
+
+  const defaultSku = {
+    id: "hv-10-4",
+    colorCode: "22c55e",
+    size: "6.5",
+    listPrice: "138.00",
+    salePrice: "118.00",
+    available: false,
+  };
+
+  const editingItem = {
+    productName: localData.productSummary.displayName,
+    productUrl: "/products/" + localData.productSummary.productId,
+    imageUrl: localData.skuVariants.imagesByColorCode[defaultSku.colorCode][0],
+    colorCode: defaultSku.colorCode,
+    size: defaultSku.size,
+  };
+
+  return (
+    <EditProductModalStatefulDemo
+      editingItem={editingItem}
+      mockModalData={localData}
+    />
+  );
+}`;
+
 # Stateless Configurable Modal
 
 This demo showcases a stateless, configurable modal architecture using
@@ -41,17 +125,26 @@ derived availability logic and render prop injection.
   <small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
   <EditProductModalStatefulDemo
     editingItem={demoItem}
-    editingItemIndex={0}
     renderAfterHeading={() => <Pill>NEW</Pill>}
   />
 </div>
+
+<LiveJsxPlayground
+  title="Default Scenario Playground"
+  initialCode={defaultScenarioPlaygroundCode}
+  scope={{
+    EditProductModalStatefulDemo,
+    EditProductErrorNotification,
+    Pill,
+    mockData,
+  }}
+/>
 
 <div className="demoSection">
   <h3>Second Scenario</h3>
   <small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
   <EditProductModalStatefulDemo
     editingItem={demoItemAlt}
-    editingItemIndex={1}
     renderNotifications={({ isCurrentSkuAvailable, currentMatchingSkuId }) => (
       <>
         <EditProductWarningNotification visible={currentMatchingSkuId === '5'}>
@@ -67,13 +160,21 @@ derived availability logic and render prop injection.
 
 <div className="demoSection">
   <h3>High-Volume Options Demo</h3>
-  <small>Fake fetch with 12 colors x 40 sizes (US 5.0-24.5) to stress selector overflow and composition.</small>
+  <small>Fake fetch with 12 colors x 25 sizes (US 5.0-9.5, then whole sizes 10-24) to stress selector overflow and composition.</small>
   <EditProductModalStatefulDemo
     editingItem={highVolumeEditingItem}
-    editingItemIndex={2}
     mockModalData={highVolumeModalMockData}
   />
 </div>
+
+<LiveJsxPlayground
+  title="High-Volume Scenario Playground"
+  initialCode={highVolumeScenarioPlaygroundCode}
+  scope={{
+    EditProductModalStatefulDemo,
+    highVolumeModalMockData,
+  }}
+/>
 
 <div className="demoSection">
   <h3>Loading State Demo</h3>
@@ -81,13 +182,33 @@ derived availability logic and render prop injection.
     Available information is rendered immediately, while the section that depends on remote data is hidden until the response arrives and that part can be fully composed. Because users already have content to scan, they begin engaging right away, which reduces perceived waiting time and lowers anxiety about loading delays.
   </small>
   <EditProductModal
-    mainHeading="BuyMeNot"
-    productName="BuyMeNot"
+    mainHeading="BuyMeNot Sneakers"
+    productName="BuyMeNot Sneakers"
     initialImageUrl={mockData.skuVariants.imagesByColorCode[firstSku.colorCode][0]}
     initialColorCode={null}
     initialSize={null}
     initialListPrice={firstSku.listPrice}
     initialSalePrice={firstSku.salePrice}
+    currencyCode="USD"
+    skuVariants={{}}
+    locale={{ lang: 'en', countryCode: 'US' }}
+    onDismiss={() => {}}
+  />
+</div>
+
+<div className="demoSection">
+  <h3>Loading Variant: Missing Core Display Context</h3>
+  <small>
+    This variant intentionally omits image, heading, product name, color and size to show the fallback loading shell when the consumer has almost no initial context.
+  </small>
+  <EditProductModal
+    mainHeading=""
+    productName=""
+    initialImageUrl={null}
+    initialColorCode={firstSku.colorCode}
+    initialSize={firstSku.size}
+    initialListPrice={null}
+    initialSalePrice={null}
     currencyCode="USD"
     skuVariants={{}}
     locale={{ lang: 'en', countryCode: 'US' }}

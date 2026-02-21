@@ -207,7 +207,7 @@ const EditProductModal = ({
   if (shouldRenderLoadingExperience) {
     const loadingFirstChild = resolveLoadingFirstChildRender({
       productName,
-      currentImagesUrls: [initialImageUrl ?? ""],
+      currentImagesUrls: [initialImageUrl],
       commonRenderArgs,
       renderFirstChild,
     });

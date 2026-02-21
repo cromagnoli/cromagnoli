@@ -25,11 +25,15 @@ const EditProductCarousel = ({
   }, [imageUrls]);
 
   const images = imageUrls.map((imageUrl, index) => {
+    if (!imageUrl) {
+      return <Fragment key={`fallback-${index}`}>{fallbackElement}</Fragment>;
+    }
+
     return index < slideIndex + preloadedImages ? (
       <ImageWithFallback
-        key={`${imageUrl ?? index}`}
+        key={`${imageUrl}-${index}`}
         lazy={false}
-        src={imageUrl ?? ""}
+        src={imageUrl}
         alt={imagesAlt}
         maxWidth={985}
         fallbackElement={fallbackElement}
