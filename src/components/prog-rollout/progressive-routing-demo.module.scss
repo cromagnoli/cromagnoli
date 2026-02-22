@@ -39,6 +39,11 @@
   cursor: pointer;
 }
 
+.group button:hover:not(:disabled) {
+  background: #263a60;
+  border-color: #4b6394;
+}
+
 .group button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -57,6 +62,11 @@
   display: block;
   padding: 0;
   overflow: hidden;
+}
+
+.modeSwitch:hover:not(:disabled) {
+  background: #1d2f55;
+  border-color: #4b6394;
 }
 
 .modeThumb {
@@ -433,6 +443,7 @@
   font-size: 0.68rem;
   color: #8ea1c9;
   margin-top: -2px;
+  animation: hintPulse 1.8s ease-in-out infinite;
 }
 
 .browserSpinner {

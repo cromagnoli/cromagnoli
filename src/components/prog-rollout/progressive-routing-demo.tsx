@@ -150,8 +150,8 @@ const ProgressiveRoutingDemo = () => {
       return "Legacy fallback after NextGen error";
     }
     return serverPayload?.route === "nextgen"
-      ? "React Router 7 (NextGen) via viteDevServerSingleton"
-      : "Hapi legacy controller";
+      ? "NextGen - React Router/Remix (Reactive UI)"
+      : "Hapi legacy controller (postback)";
   }, [serverPayload]);
 
   const signalClass = useMemo(() => {
@@ -552,7 +552,7 @@ const ProgressiveRoutingDemo = () => {
               </button>
             </div>
             <div className={styles.addressHint}>
-              Copy this URL to test the route manually in a new tab.
+              Optionally, copy this URL to test the route manually in a new tab.
             </div>
           </div>
         </div>
