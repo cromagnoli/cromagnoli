@@ -1,12 +1,10 @@
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./progressive-routing-demo.module.scss";
-import {
-  buildPayload,
-  RoutingMode,
-  RoutingPayload,
-} from "./routing-simulator";
+import { RoutingMode, RoutingPayload } from "./routing-simulator";
 
 const ROUTE_EXAMPLE = "/pdp/{productCategory}/{productName}/{productId}";
+const LANDING_ROUTE_EXAMPLE =
+  "/cdp/{productCategory}/{productName}/{productId}";
 const PRODUCT_CATEGORY = "running-sneakers";
 const PRODUCT_SLUG = "white-loop-runner";
 const PRODUCT_ID = "prod1234";
@@ -14,10 +12,22 @@ const PRODUCT_ID = "prod1234";
 //   "https://hybrid-routing-demo.onrender.com";
 const API_BASE = "http://localhost:4001";
 
-const buildIframeSrc = (simulateFailure: boolean) => {
+const buildPdpSrc = (simulateFailure: boolean, sessionId: string) => {
   const url = new URL(
     `${API_BASE}/pdp/${PRODUCT_CATEGORY}/${PRODUCT_SLUG}/${PRODUCT_ID}/`
   );
+  url.searchParams.set("demoSessionId", sessionId);
+  if (simulateFailure) {
+    url.searchParams.set("simulateFailure", "true");
+  }
+  return url.toString();
+};
+
+const buildLandingSrc = (simulateFailure: boolean, sessionId: string) => {
+  const url = new URL(
+    `${API_BASE}/cdp/${PRODUCT_CATEGORY}/${PRODUCT_SLUG}/${PRODUCT_ID}/`
+  );
+  url.searchParams.set("demoSessionId", sessionId);
   if (simulateFailure) {
     url.searchParams.set("simulateFailure", "true");
   }
@@ -61,6 +71,8 @@ type RoutingEvent = {
   legacyQuery: boolean;
   routingMode: "nextgen" | "legacy";
   simulateFailure: boolean;
+  marker?: "SESSION_END" | "SESSION_BEGINNING";
+  sessionId?: string;
 };
 
 const ProgressiveRoutingDemo = () => {
@@ -83,10 +95,27 @@ const ProgressiveRoutingDemo = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lastRoutingEventIdRef = useRef(0);
-  const localTimeZone = useMemo(
-    () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+  const sessionId = useMemo(
+    () =>
+      `doc-${Date.now().toString(36)}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}`,
     []
   );
+  const [currentIframeUrl, setCurrentIframeUrl] = useState(() =>
+    buildLandingSrc(false, sessionId)
+  );
+
+  useEffect(() => {
+    const url = new URL(currentIframeUrl);
+    if (simulateFailure) {
+      url.searchParams.set("simulateFailure", "true");
+    } else {
+      url.searchParams.delete("simulateFailure");
+    }
+    url.searchParams.set("demoSessionId", sessionId);
+    setCurrentIframeUrl(url.toString());
+  }, [simulateFailure, sessionId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,6 +123,7 @@ const ProgressiveRoutingDemo = () => {
     setError(null);
 
     const fetchUrl = new URL(`${API_BASE}/resolve/${PRODUCT_ID}`);
+    fetchUrl.searchParams.set("demoSessionId", sessionId);
     fetchUrl.searchParams.set("simulateFailure", simulateFailure ? "true" : "false");
     fetchUrl.searchParams.set("legacy", "false");
 
@@ -124,23 +154,15 @@ const ProgressiveRoutingDemo = () => {
         if (cancelled) {
           return;
         }
-        setError(
-          "Hybrid routing service unreachable. Falling back to local simulation."
-        );
-        const fallbackPayload = buildPayload({
-          productId: PRODUCT_ID,
-          routingMode,
-          simulateFailure,
-          legacyQuery: false,
-        });
-        setServerPayload(fallbackPayload);
+        setError("Hybrid routing service unreachable.");
+        setServerPayload(null);
         setLoading(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [routingMode, simulateFailure, reloadToken]);
+  }, [routingMode, simulateFailure, reloadToken, sessionId]);
 
   const activeLabel = useMemo(() => {
     if (serverPayload?.queryLegacy) {
@@ -154,24 +176,41 @@ const ProgressiveRoutingDemo = () => {
       : "Hapi legacy controller (postback)";
   }, [serverPayload]);
 
-  const signalClass = useMemo(() => {
-    const base = [styles.signal];
-    if (
+  const activeLabelClassName = useMemo(() => {
+    const isLegacyActive =
       serverPayload?.route === "legacy" ||
       serverPayload?.fallback ||
-      serverPayload?.queryLegacy
-    ) {
-      base.push(styles.legacy);
-    }
-    return base.join(" ");
+      serverPayload?.queryLegacy;
+    return `${styles.modeHeroActiveLabel} ${
+      isLegacyActive ? styles.modeHeroActiveLabelLegacy : styles.modeHeroActiveLabelNextGen
+    }`;
   }, [serverPayload]);
 
   const serverLogLines = useMemo(() => {
     if (routingEvents.length > 0) {
-      return routingEvents.slice(-8).map((event) => {
+      const lines: string[] = [];
+      const events = routingEvents.slice(-12);
+
+      for (const event of events) {
+        if (event.marker === "SESSION_END") {
+          lines.push(
+            `[SESSION ${event.sessionId ?? "unknown"}] ---------`
+          );
+          continue;
+        }
+        if (event.marker === "SESSION_BEGINNING") {
+          lines.push(
+            `[SESSION ${event.sessionId ?? "unknown"}] ---------`
+          );
+          continue;
+        }
         const time = formatEventTimestamp(event.at);
-        return `${time} · ${event.method} ${event.path} · route=${event.route} reason=${event.reason} fallback=${event.fallback ? "yes" : "no"}`;
-      });
+        lines.push(
+          `${time} · ${event.method} ${event.path} · route=${event.route} reason=${event.reason} fallback=${event.fallback ? "yes" : "no"}`
+        );
+      }
+
+      return lines;
     }
     if (!serverPayload) {
       return ["Waiting for the routing service to respond..."];
@@ -270,21 +309,30 @@ const ProgressiveRoutingDemo = () => {
   }, []);
 
   const activeRouteIsLegacy = serverPayload?.route === "legacy";
+  const isOnCategoryPage = useMemo(() => {
+    try {
+      return new URL(currentIframeUrl).pathname.includes("/cdp/");
+    } catch {
+      return false;
+    }
+  }, [currentIframeUrl]);
   const frameUrl = useMemo(() => {
-    const url = new URL(buildIframeSrc(simulateFailure));
+    const url = new URL(currentIframeUrl);
     url.searchParams.set("__reload", String(reloadToken));
     return url.toString();
-  }, [simulateFailure, reloadToken]);
+  }, [currentIframeUrl, reloadToken]);
 
   const displayUrl = useMemo(() => {
-    const url = new URL(buildIframeSrc(simulateFailure));
+    const url = new URL(currentIframeUrl);
+    url.searchParams.delete("demoSessionId");
+    url.searchParams.delete("__reload");
     return url.toString();
-  }, [simulateFailure]);
+  }, [currentIframeUrl]);
 
   const submitExternalPost = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedName = productNameDraft.trim() || "White Loop Runner";
-    const actionUrl = buildIframeSrc(simulateFailure);
+    const actionUrl = buildPdpSrc(simulateFailure, sessionId);
     setPostSubmitting(true);
 
     if (activeRouteIsLegacy) {
@@ -353,6 +401,15 @@ const ProgressiveRoutingDemo = () => {
     setReloadToken((prev) => prev + 1);
   };
 
+  const goBackToCategory = () => {
+    if (postSubmitting || isOnCategoryPage) {
+      return;
+    }
+    setPostPending(true);
+    setCurrentIframeUrl(buildLandingSrc(simulateFailure, sessionId));
+    setPostFeedback("Navigated back to category page.");
+  };
+
   const handleIframeLoad = () => {
     setPostPending(false);
     requestIframeHtmlSnapshot(iframeRef.current?.contentWindow ?? null);
@@ -379,9 +436,13 @@ const ProgressiveRoutingDemo = () => {
         return;
       }
 
-      const data = event.data as { type?: string; html?: string };
+      const data = event.data as { type?: string; html?: string; href?: string };
       if (data?.type !== "IFRAME_HTML_SNAPSHOT") {
         return;
+      }
+
+      if (typeof data.href === "string" && data.href) {
+        setCurrentIframeUrl(data.href);
       }
 
       const html = typeof data.html === "string" ? data.html : "";
@@ -412,7 +473,7 @@ const ProgressiveRoutingDemo = () => {
     setPostFeedback(`Updating routing mode to ${nextRoutingMode} via POST...`);
 
     try {
-      const configUrl = buildIframeSrc(simulateFailure);
+      const configUrl = buildPdpSrc(simulateFailure, sessionId);
       const body = new URLSearchParams({ routingMode: nextRoutingMode });
       const response = await fetch(configUrl, { method: "POST", body });
       if (!response.ok) {
@@ -438,10 +499,12 @@ const ProgressiveRoutingDemo = () => {
   };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.controls}>
-        <div className={styles.group}>
-          NextGen
+    <>
+      <div className={styles.modeHero}>
+        <div className={styles.modeHeroTopRow}>
+          <div className={styles.modeHeroLabel}>NextGen Switch for Product Detail Page</div>
+        </div>
+        <div className={styles.modeControlRow}>
           <div className={styles.modeSwitchWrap}>
             {showRefreshHint ? (
               <div className={styles.modeTooltip}>
@@ -466,11 +529,20 @@ const ProgressiveRoutingDemo = () => {
               <span className={styles.modeThumb} />
             </button>
           </div>
+          <div className={activeLabelClassName}>
+            Current experience: {activeLabel}
+          </div>
         </div>
-        <div className={styles.group}>
-          Simulate NextGen failure
+      </div>
+
+      <div className={styles.modeHero}>
+        <div className={styles.modeHeroTopRow}>
+          <div className={styles.modeHeroLabel}>Simulate NextGen failure</div>
+        </div>
+        <div className={styles.modeControlRow}>
           <button
             type="button"
+            className={styles.failureCta}
             disabled={routingMode === "legacy"}
             onClick={() => {
               setPostPending(true);
@@ -481,31 +553,40 @@ const ProgressiveRoutingDemo = () => {
           </button>
         </div>
       </div>
-      <div className={styles.status}>
-        <div className={signalClass}>
-          <div className={styles["signal-title"]}>{activeLabel}</div>
-          <div className={styles["signal-subtitle"]}>
-            Path under test: <code>{ROUTE_EXAMPLE}</code>
-          </div>
+
+      <div className={styles.modeHero}>
+        <div className={styles.modeHeroTopRow}>
+          <div className={styles.modeHeroLabel}>Product Detail Name (external POST)</div>
         </div>
+        <div className={styles.modeHeroHint}>
+          Applies to the product detail page only.
+        </div>
+        <form className={styles.externalPostForm} onSubmit={submitExternalPost}>
+          <div className={styles.postFormRow}>
+            <input
+              id="pdp-name"
+              value={productNameDraft}
+              onChange={(event) => setProductNameDraft(event.target.value)}
+            />
+            <button type="submit" disabled={postPending}>
+              {postSubmitting ? "Posting..." : "POST to server"}
+            </button>
+          </div>
+          <div className={styles.postFeedback}>{postFeedback}</div>
+        </form>
       </div>
 
+      <div className={styles.card}>
       {error ? <div className={styles["error-note"]}>{error}</div> : null}
 
-      <form className={styles.postPanel} onSubmit={submitExternalPost}>
-        <label htmlFor="pdp-name">Product Name (external POST)</label>
-        <div className={styles.postFormRow}>
-          <input
-            id="pdp-name"
-            value={productNameDraft}
-            onChange={(event) => setProductNameDraft(event.target.value)}
-          />
-          <button type="submit" disabled={postPending}>
-            {postSubmitting ? "Posting..." : "POST to server"}
-          </button>
+      <div className={styles.signal}>
+        <div className={styles["signal-subtitle"]}>
+          Path under test: <code>{ROUTE_EXAMPLE}</code>
         </div>
-        <div className={styles.postFeedback}>{postFeedback}</div>
-      </form>
+        <div className={styles["signal-subtitle"]}>
+          Entry page: <code>{LANDING_ROUTE_EXAMPLE}</code> (always legacy)
+        </div>
+      </div>
 
       <div className={styles.iframeWrapper}>
         <div className={styles.browserChrome}>
@@ -518,6 +599,21 @@ const ProgressiveRoutingDemo = () => {
                   <span className={`${styles.light} ${styles.green}`} />
                 </div>
                 <div className={styles.browserStatus}>
+                  <button
+                    type="button"
+                    className={styles.backButton}
+                    onClick={goBackToCategory}
+                    title="Back to category"
+                    disabled={postSubmitting || isOnCategoryPage}
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path d="M9.75 3.25L4.25 8l5.5 4.75v-2.75h3v-4h-3z" />
+                    </svg>
+                  </button>
                   <button
                     type="button"
                     className={styles.reloadButton}
@@ -589,6 +685,7 @@ const ProgressiveRoutingDemo = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
