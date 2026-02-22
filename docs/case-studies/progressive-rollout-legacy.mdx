@@ -9,7 +9,7 @@ This case study documents how the team unified `routing.resolveRouteController(l
 1. The iframe starts on a legacy product category page with a product thumbnail.
 2. Click the product to open the product detail page. At that point, the resolver decides NextGen vs legacy based on the NextGen ON/OFF switch state.
 3. Toggle `NextGen ON/OFF`, then press `Reload` in the simulated browser to apply the change to the iframe.
-4. Try `Product Name (external POST)`: in NextGen it updates reactively without full reload; in legacy, reload is required to observe postback behavior.
+4. Try `Product Name (external POST)`: submit the change, then use `Reload` to verify the server-side update in the embedded page.
 5. Enable `Trigger failure 🔥` (NextGen only), reload, and confirm automatic fallback to legacy in the server log (forced by error boundary).
 6. Optionally, use `Copy address` and open the URL in a new tab to validate the same behavior outside the iframe.
 

@@ -52,11 +52,6 @@
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
 }
 
-.modeHeroHint {
-  font-size: 0.75rem;
-  color: #9fb0d8;
-}
-
 .modeHeroActiveLabel {
   font-size: 0.9rem;
   font-weight: 600;
@@ -357,23 +352,23 @@
 }
 
 .tabSpinner {
-  width: 10px;
-  height: 10px;
+  width: 13px;
+  height: 13px;
   border-radius: 999px;
   border: 2px solid #4b5d87;
   border-top-color: #e2e8f0;
 }
 
 .tabBuyMeNotIcon {
-  width: 12px;
-  height: 12px;
+  width: 15px;
+  height: 15px;
   border-radius: 3px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #3f68b2, #2a4678);
   color: #f4f7ff;
-  font-size: 0.54rem;
+  font-size: 0.62rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -562,7 +557,7 @@
 
 .previewFrame {
   width: 100%;
-  min-height: 640px;
+  min-height: 674px;
   border: none;
   background: #f3f6fc;
   overflow: auto;
@@ -614,6 +609,12 @@
 
   .browserStatus {
     display: none;
+  }
+}
+
+@media (min-width: 725px) {
+  .previewFrame {
+    min-height: 450px;
   }
 }
 

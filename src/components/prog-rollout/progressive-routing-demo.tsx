@@ -87,7 +87,7 @@ const ProgressiveRoutingDemo = () => {
   const [showRefreshHint, setShowRefreshHint] = useState(false);
   const [routingEvents, setRoutingEvents] = useState<RoutingEvent[]>([]);
   const [postFeedback, setPostFeedback] = useState(
-    "Ready. Submit Product Name to compare reactive update vs full postback."
+    "Ready. Submit Product Name, then reload the embedded page to verify server-side updates."
   );
   const [serverPayload, setServerPayload] = useState<RoutingPayload | null>(
     null
@@ -308,7 +308,6 @@ const ProgressiveRoutingDemo = () => {
     };
   }, []);
 
-  const activeRouteIsLegacy = serverPayload?.route === "legacy";
   const isOnCategoryPage = useMemo(() => {
     try {
       return new URL(currentIframeUrl).pathname.includes("/cdp/");
@@ -316,6 +315,9 @@ const ProgressiveRoutingDemo = () => {
       return false;
     }
   }, [currentIframeUrl]);
+  const currentTabLabel = isOnCategoryPage
+    ? "Category Detail"
+    : "Product Detail";
   const frameUrl = useMemo(() => {
     const url = new URL(currentIframeUrl);
     url.searchParams.set("__reload", String(reloadToken));
@@ -335,36 +337,9 @@ const ProgressiveRoutingDemo = () => {
     const actionUrl = buildPdpSrc(simulateFailure, sessionId);
     setPostSubmitting(true);
 
-    if (activeRouteIsLegacy) {
-      try {
-        const body = new URLSearchParams({ productName: trimmedName });
-        const response = await fetch(actionUrl, {
-          method: "POST",
-          body,
-        });
-        if (!response.ok) {
-          throw new Error("POST failed");
-        }
-        setProductNameDraft(trimmedName);
-        setPostFeedback(
-          "Legacy POST accepted. Click reload to render the full postback."
-        );
-      } catch {
-        setPostFeedback("Legacy POST failed. Check service availability.");
-      } finally {
-        setPostSubmitting(false);
-      }
-      return;
-    }
-
-    setPostFeedback("NextGen POST in progress (reactive update, no iframe reload)...");
-
     try {
-      const reactiveUrl = new URL(actionUrl);
-      reactiveUrl.searchParams.set("reactive", "1");
       const body = new URLSearchParams({ productName: trimmedName });
-
-      const response = await fetch(reactiveUrl.toString(), {
+      const response = await fetch(actionUrl, {
         method: "POST",
         body,
       });
@@ -372,20 +347,8 @@ const ProgressiveRoutingDemo = () => {
       if (!response.ok) {
         throw new Error("POST failed");
       }
-
-      const payload = (await response.json()) as { productName?: string };
-      const resolvedName =
-        typeof payload.productName === "string" && payload.productName.trim()
-          ? payload.productName
-          : trimmedName;
-
-      iframeRef.current?.contentWindow?.postMessage(
-        { type: "PDP_NAME_UPDATE", productName: resolvedName },
-        "*"
-      );
-
-      setProductNameDraft(resolvedName);
-      setPostFeedback("NextGen POST completed reactively (same iframe document).");
+      setProductNameDraft(trimmedName);
+      setPostFeedback("POST accepted. Click reload to apply in the iframe.");
     } catch {
       setPostFeedback("POST failed. Check service availability.");
     } finally {
@@ -437,6 +400,10 @@ const ProgressiveRoutingDemo = () => {
       }
 
       const data = event.data as { type?: string; html?: string; href?: string };
+      if (data?.type === "IFRAME_NAVIGATION_START") {
+        setPostPending(true);
+        return;
+      }
       if (data?.type !== "IFRAME_HTML_SNAPSHOT") {
         return;
       }
@@ -556,10 +523,7 @@ const ProgressiveRoutingDemo = () => {
 
       <div className={styles.modeHero}>
         <div className={styles.modeHeroTopRow}>
-          <div className={styles.modeHeroLabel}>Product Detail Name (external POST)</div>
-        </div>
-        <div className={styles.modeHeroHint}>
-          Applies to the product detail page only.
+          <div className={styles.modeHeroLabel}>Live Server Data Editing (REST)</div>
         </div>
         <form className={styles.externalPostForm} onSubmit={submitExternalPost}>
           <div className={styles.postFormRow}>
@@ -619,7 +583,7 @@ const ProgressiveRoutingDemo = () => {
                     className={styles.reloadButton}
                     onClick={reloadFrame}
                     title="Reload"
-                    disabled={postSubmitting}
+                    disabled={postSubmitting || postPending}
                   >
                     ⟳
                   </button>
@@ -631,7 +595,7 @@ const ProgressiveRoutingDemo = () => {
                 ) : (
                   <span className={styles.tabBuyMeNotIcon}>B</span>
                 )}
-                Product Detail
+                {currentTabLabel}
               </div>
             </div>
             <div className={styles.addressRow}>
