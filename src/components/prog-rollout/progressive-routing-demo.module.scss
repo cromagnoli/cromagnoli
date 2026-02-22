@@ -74,6 +74,7 @@
 
 .modeSwitchLegacy .modeThumb {
   transform: translateX(0);
+  background: #2f4263;
 }
 
 .modeState {
@@ -263,6 +264,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  transform: translateY(-3px);
 }
 
 .browserTab {
@@ -339,6 +341,11 @@
   background: #1b2a45;
   color: #dbe5fb;
   cursor: pointer;
+}
+
+.reloadButton:hover:not(:disabled) {
+  background: #263a60;
+  border-color: #4b6394;
 }
 
 .reloadButton:disabled {
