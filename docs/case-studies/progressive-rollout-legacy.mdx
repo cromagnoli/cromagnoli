@@ -1,0 +1,51 @@
+import ProgressiveRoutingDemo from '@site/src/components/prog-rollout/progressive-routing-demo';
+
+# Progressive Rollout on Legacy Listings
+
+Este espacio documenta cómo el equipo unificó el controlador `routing.resolveRouteController(listings.singleListing, '/pdp/{productCategory}/{productName}/{productId}')` para que una sola ruta pueda vivir tanto sobre React Router 7 (NextGen) como sobre el servidor Hapi legacy.
+
+<ProgressiveRoutingDemo />
+
+## Qué trae la solución
+
+- **Un único decorator** (`resolveRouteController`) que intercepta la petición y decide si sigue el flujo moderno o el legado. Mientras RR7 responde, se reutiliza la misma instancia del `viteDevServerSingleton` en desarrollo o bien `viteStaticBuild.importBuild()` en producción.
+- **Gateo mediante feature flag (`routingModeFeatureFlag`) y señales desde NextGen (`nextGen.isRoutingActive`)**: solo los caminos amparados en `shouldUseNextGenRouter()` (por ejemplo `ListingsEdit`, `Detail2`) pueden saltar a RR7 cuando el flag está activo.
+- **Fallback transparente**: la query `?legacy=true` y cualquier error de RR7 activan el legado. Así se mantiene el SLA de la ruta sin sacar al usuario de la página.
+- **Registro operativo**: cuando RR7 gana se loguea la inyección del manifest (`/fsbo/_react-router/manifest`) y cuando falla se re-rutea a `notFound` vía Hapi.
+
+## Código clave
+
+```ts
+export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
+  ...legacyController,
+  handler: async (request, h) => {
+    if (shouldUseNextGenRouter(request)) {
+      const reactRouterRoutesHandler = await getReactRouterRoutesHandler(request);
+      return reactRouterRoutesHandler(request, h);
+    }
+
+    return legacyController.handler?.(request, h);
+  }
+});
+
+export const shouldUseNextGenRouter = (request: FsboRequest): boolean => {
+  const isNextGenEnabled = nextGen.isRoutingActive(request);
+  const nextGenEnabledPages = ['ListingsEdit', 'Detail2', 'BrandNewPage', 'DevPlayground'];
+  return (
+    isNextGenEnabled &&
+    canRouteViaNextGen(request.path, nextGenEnabledPages)
+  );
+};
+```
+
+## Lecciones para el demo
+
+1. El `routingModeFeatureFlag` es un interruptor que el Live Playground expone. Cuando RR7 está activo se muestran los beneficios de Vite (fast refresh, server share, singleton). Si se fuerza legacy igual se mantiene la misma URL y se sigue resolviendo con `listings.singleListing`.
+2. La query `?legacy=true` sigue disponible como escape hatch operacional. En este demo también aparece automáticamente cuando `simulateFailure=true` fuerza fallback.
+3. Mostrar ambas experiencias en paralelo (NextGen vs Hapi) permite validar que el `resolveRouteController` abstrae la complejidad y deja solo dos rutas en Hapi: la misma con y sin decorator.
+
+## Cómo probar el handle hybrid
+
+1. Navegá a `/case-studies/progressive-rollout-legacy` y usa los controles para cambiar el modo (NextGen vs Legacy) o activar `simulateFailure`. El iframe mostrará la vista activa y el log describe el camino de routing.
+2. Si el preview tarda en aparecer, esperá el cold-start de Render y recargá el iframe.
+3. Extra: podés abrir `https://hybrid-routing-demo.onrender.com/pdp/running-sneakers/white-loop-runner/prod1234/` manualmente; con `?legacy=true` obtenés fallback Hapi, y con `?simulateFailure=true` forzás la caída a legacy aun con feature flag activo.
