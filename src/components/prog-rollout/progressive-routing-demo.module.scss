@@ -1,12 +1,24 @@
 .card {
   background: #101e3d;
   border-radius: 16px;
-  padding: 24px;
   color: #f4f5fb;
   border: 1px solid #1e2e5c;
+  overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.cardHeader {
+  font-size: 0.75rem;
+  color: #a8b6d8;
+  background: #0b1328;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.cardBody {
+  padding: 24px;
   display: grid;
   gap: 16px;
-  font-family: "Inter", system-ui, sans-serif;
 }
 
 .controls {
@@ -66,6 +78,12 @@
 
 .modeHeroActiveLabelLegacy {
   border-left-color: #f97316;
+}
+
+.modeHeroBodyText {
+  font-size: 0.82rem;
+  color: #b8c6e6;
+  line-height: 1.35;
 }
 
 .failureCta {
@@ -229,17 +247,20 @@
 
 .signal {
   flex: 1;
-}
-
-.signal-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  background: #0f1a33;
+  overflow: hidden;
 }
 
 .signal-subtitle {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #cbd5f5;
+  padding: 8px 10px;
+}
+
+.signal-subtitle + .signal-subtitle {
+  padding-top: 0;
 }
 
 .logsPanel {
@@ -253,7 +274,7 @@
   border-radius: 0 0 10px 10px;
   padding: 16px;
   max-height: 240px;
-  overflow-y: auto;
+  overflow-y: scroll;
   font-size: 0.85rem;
   font-family: "JetBrains Mono", "Fira Code", monospace;
   color: #e2e8f0;
@@ -268,6 +289,16 @@
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 10px 10px 0 0;
   background: #0b1328;
+}
+
+.codeBlockHint {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: #b9c7e5;
+  background: #223254;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-top: 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 .error-note {
@@ -313,6 +344,10 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px 6px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: auto 1fr;
+  }
 }
 
 .browserLeft {
@@ -399,6 +434,10 @@
   margin-bottom: 5px;
   color: #9fb0d8;
   font-size: 0.72rem;
+
+  @media (max-width: 700px) {
+    display: none;
+  }
 }
 
 .backButton {
@@ -531,6 +570,12 @@
   cursor: pointer;
 }
 
+.copyButton:hover {
+  background: #263a60;
+  border-color: #4b6394;
+  border-left: 0;
+}
+
 .copyButtonCopied {
   color: #5ee385;
 }
@@ -562,6 +607,10 @@
   background: #f3f6fc;
   overflow: auto;
   scrollbar-color: #8ea3cc #e1e7f3;
+
+  @media (min-width: 725px) {
+    min-height: 475px;
+  }
 }
 
 .previewFrame::-webkit-scrollbar {
@@ -591,31 +640,26 @@
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
 }
 
+.iframeCodeHint {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: #b9c7e5;
+  background: #223254;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  line-height: 1.35;
+}
+
 .iframeCodePre {
   margin: 0;
   padding: 10px;
   max-height: 260px;
-  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: auto;
+  border-radius: 0;
   font-size: 0.74rem;
   line-height: 1.35;
   color: #dce4f7;
   font-family: "JetBrains Mono", "Fira Code", monospace;
-}
-
-@media (max-width: 700px) {
-  .browserTopBar {
-    grid-template-columns: auto 1fr;
-  }
-
-  .browserStatus {
-    display: none;
-  }
-}
-
-@media (min-width: 725px) {
-  .previewFrame {
-    min-height: 450px;
-  }
 }
 
 @keyframes browser-spin {

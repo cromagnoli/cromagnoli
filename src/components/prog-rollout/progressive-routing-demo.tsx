@@ -506,6 +506,10 @@ const ProgressiveRoutingDemo = () => {
         <div className={styles.modeHeroTopRow}>
           <div className={styles.modeHeroLabel}>Simulate NextGen failure</div>
         </div>
+        <div className={styles.modeHeroBodyText}>
+          This flow is resilient by design: when NextGen fails, an error boundary
+          redirects to legacy rendering to minimize user friction.
+        </div>
         <div className={styles.modeControlRow}>
           <button
             type="button"
@@ -525,6 +529,11 @@ const ProgressiveRoutingDemo = () => {
         <div className={styles.modeHeroTopRow}>
           <div className={styles.modeHeroLabel}>Live Server Data Editing (REST)</div>
         </div>
+        <div className={styles.modeHeroBodyText}>
+          Use this control to verify that both renderers consume the same
+          server-side source of truth. Submit an update, then reload the
+          embedded page to confirm consistent data across legacy and NextGen.
+        </div>
         <form className={styles.externalPostForm} onSubmit={submitExternalPost}>
           <div className={styles.postFormRow}>
             <input
@@ -541,114 +550,125 @@ const ProgressiveRoutingDemo = () => {
       </div>
 
       <div className={styles.card}>
-      {error ? <div className={styles["error-note"]}>{error}</div> : null}
-
-      <div className={styles.signal}>
-        <div className={styles["signal-subtitle"]}>
-          Path under test: <code>{ROUTE_EXAMPLE}</code>
+      <div className={styles.cardHeader}>Live User Flow Test Playground</div>
+      <div className={styles.cardBody}>
+        <div className={styles.signal}>
+          <div className={styles["signal-subtitle"]}>
+            Path under test: <code>{ROUTE_EXAMPLE}</code>
+          </div>
+          <div className={styles["signal-subtitle"]}>
+            Entry page: <code>{LANDING_ROUTE_EXAMPLE}</code> (always legacy)
+          </div>
         </div>
-        <div className={styles["signal-subtitle"]}>
-          Entry page: <code>{LANDING_ROUTE_EXAMPLE}</code> (always legacy)
-        </div>
-      </div>
+        {error ? <div className={styles["error-note"]}>{error}</div> : null}
 
-      <div className={styles.iframeWrapper}>
-        <div className={styles.browserChrome}>
-          <div className={styles.browserTopBar}>
-            <div className={styles.browserLeft}>
-              <div className={styles.browserControls}>
-                <div className={styles.trafficLights} aria-hidden="true">
-                  <span className={`${styles.light} ${styles.red}`} />
-                  <span className={`${styles.light} ${styles.yellow}`} />
-                  <span className={`${styles.light} ${styles.green}`} />
-                </div>
-                <div className={styles.browserStatus}>
-                  <button
-                    type="button"
-                    className={styles.backButton}
-                    onClick={goBackToCategory}
-                    title="Back to category"
-                    disabled={postSubmitting || isOnCategoryPage}
-                  >
-                    <svg
-                      viewBox="0 0 16 16"
-                      aria-hidden="true"
-                      focusable="false"
+        <div className={styles.iframeWrapper}>
+          <div className={styles.browserChrome}>
+            <div className={styles.browserTopBar}>
+              <div className={styles.browserLeft}>
+                <div className={styles.browserControls}>
+                  <div className={styles.trafficLights} aria-hidden="true">
+                    <span className={`${styles.light} ${styles.red}`} />
+                    <span className={`${styles.light} ${styles.yellow}`} />
+                    <span className={`${styles.light} ${styles.green}`} />
+                  </div>
+                  <div className={styles.browserStatus}>
+                    <button
+                      type="button"
+                      className={styles.backButton}
+                      onClick={goBackToCategory}
+                      title="Back to category"
+                      disabled={postSubmitting || isOnCategoryPage}
                     >
-                      <path d="M9.75 3.25L4.25 8l5.5 4.75v-2.75h3v-4h-3z" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.reloadButton}
-                    onClick={reloadFrame}
-                    title="Reload"
-                    disabled={postSubmitting || postPending}
-                  >
-                    ⟳
-                  </button>
+                      <svg
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M9.75 3.25L4.25 8l5.5 4.75v-2.75h3v-4h-3z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.reloadButton}
+                      onClick={reloadFrame}
+                      title="Reload"
+                      disabled={postSubmitting || postPending}
+                    >
+                      ⟳
+                    </button>
+                  </div>
+                </div>
+                <div className={styles.browserTab} aria-hidden="true">
+                  {postPending ? (
+                    <span className={`${styles.tabSpinner} ${styles.spinning}`} />
+                  ) : (
+                    <span className={styles.tabBuyMeNotIcon}>B</span>
+                  )}
+                  {currentTabLabel}
                 </div>
               </div>
-              <div className={styles.browserTab} aria-hidden="true">
-                {postPending ? (
-                  <span className={`${styles.tabSpinner} ${styles.spinning}`} />
-                ) : (
-                  <span className={styles.tabBuyMeNotIcon}>B</span>
-                )}
-                {currentTabLabel}
+              <div className={styles.addressRow}>
+                <code className={styles.address}>{displayUrl}</code>
+                <button
+                  type="button"
+                  className={`${styles.copyButton} ${
+                    copiedAddress ? styles.copyButtonCopied : ""
+                  }`}
+                  onClick={copyAddress}
+                  title="Copy address"
+                >
+                  {copiedAddress ? "✓ Copied" : "Copy address"}
+                </button>
+              </div>
+              <div className={styles.addressHint}>
+                Optionally, copy this URL to test the route manually in a new tab.
               </div>
             </div>
-            <div className={styles.addressRow}>
-              <code className={styles.address}>{displayUrl}</code>
-              <button
-                type="button"
-                className={`${styles.copyButton} ${
-                  copiedAddress ? styles.copyButtonCopied : ""
-                }`}
-                onClick={copyAddress}
-                title="Copy address"
-              >
-                {copiedAddress ? "✓ Copied" : "Copy address"}
-              </button>
-            </div>
-            <div className={styles.addressHint}>
-              Optionally, copy this URL to test the route manually in a new tab.
-            </div>
           </div>
+          <iframe
+            key={frameUrl}
+            ref={iframeRef}
+            className={styles.previewFrame}
+            src={frameUrl}
+            onLoad={handleIframeLoad}
+            title="Progressive routing preview"
+          />
         </div>
-        <iframe
-          key={frameUrl}
-          ref={iframeRef}
-          className={styles.previewFrame}
-          src={frameUrl}
-          onLoad={handleIframeLoad}
-          title="Progressive routing preview"
-        />
-      </div>
-      <div className={styles.iframeCode}>
-        <div className={styles.iframeCodeTitle}>Current iframe HTML</div>
-        <pre className={styles.iframeCodePre}>{iframeHtml}</pre>
-      </div>
+        <div className={styles.iframeCode}>
+          <div className={styles.iframeCodeTitle}>Current iframe HTML</div>
+          <div className={styles.iframeCodeHint}>
+            Inspect the raw HTML payload returned by the active server renderer
+            before client-side processing. Look for runtime markers such as Vite
+            scripts to validate which stack served the page.
+          </div>
+          <pre className={styles.iframeCodePre}>{iframeHtml}</pre>
+        </div>
 
-      {loading ? (
-        <div className={styles["spinner"]}>Fetching routing state...</div>
-    ) : (
-        <div className={styles.logsPanel}>
-          <div className={styles.codeBlockTitle}>
-            Server Log
+        {loading ? (
+          <div className={styles["spinner"]}>Fetching routing state...</div>
+      ) : (
+          <div className={styles.logsPanel}>
+            <div className={styles.codeBlockTitle}>
+              Server Log
+            </div>
+            <div className={styles.codeBlockHint}>
+              Validate routing decisions by tracking which renderer served each
+              request and, if applicable, why fallback happened.
+            </div>
+            <div
+              ref={serverLogRef}
+              className={styles["code-block"]}
+              onScroll={handleServerLogScroll}
+            >
+              {serverLogLines.map((line) => (
+                <div key={line}>{line}</div>
+              ))}
+            </div>
           </div>
-          <div
-            ref={serverLogRef}
-            className={styles["code-block"]}
-            onScroll={handleServerLogScroll}
-          >
-            {serverLogLines.map((line) => (
-              <div key={line}>{line}</div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      </div>
     </>
   );
 };
