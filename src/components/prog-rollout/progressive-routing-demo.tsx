@@ -418,7 +418,6 @@ const ProgressiveRoutingDemo = () => {
           const url = new URL(prev);
           url.searchParams.delete("legacy");
           url.searchParams.delete("fallbackReason");
-          url.searchParams.delete("colorCode");
           return url.toString();
         } catch {
           return prev;
