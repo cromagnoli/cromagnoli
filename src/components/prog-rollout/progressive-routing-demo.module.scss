@@ -1,10 +1,13 @@
 .card {
   background: #101e3d;
-  border-radius: 16px;
+  border-radius: 10px;
   color: #f4f5fb;
   border: 1px solid #1e2e5c;
-  overflow: hidden;
   font-family: "Inter", system-ui, sans-serif;
+}
+
+.sectionBlock {
+  margin-top: 16px;
 }
 
 .cardHeader {
@@ -13,6 +16,8 @@
   background: #0b1328;
   padding: 8px 10px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .cardBody {
@@ -38,8 +43,21 @@
   border-radius: 10px;
   background: rgba(20, 34, 71, 0.55);
   width: 100%;
-  margin-bottom: 12px;
-  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.playgroundModeHero {
+  padding: 10px 24px;
+  border: 0;
+  border-bottom: 1px solid rgba(83, 125, 201, 0.5);
+  border-radius: 0;
+  background: rgba(20, 34, 71, 1);
+}
+
+.stickyModeHero {
+  position: sticky;
+  top: 22px;
+  z-index: 10;
 }
 
 .modeHeroTopRow {
@@ -55,6 +73,14 @@
 
 .modeHeroLabel {
   display: block;
+  margin: 0;
+  font-size: 0.85rem;
+  color: #a8b6d8;
+  padding: 4px 0;
+}
+
+.sectionLabel {
+  display: block;
   width: calc(100% + 24px);
   margin: -10px -12px 0;
   font-size: 0.75rem;
@@ -62,6 +88,8 @@
   background: #0b1328;
   padding: 8px 10px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .modeHeroActiveLabel {
@@ -141,7 +169,6 @@
 }
 
 .modeSwitch {
-  margin-top: 4px;
   appearance: none;
   position: relative;
   width: 78px;
@@ -183,7 +210,7 @@
   inset: 0;
   display: flex;
   align-items: center;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #dbe5fb;
@@ -208,7 +235,7 @@
 .modeTooltip {
   position: absolute;
   left: calc(100% + 8px);
-  bottom: 2px;
+  bottom: -15px;
   transform: none;
   background: #2a1212;
   color: #ff6b6b;
@@ -217,7 +244,7 @@
   padding: 6px 8px;
   font-size: 0.84rem;
   line-height: 1.2;
-  width: 340px;
+  width: 310px;
   white-space: normal;
   z-index: 5;
 }
@@ -264,6 +291,7 @@
 }
 
 .logsPanel {
+  margin-top: 16px;
   display: block;
 }
 
@@ -275,6 +303,7 @@
   padding: 16px;
   max-height: 240px;
   overflow-y: scroll;
+  scrollbar-gutter: stable;
   font-size: 0.85rem;
   font-family: "JetBrains Mono", "Fira Code", monospace;
   color: #e2e8f0;
@@ -533,6 +562,11 @@
   cursor: pointer;
 }
 
+.postFormRow button:hover:not(:disabled) {
+  background: #263a60;
+  border-color: #4b6394;
+}
+
 .postFormRow button:disabled {
   opacity: 0.65;
   cursor: default;
@@ -627,6 +661,7 @@
 }
 
 .iframeCode {
+  margin-top: 16px;
   border-radius: 10px;
   border: 1px solid rgba(148, 163, 184, 0.35);
   background: #0b1328;
