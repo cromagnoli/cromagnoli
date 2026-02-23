@@ -696,12 +696,10 @@ const ProgressiveRoutingDemo = () => {
             disabled={!isNextGenProductDetailActive || simulateFailure}
             onClick={() => {
               setPostPending(true);
-              setSimulateFailure((prev) => {
-                const next = !prev;
-                const baseUrl = iframeObservedUrl || currentIframeUrl;
-                setCurrentIframeUrl(withFailureParams(baseUrl, next, sessionId));
-                return next;
-              });
+              const baseUrl = iframeObservedUrl || currentIframeUrl;
+              setCurrentIframeUrl(withFailureParams(baseUrl, true, sessionId));
+              setSimulateFailure(true);
+              setReloadToken((prev) => prev + 1);
             }}
           >
             {simulateFailure ? "Failure triggered 🔥" : "Trigger failure 🔥"}
