@@ -1,0 +1,58 @@
+@import "../utils.module";
+
+.modalContainer {
+  align-items: baseline;
+}
+
+// Double class to avoid specificity issue on build time.
+.splitViewModalContainer.splitViewModalContainer {
+  @media screen and (max-width: $small) {
+    display: block;
+    padding: 0;
+  }
+}
+
+// Double class to avoid specificity issue on build time.
+.splitViewModal.splitViewModal {
+  border-radius: rem(8);
+  overflow: hidden;
+  padding: 0;
+
+  @media screen and (min-width: $small) {
+    max-width: rem(1050);
+  }
+
+  @media only screen and (max-width: $small) {
+    height: fit-content;
+    min-width: 100%;
+  }
+
+  [class^="closeButton"] {
+    @media screen and (max-width: $med) {
+      z-index: 10;
+    }
+  }
+}
+
+.splitViewModalContentContainer {
+  @media screen and (min-width: $small) {
+    display: flex;
+    flex-direction: row;
+    max-height: rem(658);
+  }
+}
+
+.splitViewModalSecondChild {
+  margin: 0 rem(10);
+
+  @media screen and (min-width: $small) {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    flex-basis: 0;
+  }
+}

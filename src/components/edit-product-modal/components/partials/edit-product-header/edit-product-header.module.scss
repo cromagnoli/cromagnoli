@@ -1,0 +1,32 @@
+@import "../../../../stub-ui-library/utils.module";
+
+.heading {
+  color: #3e3e3e;
+  margin: rem(0.5) 0;
+
+  @include mq($desktop-and-above) {
+    margin: 0;
+  }
+}
+
+.currency {
+  align-items: baseline;
+  color: #3f68b2;
+  display: flex;
+  font-size: rem(18);
+  font-weight: 500;
+  gap: rem(8);
+  margin: rem(8) 0 0;
+  min-height: rem(22.8); // Prevent vertical jump when no prices super edge case
+}
+
+.salePrice {
+  color: #3f68b2;
+  font-weight: 500;
+}
+
+.listPrice {
+  color: #7a7a7a;
+  font-size: rem(15);
+  text-decoration: line-through;
+}

@@ -1,0 +1,91 @@
+@import '../utils.module';
+
+/* stylelint-disable selector-max-type */
+.notificationBlock {
+  @include textBody1();
+  align-items: center;
+
+  background-color: #fff;
+  border: rem(1) solid #000;
+  border-radius: rem(6);
+  display: flex;
+  padding: rem(8) rem(10);
+
+  .iconBlock {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: rem(18);
+    justify-content: center;
+    line-height: 0;
+    margin-right: rem(8);
+    width: rem(18);
+
+    svg {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  a {
+    color: #000;
+  }
+
+  p {
+    &:first-of-type {
+      margin-block-start: 0;
+    }
+
+    &:last-of-type {
+      margin-block-end: 0;
+    }
+  }
+}
+
+.successNotification {
+  background-color: #73c855;
+  border: solid rem(1) #41ac00;
+
+  .iconBlock {
+    color: #41ac00;
+  }
+}
+
+.errorNotification {
+  background-color: #f2dada;
+  border: solid rem(1) #cb8f8f;
+  color: #5f2a2a;
+
+  .iconBlock {
+    color: #8e3f3f;
+  }
+}
+
+.warningNotification {
+  background-color: #f4ebdb;
+  border: solid rem(1) #d7be96;
+  color: #5f4a2a;
+
+  .iconBlock {
+    color: #8f6f3a;
+  }
+}
+
+.infoNotification {
+  background-color: #6fa1dc;
+  border: solid rem(1) #155097;
+
+  .iconBlock {
+    color: #155097;
+  }
+}
+
+.messageNotification {
+  background-color: #a8a8a8;
+  border: solid rem(1) #4a4a4a;
+
+  .iconBlock {
+    color: #4a4a4a;
+  }
+}

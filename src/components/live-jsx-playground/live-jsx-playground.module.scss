@@ -1,0 +1,106 @@
+.playground {
+  border: 1px solid #d7dce8;
+  border-radius: 12px;
+  background: #f7f8fc;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a4a4a;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.button {
+  border: 1px solid #cfd5e3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4e4e4e;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: #b9c1d3;
+  background: #f5f7fb;
+}
+
+.editorBlock + .editorBlock {
+  margin-top: 10px;
+}
+
+.editorLabel {
+  color: #5b6375;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.editor {
+  width: 100%;
+  min-height: 190px;
+  border: 1px solid #d7dce8;
+  border-radius: 10px;
+  padding: 12px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #232323;
+  background: #ffffff;
+  scrollbar-width: thin;
+  scrollbar-color: #9a9a9a #ececec;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #ececec;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #9a9a9a;
+    border-radius: 10px;
+    border: 2px solid #ececec;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #7a7a7a;
+  }
+}
+
+.preview {
+  margin-top: 10px;
+  border: 1px solid #d7dce8;
+  border-radius: 10px;
+  background: rgba(8, 10, 14, 0.72);
+  padding: 10px;
+}
+
+.preview > * {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.error {
+  margin-top: 8px;
+  color: #8f2d2d;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

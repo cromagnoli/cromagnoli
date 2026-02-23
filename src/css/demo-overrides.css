@@ -1,0 +1,37 @@
+
+.demoSection {
+  margin-bottom: 56px;
+}
+
+/* Distinct injected CTA color */
+.primaryButton.injectedCta {
+  background: #0f766e; /* teal-ish primary alternative */
+}
+
+.primaryButton.injectedCta:hover {
+  background: #0d5f59;
+}
+
+.subtle-attention-text {
+  animation: subtleAttentionPulse 2.2s ease-in-out infinite;
+  color: #8ea8f3;
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  margin-bottom: 10px;
+}
+
+@keyframes subtleAttentionPulse {
+  0% {
+    color: #8ea8f3;
+    opacity: 0.82;
+  }
+  50% {
+    color: #b4c7ff;
+    opacity: 1;
+  }
+  100% {
+    color: #8ea8f3;
+    opacity: 0.82;
+  }
+}

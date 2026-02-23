@@ -1,0 +1,50 @@
+import ProgressiveRoutingDemo from '@site/src/components/prog-rollout/progressive-routing-demo';
+
+# Progressive Rollout from Legacy to NextGen Stack (Hybrid Routing)
+
+## Summary
+
+This case study documents how the team unified `routing.resolveRouteController(listings.singleListing, '/pdp/{productCategory}/{productName}/{productId}')` so one route can run on both React Router 7 (NextGen) and the legacy Hapi server.
+
+## How to Run the Experience
+
+1. The iframe starts on a legacy product category page with a product thumbnail.
+2. Click the product to open the product detail page. At that point, the resolver decides NextGen vs legacy based on the NextGen ON/OFF switch state.
+3. Toggle `NextGen ON/OFF`, then press `Reload` in the simulated browser to apply the change to the iframe.
+4. Try `Product Name (external POST)`: submit the change, then use `Reload` to verify the server-side update in the embedded page.
+5. Enable `Trigger failure 🔥` (NextGen only), reload, and confirm automatic fallback to legacy in the server log (forced by error boundary).
+6. Optionally, use `Copy address` and open the URL in a new tab to validate the same behavior outside the iframe.
+
+<ProgressiveRoutingDemo />
+
+## What the Solution Includes
+
+- **Single decorator** (`resolveRouteController`) that intercepts the request and decides modern vs legacy flow.
+- **Feature-flag gating** (`routingModeFeatureFlag`) plus NextGen signals (`nextGen.isRoutingActive`) so only allowed pages route through RR7.
+- **Transparent fallback**: `?legacy=true` and RR7 failures both force the legacy path to preserve route reliability.
+- **Operational visibility**: manifest injection and fallback route decisions are logged.
+
+## Key Code
+
+```ts
+export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
+  ...legacyController,
+  handler: async (request, h) => {
+    if (shouldUseNextGenRouter(request)) {
+      const reactRouterRoutesHandler = await getReactRouterRoutesHandler(request);
+      return reactRouterRoutesHandler(request, h);
+    }
+
+    return legacyController.handler?.(request, h);
+  }
+});
+
+export const shouldUseNextGenRouter = (request: FsboRequest): boolean => {
+  const isNextGenEnabled = nextGen.isRoutingActive(request);
+  const nextGenEnabledPages = ['ListingsEdit', 'Detail2', 'BrandNewPage', 'DevPlayground'];
+  return (
+    isNextGenEnabled &&
+    canRouteViaNextGen(request.path, nextGenEnabledPages)
+  );
+};
+```
