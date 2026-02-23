@@ -21,25 +21,19 @@ const resolveApiBase = () => {
 };
 const API_BASE = resolveApiBase();
 
-const buildPdpSrc = (simulateFailure: boolean, sessionId: string) => {
+const buildPdpSrc = (sessionId: string) => {
   const url = new URL(
     `${API_BASE}/pdp/${PRODUCT_CATEGORY}/${PRODUCT_SLUG}/${PRODUCT_ID}/`
   );
   url.searchParams.set("demoSessionId", sessionId);
-  if (simulateFailure) {
-    url.searchParams.set("simulateFailure", "true");
-  }
   return url.toString();
 };
 
-const buildLandingSrc = (simulateFailure: boolean, sessionId: string) => {
+const buildLandingSrc = (sessionId: string) => {
   const url = new URL(
     `${API_BASE}/cdp/${PRODUCT_CATEGORY}/${PRODUCT_SLUG}/${PRODUCT_ID}/`
   );
   url.searchParams.set("demoSessionId", sessionId);
-  if (simulateFailure) {
-    url.searchParams.set("simulateFailure", "true");
-  }
   return url.toString();
 };
 
@@ -58,17 +52,6 @@ const requestIframeHtmlSnapshot = (targetWindow: Window | null) => {
     return;
   }
   targetWindow.postMessage({ type: "REQUEST_HTML_SNAPSHOT" }, "*");
-};
-
-const withFailureParams = (baseUrl: string, shouldSimulateFailure: boolean, sessionId: string) => {
-  const url = new URL(baseUrl);
-  if (shouldSimulateFailure) {
-    url.searchParams.set("simulateFailure", "true");
-  } else {
-    url.searchParams.delete("simulateFailure");
-  }
-  url.searchParams.set("demoSessionId", sessionId);
-  return url.toString();
 };
 
 const formatEventTimestamp = (isoTimestamp: string) => {
@@ -130,35 +113,8 @@ const ProgressiveRoutingDemo = () => {
     []
   );
   const [currentIframeUrl, setCurrentIframeUrl] = useState(() =>
-    buildLandingSrc(false, sessionId)
+    buildLandingSrc(sessionId)
   );
-
-  useEffect(() => {
-    if (!simulateFailure) {
-      return;
-    }
-
-    try {
-      const url = new URL(iframeObservedUrl || currentIframeUrl);
-      const legacyForced = url.searchParams.get("legacy") === "true";
-      if (!legacyForced) {
-        return;
-      }
-    } catch {
-      return;
-    }
-
-    setSimulateFailure(false);
-    setCurrentIframeUrl((prev) => {
-      try {
-        const url = new URL(prev);
-        url.searchParams.delete("simulateFailure");
-        return url.toString();
-      } catch {
-        return prev;
-      }
-    });
-  }, [currentIframeUrl, iframeObservedUrl, simulateFailure]);
 
   useEffect(() => {
     let cancelled = false;
@@ -167,7 +123,6 @@ const ProgressiveRoutingDemo = () => {
 
     const fetchUrl = new URL(`${API_BASE}/resolve/${PRODUCT_ID}`);
     fetchUrl.searchParams.set("demoSessionId", sessionId);
-    fetchUrl.searchParams.set("simulateFailure", simulateFailure ? "true" : "false");
     fetchUrl.searchParams.set("legacy", "false");
 
     fetch(fetchUrl.toString())
@@ -205,7 +160,7 @@ const ProgressiveRoutingDemo = () => {
     return () => {
       cancelled = true;
     };
-  }, [simulateFailure, reloadToken, sessionId]);
+  }, [reloadToken, sessionId]);
 
   const activeLabel = useMemo(() => {
     if (serverPayload?.queryLegacy) {
@@ -398,7 +353,7 @@ const ProgressiveRoutingDemo = () => {
   const submitExternalPost = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedName = productNameDraft.trim() || "White Loop Runner";
-    const actionUrl = buildPdpSrc(simulateFailure, sessionId);
+    const actionUrl = buildPdpSrc(sessionId);
     setPostSubmitting(true);
 
     try {
@@ -445,7 +400,7 @@ const ProgressiveRoutingDemo = () => {
       return;
     }
     setPostPending(true);
-    setCurrentIframeUrl(buildLandingSrc(simulateFailure, sessionId));
+    setCurrentIframeUrl(buildLandingSrc(sessionId));
     setPostFeedback("Navigated back to category page.");
   };
 
@@ -535,7 +490,7 @@ const ProgressiveRoutingDemo = () => {
     setPostFeedback(`Updating routing mode to ${nextRoutingMode} via POST...`);
 
     try {
-      const configUrl = buildPdpSrc(simulateFailure, sessionId);
+      const configUrl = buildPdpSrc(sessionId);
       const body = new URLSearchParams({ routingMode: nextRoutingMode });
       const response = await fetch(configUrl, { method: "POST", body });
       if (!response.ok) {
@@ -555,6 +510,29 @@ const ProgressiveRoutingDemo = () => {
     } catch {
       setRoutingMode((prev) => (prev === "nextgen" ? "legacy" : "nextgen"));
       setPostFeedback("Routing mode POST failed. Check service availability.");
+    } finally {
+      setPostSubmitting(false);
+    }
+  };
+
+  const triggerFailure = async () => {
+    setPostSubmitting(true);
+    setPostPending(true);
+    setPostFeedback("Triggering NextGen failure via POST...");
+
+    try {
+      const actionUrl = buildPdpSrc(sessionId);
+      const body = new URLSearchParams({ simulateFailure: "true" });
+      const response = await fetch(actionUrl, { method: "POST", body });
+      if (!response.ok) {
+        throw new Error("POST failed");
+      }
+      setSimulateFailure(true);
+      setReloadToken((prev) => prev + 1);
+      setPostFeedback("Failure trigger accepted. Reloading iframe...");
+    } catch {
+      setPostPending(false);
+      setPostFeedback("Failure trigger POST failed. Check service availability.");
     } finally {
       setPostSubmitting(false);
     }
@@ -693,14 +671,8 @@ const ProgressiveRoutingDemo = () => {
           <button
             type="button"
             className={styles.failureCta}
-            disabled={!isNextGenProductDetailActive || simulateFailure}
-            onClick={() => {
-              setPostPending(true);
-              const baseUrl = iframeObservedUrl || currentIframeUrl;
-              setCurrentIframeUrl(withFailureParams(baseUrl, true, sessionId));
-              setSimulateFailure(true);
-              setReloadToken((prev) => prev + 1);
-            }}
+            disabled={!isNextGenProductDetailActive || postSubmitting || postPending}
+            onClick={triggerFailure}
           >
             {simulateFailure ? "Failure triggered 🔥" : "Trigger failure 🔥"}
           </button>
