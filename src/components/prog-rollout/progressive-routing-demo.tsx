@@ -118,6 +118,24 @@ const ProgressiveRoutingDemo = () => {
   }, [simulateFailure, sessionId]);
 
   useEffect(() => {
+    if (!simulateFailure) {
+      return;
+    }
+
+    try {
+      const url = new URL(currentIframeUrl);
+      const legacyForced = url.searchParams.get("legacy") === "true";
+      if (!legacyForced) {
+        return;
+      }
+    } catch {
+      return;
+    }
+
+    setSimulateFailure(false);
+  }, [currentIframeUrl, simulateFailure]);
+
+  useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -315,6 +333,25 @@ const ProgressiveRoutingDemo = () => {
       return false;
     }
   }, [currentIframeUrl]);
+
+  const isOnProductDetailPage = useMemo(() => {
+    try {
+      return new URL(currentIframeUrl).pathname.includes("/pdp/");
+    } catch {
+      return false;
+    }
+  }, [currentIframeUrl]);
+  const isLegacyForcedInUrl = useMemo(() => {
+    try {
+      return new URL(currentIframeUrl).searchParams.get("legacy") === "true";
+    } catch {
+      return false;
+    }
+  }, [currentIframeUrl]);
+  const isNextGenProductDetailActive =
+    isOnProductDetailPage &&
+    !isLegacyForcedInUrl &&
+    serverPayload?.route === "nextgen";
   const currentTabLabel = isOnCategoryPage
     ? "Category Detail"
     : "Product Detail";
@@ -603,7 +640,7 @@ const ProgressiveRoutingDemo = () => {
           <button
             type="button"
             className={styles.failureCta}
-            disabled={routingMode === "legacy"}
+            disabled={!isNextGenProductDetailActive || simulateFailure}
             onClick={() => {
               setPostPending(true);
               setSimulateFailure((prev) => !prev);
@@ -611,6 +648,11 @@ const ProgressiveRoutingDemo = () => {
           >
             {simulateFailure ? "Failure triggered 🔥" : "Trigger failure 🔥"}
           </button>
+          {!isNextGenProductDetailActive ? (
+            <div className={styles.modeHeroBodyText}>
+              Disabled until the iframe is on NextGen product detail.
+            </div>
+          ) : null}
         </div>
       </div>
 
