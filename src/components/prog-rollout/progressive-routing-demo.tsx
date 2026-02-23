@@ -195,7 +195,7 @@ const ProgressiveRoutingDemo = () => {
     return () => {
       cancelled = true;
     };
-  }, [routingMode, simulateFailure, reloadToken, sessionId]);
+  }, [simulateFailure, reloadToken, sessionId]);
 
   const activeLabel = useMemo(() => {
     if (serverPayload?.queryLegacy) {
