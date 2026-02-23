@@ -13,4 +13,4 @@ npm run start
 npm run build
 
 ## Deploy to GitHub Pages
-GIT_USER=cromagnoli npm run deploy
+GIT_USER=[GIT_USER_HANDLE] USE_SSH=true npm run deploy
