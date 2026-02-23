@@ -398,6 +398,18 @@ const ProgressiveRoutingDemo = () => {
     if (postSubmitting) {
       return;
     }
+    if (routingMode === "nextgen") {
+      setCurrentIframeUrl((prev) => {
+        try {
+          const url = new URL(prev);
+          url.searchParams.delete("legacy");
+          url.searchParams.delete("fallbackReason");
+          return url.toString();
+        } catch {
+          return prev;
+        }
+      });
+    }
     setPostPending(true);
     setReloadToken((prev) => prev + 1);
   };
