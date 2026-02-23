@@ -149,6 +149,15 @@ const ProgressiveRoutingDemo = () => {
     }
 
     setSimulateFailure(false);
+    setCurrentIframeUrl((prev) => {
+      try {
+        const url = new URL(prev);
+        url.searchParams.delete("simulateFailure");
+        return url.toString();
+      } catch {
+        return prev;
+      }
+    });
   }, [currentIframeUrl, iframeObservedUrl, simulateFailure]);
 
   useEffect(() => {
