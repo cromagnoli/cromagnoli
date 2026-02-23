@@ -481,13 +481,25 @@ const ProgressiveRoutingDemo = () => {
       }
 
       if (typeof data.href === "string" && data.href) {
-        try {
-          const nextUrl = new URL(data.href);
-          nextUrl.searchParams.delete("routingMode");
-          setCurrentIframeUrl(nextUrl.toString());
-        } catch {
-          setCurrentIframeUrl(data.href);
-        }
+        setCurrentIframeUrl((prev) => {
+          try {
+            const nextUrl = new URL(data.href);
+            nextUrl.searchParams.delete("routingMode");
+            nextUrl.searchParams.delete("__reload");
+
+            const prevUrl = new URL(prev);
+            prevUrl.searchParams.delete("routingMode");
+            prevUrl.searchParams.delete("__reload");
+
+            if (nextUrl.toString() === prevUrl.toString()) {
+              return prev;
+            }
+
+            return nextUrl.toString();
+          } catch {
+            return data.href === prev ? prev : data.href;
+          }
+        });
       }
 
       const html = typeof data.html === "string" ? data.html : "";
