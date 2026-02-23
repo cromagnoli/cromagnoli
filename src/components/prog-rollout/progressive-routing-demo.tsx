@@ -569,13 +569,15 @@ const ProgressiveRoutingDemo = () => {
                   type="button"
                   className={`${styles.modeSwitch} ${
                       routingMode === "legacy" ? styles.modeSwitchLegacy : ""
+                  } ${
+                      postSubmitting ? styles.modeSwitchLoading : ""
                   }`}
                   onClick={toggleRoutingMode}
                   aria-label="Toggle product detail page routing mode"
                   title="Toggle product detail page routing mode"
                   disabled={postSubmitting}
               >
-                  <span className={styles.modeState}>
+                <span className={styles.modeState}>
                     {routingMode === "nextgen" ? "ON" : "OFF"}
                   </span>
                 <span className={styles.modeThumb} />
