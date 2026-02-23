@@ -333,7 +333,10 @@ const ProgressiveRoutingDemo = () => {
   const isNextGenProductDetailActive =
     isOnProductDetailPage &&
     !isLegacyForcedInUrl &&
-    routingMode === "nextgen";
+    routingMode === "nextgen" &&
+    serverPayload?.route === "nextgen" &&
+    !serverPayload?.queryLegacy &&
+    !serverPayload?.fallback;
   const currentTabLabel =
     iframeTitle || (isOnCategoryPage ? "Category Detail" : "Product Detail");
   const frameUrl = useMemo(() => {
