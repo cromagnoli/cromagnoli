@@ -339,6 +339,7 @@ const ProgressiveRoutingDemo = () => {
     !serverPayload?.fallback;
   const currentTabLabel =
     iframeTitle || (isOnCategoryPage ? "Category Detail" : "Product Detail");
+  const showRecoveryOverlay = postPending && simulateFailure && isOnProductDetailPage;
   const frameUrl = useMemo(() => {
     const url = new URL(currentIframeUrl);
     url.searchParams.set("__reload", String(reloadToken));
@@ -667,6 +668,14 @@ const ProgressiveRoutingDemo = () => {
                 </div>
               </div>
             </div>
+            {showRecoveryOverlay ? (
+              <div className={styles.recoveryOverlay} aria-live="polite">
+                <span className={`${styles.recoverySpinner} ${styles.spinning}`} />
+                <span className={styles.recoveryText}>
+                  Something went wrong and we need to switch to the previous experience. Your data is safe.
+                </span>
+              </div>
+            ) : null}
             <iframe
               key={frameUrl}
               ref={iframeRef}
