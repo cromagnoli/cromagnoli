@@ -1,50 +1,394 @@
 import ProgressiveRoutingDemo from '@site/src/components/prog-rollout/progressive-routing-demo';
+import CodeHeader from '@site/src/components/docs/code-header';
 
 # Progressive Rollout from Legacy to NextGen Stack (Hybrid Routing)
 
+:::info Core Objective
+Modernize without freezing delivery or risking route uptime.
+:::
+
 ## Summary
 
-This case study documents how the team unified `routing.resolveRouteController(listings.singleListing, '/pdp/{productCategory}/{productName}/{productId}')` so one route can run on both React Router 7 (NextGen) and the legacy Hapi server.
+This case study shows a production-style migration strategy where one URL can be served by either a legacy Hapi controller or a NextGen React Router runtime, with controlled rollout and safe fallback.
 
-## How to Run the Experience
+:::note
+This implementation is intentionally documented in JavaScript (`.mjs`) instead of TypeScript to mirror the legacy codebase constraints and keep the architecture representation faithful to the original production pattern. [More details](#why-javascript-no-typescript-in-this-case).
+:::
 
-1. The iframe starts on a legacy product category page with a product thumbnail.
-2. Click the product to open the product detail page. At that point, the resolver decides NextGen vs legacy based on the NextGen ON/OFF switch state.
-3. Toggle `NextGen ON/OFF`, then press `Reload` in the simulated browser to apply the change to the iframe.
-4. Try `Product Name (external POST)`: submit the change, then use `Reload` to verify the server-side update in the embedded page.
-5. Enable `Trigger failure 🔥` (NextGen only), reload, and confirm automatic fallback to legacy in the server log (forced by error boundary).
-6. Optionally, use `Copy address` and open the URL in a new tab to validate the same behavior outside the iframe.
+:::tip Live Demo Available
+Short on time? Jump directly to the [interactive demo](#live-demo).
+:::
 
-<ProgressiveRoutingDemo />
+## Problem to Solve
 
-## What the Solution Includes
+We needed to ship a modern stack incrementally while keeping legacy pages stable and revenue-safe.
 
-- **Single decorator** (`resolveRouteController`) that intercepts the request and decides modern vs legacy flow.
-- **Feature-flag gating** (`routingModeFeatureFlag`) plus NextGen signals (`nextGen.isRoutingActive`) so only allowed pages route through RR7.
-- **Transparent fallback**: `?legacy=true` and RR7 failures both force the legacy path to preserve route reliability.
-- **Operational visibility**: manifest injection and fallback route decisions are logged.
+We needed surgical control over rollout blast radius:
 
-## Key Code
+1. Existing URLs could not change.
+2. Legacy had to remain the source of safety.
+3. Rollout had to be reversible instantly.
+4. Failures in NextGen had to degrade gracefully.
+5. Teams needed observability to prove routing decisions in real traffic.
 
-```ts
-export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
+## Main Risks Covered
+
+1. Routing regressions during migration.
+2. Hard cutover risk (all-or-nothing releases).
+3. Runtime failures in NextGen breaking user journeys.
+4. Operational blind spots (not knowing why a request went legacy vs NextGen).
+5. Fragmented data behavior between old and new renderers.
+
+## Architectural Approach
+
+The solution uses a route-level resolver (`resolveRouteController`) that composes both worlds behind the same path.
+
+1. Hapi keeps owning route registration and legacy controllers.
+2. Resolver checks feature-flag and path eligibility.
+3. If eligible, it delegates to a React Router handler adapted to Hapi request/response.
+4. If not eligible, it serves legacy immediately.
+5. If NextGen fails, it falls back to legacy path safely.
+
+This avoids dual public endpoints, keeps migration localized, and preserves rollback.
+
+## End-to-End Request Flow
+
+1. Request enters Hapi route table.
+2. `resolveRouteController(...)` runs for dual-stack paths.
+3. `shouldUseNextGenRouter(request)` evaluates flag + route match + fallback query.
+4. NextGen branch: load React Router server build through Vite middleware mode and respond through the Hapi adapter.
+5. Legacy branch: execute legacy controller handler directly.
+6. Decision and reason are emitted to routing events for debugging and auditability.
+
+## Key Files (Entry Point to Runtime)
+
+All files below live in the companion runtime repo used by this demo ([`hybrid-routing-demo`](https://github.com/cromagnoli/hybrid-routing-demo)).
+
+### 1) Route registration entry
+
+<CodeHeader
+  path="server/init/routes.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/init/routes.mjs#L10"
+/>
+
+```js
+const routes = [
+  {
+    method: "GET",
+    path: "/cdp/{productCategory}/{productName}/{productId}/",
+    config: cdp.get,
+  },
+  {
+    method: "GET",
+    path: "/pdp/{productCategory}/{productName}/{productId}/",
+    config: routing.resolveRouteController(
+      pdp.getLegacy,
+      "/pdp/{productCategory}/{productName}/{productId}/"
+    ),
+  },
+  {
+    method: "GET",
+    path: "/checkout/{productId}/",
+    config: checkout.get,
+  },
+  {
+    method: ["GET", "POST"],
+    path: "/{path*}",
+    config: routing.resolveRouteController(fallback.unmatched, "/{path*}"),
+  },
+];
+```
+
+:::note Why it matters
+Only dual-stack routes use `resolveRouteController()`; legacy-only routes keep direct controllers.
+:::
+
+### 2) Core hybrid resolver
+
+#### 2.1) Main entry point (`resolveRouteController`)
+
+<CodeHeader
+  path="server/app/hybrid-routing/routing.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs#L99"
+/>
+```js
+export const resolveRouteController = (legacyController, pathDebugId) => ({
   ...legacyController,
-  handler: async (request, h) => {
-    if (shouldUseNextGenRouter(request)) {
-      const reactRouterRoutesHandler = await getReactRouterRoutesHandler(request);
-      return reactRouterRoutesHandler(request, h);
+  handler: async (...handlerArgs) => {
+    try {
+      const [request] = handlerArgs;
+
+      if (shouldUseNextGenRouter(request)) {
+        const reactRouterRoutesHandler = await getReactRouterRoutesHandler(request);
+
+        return reactRouterRoutesHandler(...handlerArgs);
+      }
+
+      if (typeof legacyController.handler === "function") {
+        return legacyController.handler(...handlerArgs);
+      }
+
+      throw new Error("Handler is undefined for legacyController");
+    } catch (error) {
+      return notFound.handler(...handlerArgs);
     }
-
-    return legacyController.handler?.(request, h);
-  }
+  },
 });
+```
 
-export const shouldUseNextGenRouter = (request: FsboRequest): boolean => {
-  const isNextGenEnabled = nextGen.isRoutingActive(request);
-  const nextGenEnabledPages = ['ListingsEdit', 'Detail2', 'BrandNewPage', 'DevPlayground'];
-  return (
-    isNextGenEnabled &&
-    canRouteViaNextGen(request.path, nextGenEnabledPages)
-  );
+#### 2.2) Eligibility gate used by the resolver
+
+:::note Feature-flag route metadata (conceptual)
+```js
+// In production, this route allowlist is controlled by the feature-flag platform.
+// For demo purposes, we keep it local and explicit.
+const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
+```
+:::
+
+<CodeHeader
+    path="server/app/hybrid-routing/routing.mjs"
+    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs"
+/>
+```js
+const shouldUseNextGenRouter = (request) => {
+  const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
+
+  if (hasLegacyFallbackQuery) {
+    return false;
+  }
+
+  const context = parseContext(request);
+  const isPathAvailable = isNextGenPathAvailable(request.path, NEXTGEN_ENABLED_ROUTES);
+
+  // ...
+  return isNextGenRoutingEnabled(context) && isPathAvailable;
 };
 ```
+
+:::note Why `hasLegacyFallbackQuery` matters
+`?legacy=true` is an explicit operator/support override. It short-circuits NextGen eligibility and guarantees a deterministic fallback path when rollback is needed without redeploying.
+:::
+
+:::note Why it matters
+`resolveRouteController` is the core entry point. `shouldUseNextGenRouter` is a focused dependency used only to decide eligibility.
+:::
+
+:::note
+`ProductDetail` is a route key (not a URL literal). It maps to the declarative path contract in `paths.mjs`, and in production this enablement metadata is typically sourced from the feature-flag tool.
+:::
+
+### 3) Hapi ↔ React Router adapter
+
+#### 3.1) Runtime handler bridge
+
+<CodeHeader
+    path="server/app/hybrid-routing/routing.mjs"
+    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs"
+/>
+```js
+const createReactRouterRoutesHandler = async (request) => {
+  const build = await getViteBuild();
+
+  return createRequestHandler({
+    build,
+    getLoadContext: async () => ({
+      request,
+    }),
+  });
+};
+
+export const getReactRouterRoutesHandler = async (request) => {
+  return await createReactRouterRoutesHandler(request);
+};
+```
+
+:::note Why it matters
+This is the runtime bridge used by `resolveRouteController` to defer NextGen handler creation until a request is actually eligible.
+:::
+
+:::note
+`getLoadContext` is the per-request context portal. It is where Hapi runtime data is injected into React Router loaders/actions (session, request metadata, feature state, and any cross-layer runtime contract).
+:::
+
+#### 3.2) Hapi request/response adapter
+
+<CodeHeader
+  path="server/app/hybrid-routing/react-router-request-response.adapter.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/react-router-request-response.adapter.mjs#L42"
+/>
+```js
+export const createRequestHandler = ({ build, getLoadContext, mode = process.env.NODE_ENV }) => {
+  const handleRequest = createReactRouterRequestHandler(build, mode);
+
+  return async (hapiReq, h) => {
+    const request = createReactRouterRequest(hapiReq);
+    const loadContext = await getLoadContext?.(hapiReq, h);
+    const response = await handleRequest(request, loadContext);
+
+    return await sendReactRouterResponse(h, response);
+  };
+};
+```
+
+:::note Why it matters
+This makes NextGen runtime pluggable without replacing Hapi server infrastructure.
+:::
+
+### 4) Vite runtime service layer
+
+<CodeHeader
+  path="server/app/hybrid-routing/vite.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/vite.mjs#L35"
+/>
+```js
+let vite = null;
+
+const viteDevServerSingleton = async () => {
+  if (!vite) {
+    vite = await createViteServer();
+  }
+  return vite;
+};
+
+export const getViteDevServer = viteDevServerSingleton;
+
+export const getViteBuild = async () => {
+  if (shouldRunViteDevServer()) {
+    const viteDevServer = await getViteDevServer();
+
+    return await viteDevServer.ssrLoadModule("virtual:react-router/server-build");
+  }
+
+  const viteStaticBuild = await import("../../build/server/index.mjs");
+
+  return viteStaticBuild.importBuild();
+};
+```
+
+:::note Why it matters
+Singleton lifecycle avoids per-request boot cost and keeps dev/prod demo behavior deterministic.
+:::
+
+:::note Demo scope
+The companion demo runtime intentionally runs only the Vite dev-server branch for simplicity. The static-build branch is shown here to preserve the full production control-flow shape.
+:::
+
+### 5) Route capability map
+
+<CodeHeader
+  path="server/app/hybrid-routing/paths.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/paths.mjs#L1"
+/>
+
+```js
+const DualPaths = {
+  ProductDetail: "/pdp/:productCategory/:productName/:productId",
+};
+
+const InternalPaths = {
+  ReactRouterManifest: "/__manifest",
+};
+```
+
+:::note Why it matters
+An explicit allowlist of dual-stack pages prevents accidental routing to NextGen for pages under migration that are not yet production-ready.
+:::
+
+## Resilience Design
+
+1. Safe fallback path always exists (legacy controller).
+2. Fallback can be user-forced (`?legacy=true`) for incidents and support workflows.
+3. Runtime failures in NextGen are contained and redirected without losing the journey.
+4. Wildcard fallback route guarantees unknown paths still resolve predictably.
+5. Routing event logs explain decision reason (`nextgen-active`, `feature-flag-off`, `forced-by-query`, etc.).
+
+### Resilience in Code
+
+#### 1) Explicit operator fallback short-circuit
+
+<CodeHeader
+  path="server/app/hybrid-routing/routing.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs#L146"
+/>
+
+```js
+const shouldUseNextGenRouter = (request) => {
+  const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
+
+  if (hasLegacyFallbackQuery) {
+    return false;
+  }
+
+  // ...
+};
+```
+
+:::note Why it matters
+This guarantees deterministic rollback behavior from the edge of the routing decision, before modern runtime execution begins.
+:::
+
+#### 2) NextGen runtime failure boundary -> legacy redirect
+
+<CodeHeader
+  path="nextgen-app/app/routes/pdp.tsx"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/nextgen-app/app/routes/pdp.tsx#L102"
+/>
+
+```tsx
+const redirectToLegacyFromBoundary = () => {
+  const url = new URL(window.location.href);
+  url.searchParams.set("legacy", "true");
+  url.searchParams.set("fallbackReason", "error-boundary");
+  window.location.assign(url.toString());
+};
+
+class RedirectToLegacyBoundary extends React.Component {
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch() {
+    redirectToLegacyFromBoundary();
+  }
+}
+```
+
+:::note Why it matters
+If modern rendering fails at runtime, users are automatically moved to the legacy path instead of getting a dead-end error screen.
+:::
+
+## Why JavaScript (No TypeScript) in This Case
+
+1. The source system being represented is legacy-first and JS-based.
+2. Preserving `.mjs` keeps parity with real migration constraints (team tooling, runtime conventions, file contracts).
+3. The goal of this case study is architectural fidelity, not a language rewrite.
+4. A TypeScript conversion can be a future step, but it is intentionally decoupled from rollout-risk mitigation.
+
+## Product Value
+
+1. Lower migration risk with zero URL churn.
+2. Faster incremental delivery by page/path, not by platform rewrite.
+3. Better reliability posture through graceful degradation.
+4. Easier stakeholder confidence: behavior is testable live with visible logs and HTML payload inspection.
+5. Clear rollback strategy without deployment rollback (immediate traffic rollback).
+
+## Performance Notes
+
+1. In dev environments, the singleton NextGen runtime avoids repeated startup overhead across requests.
+2. Routing checks are lightweight string/path matching plus feature-state checks.
+3. Legacy remains direct path for non-enabled pages, so migration does not tax unrelated routes.
+4. Adapter avoids duplicate server stacks by reusing current Hapi transport surface.
+
+## Live Demo
+
+### How to Run the Experience
+
+1. The iframe starts on a legacy category page.
+2. Click the product tile to open product detail.
+3. Use `NextGen ON/OFF` switch, then click browser `Reload` to apply the current renderer.
+4. Use `Trigger failure` in NextGen PDP to validate automatic fallback behavior.
+5. Use `Live Server Data Editing (REST)` and reload to prove both renderers consume the same source of truth.
+6. Inspect `Current iframe HTML` and `Server Log` to verify renderer ownership and routing reason.
+
+<ProgressiveRoutingDemo />
