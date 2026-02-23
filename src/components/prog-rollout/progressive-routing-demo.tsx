@@ -8,9 +8,10 @@ const LANDING_ROUTE_EXAMPLE =
 const PRODUCT_CATEGORY = "running-sneakers";
 const PRODUCT_SLUG = "white-loop-runner";
 const PRODUCT_ID = "prod1234";
-// const API_BASE =
-//   "https://hybrid-routing-demo.onrender.com";
-const API_BASE = "http://localhost:4001";
+const API_BASE =
+  process.env.NODE_ENV === "local"
+    ? "http://localhost:4001"
+    : "https://hybrid-routing-demo.onrender.com";
 
 const buildPdpSrc = (simulateFailure: boolean, sessionId: string) => {
   const url = new URL(
