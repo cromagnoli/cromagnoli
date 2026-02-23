@@ -48,9 +48,3 @@ export const shouldUseNextGenRouter = (request: FsboRequest): boolean => {
   );
 };
 ```
-
-## Demo Lessons
-
-1. `routingModeFeatureFlag` is exposed by the playground switch.
-2. `?legacy=true` remains available as an operational escape hatch.
-3. Showing both experiences in parallel (NextGen vs Hapi) validates that `resolveRouteController` keeps routing complexity centralized.
