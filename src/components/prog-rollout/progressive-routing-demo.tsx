@@ -521,12 +521,28 @@ const ProgressiveRoutingDemo = () => {
     setPostFeedback("Triggering NextGen failure via POST...");
 
     try {
+      const nextPdpUrl = (() => {
+        try {
+          const observed = new URL(iframeObservedUrl);
+          if (observed.pathname.includes("/pdp/")) {
+            observed.searchParams.set("demoSessionId", sessionId);
+            observed.searchParams.delete("legacy");
+            observed.searchParams.delete("fallbackReason");
+            return observed.toString();
+          }
+        } catch {
+          // fallback to canonical pdp URL below
+        }
+        return buildPdpSrc(sessionId);
+      })();
+
       const actionUrl = buildPdpSrc(sessionId);
       const body = new URLSearchParams({ simulateFailure: "true" });
       const response = await fetch(actionUrl, { method: "POST", body });
       if (!response.ok) {
         throw new Error("POST failed");
       }
+      setCurrentIframeUrl(nextPdpUrl);
       setSimulateFailure(true);
       setReloadToken((prev) => prev + 1);
       setPostFeedback("Failure trigger accepted. Reloading iframe...");
