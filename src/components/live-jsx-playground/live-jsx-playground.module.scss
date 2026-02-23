@@ -99,8 +99,11 @@
 }
 
 .error {
-  margin-top: 8px;
-  color: #8f2d2d;
+  background-color: #583c43;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #ffe7ee;
   font-size: 12px;
+  font-weight: 500;
   white-space: pre-wrap;
 }

@@ -16,6 +16,46 @@ type LiveJsxPlaygroundProps = {
   minEditorHeight?: number;
 };
 
+type PreviewErrorBoundaryProps = {
+  children: React.ReactNode;
+  resetKey: string;
+};
+
+type PreviewErrorBoundaryState = {
+  error: Error | null;
+};
+
+class PreviewErrorBoundary extends React.Component<
+  PreviewErrorBoundaryProps,
+  PreviewErrorBoundaryState
+> {
+  state: PreviewErrorBoundaryState = { error: null };
+
+  static getDerivedStateFromError(error: Error): PreviewErrorBoundaryState {
+    return { error };
+  }
+
+  componentDidUpdate(prevProps: PreviewErrorBoundaryProps) {
+    if (
+      this.state.error &&
+      prevProps.resetKey !== this.props.resetKey
+    ) {
+      this.setState({ error: null });
+    }
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className={styles.error}>
+          Runtime error: {this.state.error.message}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 let tsModulePromise: Promise<typeof import("typescript")> | null = null;
 
 const loadTypeScript = () => {
@@ -56,6 +96,7 @@ const LiveJsxPlayground = ({
   );
   const [preview, setPreview] = useState<React.ReactNode>(null);
   const [error, setError] = useState<string>("");
+  const previewResetKey = `${code}\u0000${dataCode}\u0000${initializationCode}`;
 
   const scopeEntries = useMemo(() => Object.entries(scope), [scope]);
 
@@ -176,7 +217,11 @@ const LiveJsxPlayground = ({
       {error ? (
         <div className={styles.error}>{error}</div>
       ) : (
-        <div className={styles.preview}>{preview}</div>
+        <div className={styles.preview}>
+          <PreviewErrorBoundary resetKey={previewResetKey}>
+            {preview}
+          </PreviewErrorBoundary>
+        </div>
       )}
     </div>
   );
