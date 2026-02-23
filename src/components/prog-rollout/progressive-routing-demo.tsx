@@ -480,27 +480,8 @@ const ProgressiveRoutingDemo = () => {
         return;
       }
 
-      if (typeof data.href === "string" && data.href) {
-        setCurrentIframeUrl((prev) => {
-          try {
-            const nextUrl = new URL(data.href);
-            nextUrl.searchParams.delete("routingMode");
-            nextUrl.searchParams.delete("__reload");
-
-            const prevUrl = new URL(prev);
-            prevUrl.searchParams.delete("routingMode");
-            prevUrl.searchParams.delete("__reload");
-
-            if (nextUrl.toString() === prevUrl.toString()) {
-              return prev;
-            }
-
-            return nextUrl.toString();
-          } catch {
-            return data.href === prev ? prev : data.href;
-          }
-        });
-      }
+      // Do not mutate iframe src from snapshot events; it can cause double navigations/flicker.
+      // We only consume snapshot payload for HTML/title inspection.
 
       const html = typeof data.html === "string" ? data.html : "";
       if (!html) {
