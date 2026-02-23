@@ -99,6 +99,7 @@ const ProgressiveRoutingDemo = () => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [iframeHtml, setIframeHtml] = useState("Waiting for iframe load...");
   const [iframeTitle, setIframeTitle] = useState("");
+  const [iframeObservedUrl, setIframeObservedUrl] = useState("");
   const [showRefreshHint, setShowRefreshHint] = useState(false);
   const [routingEvents, setRoutingEvents] = useState<RoutingEvent[]>([]);
   const [postFeedback, setPostFeedback] = useState(
@@ -341,28 +342,30 @@ const ProgressiveRoutingDemo = () => {
     };
   }, []);
 
+  const effectiveUrl = iframeObservedUrl || currentIframeUrl;
+
   const isOnCategoryPage = useMemo(() => {
     try {
-      return new URL(currentIframeUrl).pathname.includes("/cdp/");
+      return new URL(effectiveUrl).pathname.includes("/cdp/");
     } catch {
       return false;
     }
-  }, [currentIframeUrl]);
+  }, [effectiveUrl]);
 
   const isOnProductDetailPage = useMemo(() => {
     try {
-      return new URL(currentIframeUrl).pathname.includes("/pdp/");
+      return new URL(effectiveUrl).pathname.includes("/pdp/");
     } catch {
       return false;
     }
-  }, [currentIframeUrl]);
+  }, [effectiveUrl]);
   const isLegacyForcedInUrl = useMemo(() => {
     try {
-      return new URL(currentIframeUrl).searchParams.get("legacy") === "true";
+      return new URL(effectiveUrl).searchParams.get("legacy") === "true";
     } catch {
       return false;
     }
-  }, [currentIframeUrl]);
+  }, [effectiveUrl]);
   const isNextGenProductDetailActive =
     isOnProductDetailPage &&
     !isLegacyForcedInUrl &&
@@ -441,6 +444,10 @@ const ProgressiveRoutingDemo = () => {
     setPostPending(false);
     requestIframeHtmlSnapshot(iframeRef.current?.contentWindow ?? null);
     try {
+      const href = iframeRef.current?.contentWindow?.location?.href;
+      if (href) {
+        setIframeObservedUrl(href);
+      }
       const docTitle = iframeRef.current?.contentDocument?.title;
       if (docTitle) {
         setIframeTitle(docTitle);
@@ -478,6 +485,10 @@ const ProgressiveRoutingDemo = () => {
       }
       if (data?.type !== "IFRAME_HTML_SNAPSHOT") {
         return;
+      }
+
+      if (typeof data.href === "string" && data.href) {
+        setIframeObservedUrl(data.href);
       }
 
       // Do not mutate iframe src from snapshot events; it can cause double navigations/flicker.
