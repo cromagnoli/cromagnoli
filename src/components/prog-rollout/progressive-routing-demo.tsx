@@ -123,15 +123,17 @@ const ProgressiveRoutingDemo = () => {
   );
 
   useEffect(() => {
-    const url = new URL(currentIframeUrl);
+    const baseUrl = iframeObservedUrl || currentIframeUrl;
+    const url = new URL(baseUrl);
     if (simulateFailure) {
       url.searchParams.set("simulateFailure", "true");
     } else {
       url.searchParams.delete("simulateFailure");
     }
     url.searchParams.set("demoSessionId", sessionId);
-    setCurrentIframeUrl(url.toString());
-  }, [simulateFailure, sessionId]);
+    const next = url.toString();
+    setCurrentIframeUrl((prev) => (prev === next ? prev : next));
+  }, [simulateFailure, sessionId, iframeObservedUrl, currentIframeUrl]);
 
   useEffect(() => {
     if (!simulateFailure) {
