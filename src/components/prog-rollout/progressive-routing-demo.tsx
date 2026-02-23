@@ -670,10 +670,13 @@ const ProgressiveRoutingDemo = () => {
             </div>
             {showRecoveryOverlay ? (
               <div className={styles.recoveryOverlay} aria-live="polite">
-                <span className={`${styles.recoverySpinner} ${styles.spinning}`} />
-                <span className={styles.recoveryText}>
-                  Something went wrong and we need to switch to the previous experience. Your data is safe.
-                </span>
+                <div className={styles.recoveryContent}>
+                  <span className={styles.recoverySwapIcon} aria-hidden="true">
+                    ↹
+                  </span>
+                  <span className={styles.recoveryText}>Switching experience...</span>
+                  <span className={styles.recoverySubtext}>Your data is safe.</span>
+                </div>
               </div>
             ) : null}
             <iframe
@@ -703,7 +706,7 @@ const ProgressiveRoutingDemo = () => {
             disabled={!isNextGenProductDetailActive || postSubmitting || postPending}
             onClick={triggerFailure}
           >
-            {simulateFailure ? "Failure triggered 🔥" : "Trigger failure 🔥"}
+            {simulateFailure ? "Failure triggered 🔥" : "Trigger failure 💥"}
           </button>
           {!isNextGenProductDetailActive ? (
             <div className={styles.modeHeroBodyText}>

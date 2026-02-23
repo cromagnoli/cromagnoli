@@ -370,7 +370,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   background: linear-gradient(
     135deg,
     rgba(7, 12, 25, 0.88),
@@ -379,19 +378,37 @@
   backdrop-filter: blur(1.5px);
 }
 
-.recoverySpinner {
-  width: 17px;
-  height: 17px;
-  border-radius: 999px;
-  border: 2px solid rgba(139, 163, 209, 0.35);
-  border-top-color: #d5e5ff;
+.recoveryContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.recoverySwapIcon {
+  font-size: 1.32rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #dbe7ff;
+  line-height: 1;
+  transform: translateY(1px);
+  text-shadow: 0 0 14px rgba(124, 160, 235, 0.45);
+  -webkit-text-stroke: 0.2px rgba(219, 231, 255, 0.7);
+  animation: recoverySwapPulse 0.9s ease-in-out infinite;
 }
 
 .recoveryText {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: #dbe7ff;
+}
+
+.recoverySubtext {
+  font-size: 0.76rem;
+  color: #b7c8ea;
 }
 
 .externalPostForm {
@@ -768,5 +785,17 @@
 @keyframes modeSwitchGradient {
   to {
     background-position: 0 0, 200% 0;
+  }
+}
+
+@keyframes recoverySwapPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateY(1px) scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(1px) scale(1.06);
   }
 }
