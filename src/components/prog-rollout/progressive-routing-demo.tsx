@@ -382,18 +382,19 @@ const ProgressiveRoutingDemo = () => {
     if (postSubmitting) {
       return;
     }
-    if (routingMode === "nextgen") {
-      setCurrentIframeUrl((prev) => {
-        try {
-          const url = new URL(prev);
+    const baseUrl = iframeObservedUrl || currentIframeUrl;
+    setCurrentIframeUrl(() => {
+      try {
+        const url = new URL(baseUrl);
+        if (routingMode === "nextgen") {
           url.searchParams.delete("legacy");
           url.searchParams.delete("fallbackReason");
-          return url.toString();
-        } catch {
-          return prev;
         }
-      });
-    }
+        return url.toString();
+      } catch {
+        return baseUrl;
+      }
+    });
     setPostPending(true);
     setReloadToken((prev) => prev + 1);
   };
