@@ -60,6 +60,17 @@ const requestIframeHtmlSnapshot = (targetWindow: Window | null) => {
   targetWindow.postMessage({ type: "REQUEST_HTML_SNAPSHOT" }, "*");
 };
 
+const withFailureParams = (baseUrl: string, shouldSimulateFailure: boolean, sessionId: string) => {
+  const url = new URL(baseUrl);
+  if (shouldSimulateFailure) {
+    url.searchParams.set("simulateFailure", "true");
+  } else {
+    url.searchParams.delete("simulateFailure");
+  }
+  url.searchParams.set("demoSessionId", sessionId);
+  return url.toString();
+};
+
 const formatEventTimestamp = (isoTimestamp: string) => {
   const date = new Date(isoTimestamp);
   if (Number.isNaN(date.getTime())) {
@@ -123,25 +134,12 @@ const ProgressiveRoutingDemo = () => {
   );
 
   useEffect(() => {
-    const baseUrl = iframeObservedUrl || currentIframeUrl;
-    const url = new URL(baseUrl);
-    if (simulateFailure) {
-      url.searchParams.set("simulateFailure", "true");
-    } else {
-      url.searchParams.delete("simulateFailure");
-    }
-    url.searchParams.set("demoSessionId", sessionId);
-    const next = url.toString();
-    setCurrentIframeUrl((prev) => (prev === next ? prev : next));
-  }, [simulateFailure, sessionId, iframeObservedUrl, currentIframeUrl]);
-
-  useEffect(() => {
     if (!simulateFailure) {
       return;
     }
 
     try {
-      const url = new URL(currentIframeUrl);
+      const url = new URL(iframeObservedUrl || currentIframeUrl);
       const legacyForced = url.searchParams.get("legacy") === "true";
       if (!legacyForced) {
         return;
@@ -151,7 +149,7 @@ const ProgressiveRoutingDemo = () => {
     }
 
     setSimulateFailure(false);
-  }, [currentIframeUrl, simulateFailure]);
+  }, [currentIframeUrl, iframeObservedUrl, simulateFailure]);
 
   useEffect(() => {
     let cancelled = false;
@@ -689,7 +687,12 @@ const ProgressiveRoutingDemo = () => {
             disabled={!isNextGenProductDetailActive || simulateFailure}
             onClick={() => {
               setPostPending(true);
-              setSimulateFailure((prev) => !prev);
+              setSimulateFailure((prev) => {
+                const next = !prev;
+                const baseUrl = iframeObservedUrl || currentIframeUrl;
+                setCurrentIframeUrl(withFailureParams(baseUrl, next, sessionId));
+                return next;
+              });
             }}
           >
             {simulateFailure ? "Failure triggered 🔥" : "Trigger failure 🔥"}
