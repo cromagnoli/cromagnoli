@@ -8,10 +8,18 @@ const LANDING_ROUTE_EXAMPLE =
 const PRODUCT_CATEGORY = "running-sneakers";
 const PRODUCT_SLUG = "white-loop-runner";
 const PRODUCT_ID = "prod1234";
-const API_BASE =
-  process.env.NODE_ENV === "local"
-    ? "http://localhost:4001"
-    : "https://hybrid-routing-demo.onrender.com";
+const LOCAL_API_BASE = "http://localhost:4001";
+const REMOTE_API_BASE = "https://hybrid-routing-demo.onrender.com";
+const resolveApiBase = () => {
+  if (typeof window === "undefined") {
+    return REMOTE_API_BASE;
+  }
+  const host = window.location.hostname;
+  return host === "localhost" || host === "127.0.0.1"
+    ? LOCAL_API_BASE
+    : REMOTE_API_BASE;
+};
+const API_BASE = resolveApiBase();
 
 const buildPdpSrc = (simulateFailure: boolean, sessionId: string) => {
   const url = new URL(
@@ -38,6 +46,11 @@ const buildLandingSrc = (simulateFailure: boolean, sessionId: string) => {
 const formatIframeHtml = (html: string) => {
   const maxChars = 12000;
   return html.length > maxChars ? `${html.slice(0, maxChars)}\n<!-- truncated -->` : html;
+};
+
+const extractHtmlTitle = (html: string) => {
+  const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return match?.[1]?.trim() ?? "";
 };
 
 const requestIframeHtmlSnapshot = (targetWindow: Window | null) => {
@@ -85,6 +98,7 @@ const ProgressiveRoutingDemo = () => {
   const [reloadToken, setReloadToken] = useState(0);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [iframeHtml, setIframeHtml] = useState("Waiting for iframe load...");
+  const [iframeTitle, setIframeTitle] = useState("");
   const [showRefreshHint, setShowRefreshHint] = useState(false);
   const [routingEvents, setRoutingEvents] = useState<RoutingEvent[]>([]);
   const [postFeedback, setPostFeedback] = useState(
@@ -353,9 +367,8 @@ const ProgressiveRoutingDemo = () => {
     isOnProductDetailPage &&
     !isLegacyForcedInUrl &&
     serverPayload?.route === "nextgen";
-  const currentTabLabel = isOnCategoryPage
-    ? "Category Detail"
-    : "Product Detail";
+  const currentTabLabel =
+    iframeTitle || (isOnCategoryPage ? "Category Detail" : "Product Detail");
   const frameUrl = useMemo(() => {
     const url = new URL(currentIframeUrl);
     url.searchParams.set("__reload", String(reloadToken));
@@ -405,6 +418,7 @@ const ProgressiveRoutingDemo = () => {
           const url = new URL(prev);
           url.searchParams.delete("legacy");
           url.searchParams.delete("fallbackReason");
+          url.searchParams.delete("colorCode");
           return url.toString();
         } catch {
           return prev;
@@ -428,10 +442,18 @@ const ProgressiveRoutingDemo = () => {
     setPostPending(false);
     requestIframeHtmlSnapshot(iframeRef.current?.contentWindow ?? null);
     try {
+      const docTitle = iframeRef.current?.contentDocument?.title;
+      if (docTitle) {
+        setIframeTitle(docTitle);
+      }
       const html = iframeRef.current?.contentDocument?.documentElement?.outerHTML;
       if (!html) {
         setIframeHtml("Unable to read iframe HTML.");
         return;
+      }
+      const parsedTitle = extractHtmlTitle(html);
+      if (parsedTitle) {
+        setIframeTitle(parsedTitle);
       }
       setIframeHtml(formatIframeHtml(html));
     } catch {
@@ -472,6 +494,10 @@ const ProgressiveRoutingDemo = () => {
       const html = typeof data.html === "string" ? data.html : "";
       if (!html) {
         return;
+      }
+      const parsedTitle = extractHtmlTitle(html);
+      if (parsedTitle) {
+        setIframeTitle(parsedTitle);
       }
       setIframeHtml(formatIframeHtml(html));
     };
