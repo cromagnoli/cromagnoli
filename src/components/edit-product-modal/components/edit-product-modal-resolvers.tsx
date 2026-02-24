@@ -168,7 +168,6 @@ export const resolveSecondChildRender = ({
   renderNotifications,
   renderPrimaryCta,
   renderSecondaryCta,
-  renderSecondChildFooterExtra,
   renderSecondChild,
   renderHeading,
   renderAfterHeading,
@@ -218,7 +217,6 @@ export const resolveSecondChildRender = ({
     prevSizeIndex: number | undefined;
     currentMatchingSku: MaybeSku;
   }) => React.ReactNode;
-  renderSecondChildFooterExtra?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
   renderSecondChild?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
   renderHeading?: () => React.ReactNode;
   renderAfterHeading?: () => React.ReactNode;
@@ -304,11 +302,6 @@ export const resolveSecondChildRender = ({
     currentMatchingSku,
   };
 
-  const secondChildFooterRenderArgs = {
-    ...commonRenderArgs,
-    ...restRenderArgs,
-  };
-
   const secondChildHeaderRenderArgs = {
     ...commonRenderArgs,
     ...restRenderArgs,
@@ -369,9 +362,6 @@ export const resolveSecondChildRender = ({
           {isDefinedFn(renderPrimaryCta) && renderPrimaryCta(ctaRenderArgs)}
 
           {isDefinedFn(renderSecondaryCta) && renderSecondaryCta(ctaRenderArgs)}
-
-          {isDefinedFn(renderSecondChildFooterExtra) &&
-            renderSecondChildFooterExtra(secondChildFooterRenderArgs)}
         </EditProductStickyFrame>
       </>
     );

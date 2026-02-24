@@ -102,7 +102,6 @@ export type EditProductModalProps = {
     prevSizeIndex: number | undefined;
     currentMatchingSku: MaybeSku;
   }) => React.ReactNode;
-  renderSecondChildFooterExtra?: (args: EditProductModalRenderArgs) => React.ReactNode;
   renderFirstChild?: (args: EditProductModalRenderArgs) => React.ReactNode;
   renderSecondChild?: (args: EditProductModalRenderArgs) => React.ReactNode;
   renderSpinner?: () => React.ReactNode;
@@ -136,7 +135,6 @@ const EditProductModal = ({
   renderNotifications = null,
   renderPrimaryCta = null,
   renderSecondaryCta = null,
-  renderSecondChildFooterExtra = null,
   renderFirstChild = null,
   renderSecondChild = null,
   renderSpinner = null,
@@ -300,7 +298,6 @@ const EditProductModal = ({
     renderNotifications,
     renderPrimaryCta,
     renderSecondaryCta,
-    renderSecondChildFooterExtra,
     renderHeading,
     renderAfterHeading,
     renderPrice,
