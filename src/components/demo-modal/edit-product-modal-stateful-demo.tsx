@@ -31,6 +31,7 @@ const defaultRenderNotifications: NonNullable<
 type Props = {
   editingItem: EditingItem;
   renderAfterHeading?: () => React.ReactNode;
+  renderAfterAttrsSelectors?: EditProductModalProps["renderAfterAttrsSelectors"];
   renderNotifications?: EditProductModalProps["renderNotifications"];
   renderPrimaryCta?: EditProductModalProps["renderPrimaryCta"];
   renderSecondaryCta?: EditProductModalProps["renderSecondaryCta"];
@@ -42,6 +43,7 @@ type Props = {
 const EditProductModalStatefulDemo = ({
   editingItem,
   renderAfterHeading,
+  renderAfterAttrsSelectors,
   renderNotifications,
   renderPrimaryCta,
   renderSecondaryCta,
@@ -163,6 +165,7 @@ const EditProductModalStatefulDemo = ({
         );
       }}
       renderAfterHeading={renderAfterHeading}
+      renderAfterAttrsSelectors={renderAfterAttrsSelectors}
     />
   );
 };

@@ -1,5 +1,4 @@
 
-import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
 import EditProductModal from '@site/src/components/edit-product-modal/components/edit-product-modal';
 import { useEditProductModalDemo } from '@site/src/components/demo-modal/use-edit-product-modal-demo';
 import mockData, { highVolumeEditingItem, highVolumeModalMockData } from '@site/src/components/demo-modal/mockData';
@@ -329,6 +328,69 @@ export const notifyMeScenarioInitializationCode = `(() => {
   };
 })()`;
 
+export const afterSelectorsScenarioPlaygroundCode = `() => {
+  const {
+    imageUrl,
+    colorCode,
+    onDismiss,
+    handleAddToBagClick,
+    handleNavigateProductDetails,
+    initialSize,
+    productName,
+    skuVariants,
+  } = useEditProductModalDemo({
+    editingItem: initializationData.editingItem,
+    onModalDismiss: () => {},
+    mockModalData: skuCombinationsResponse,
+  });
+
+  return (
+    <EditProductModal
+      mainHeading={productName}
+      productName={productName}
+      initialImageUrl={imageUrl}
+      initialColorCode={colorCode}
+      initialSize={initialSize}
+      skuVariants={skuVariants}
+      onDismiss={onDismiss}
+      renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
+        <EditProductPrimaryButton
+          label="Add to cart"
+          disabled={!isCurrentSkuAvailable}
+          onClick={() => handleAddToBagClick(currentMatchingSku)}
+        />
+      )}
+      renderSecondaryCta={({ currentMatchingSku }) => (
+        <EditProductSecondaryCta
+          label="Go to product overview"
+          onClick={() => handleNavigateProductDetails(currentMatchingSku)}
+        />
+      )}
+      renderAfterAttrsSelectors={({ currentSizeDetails }) => (
+        <small className="subtle-attention-text">
+          Model is wearing size {currentSizeDetails?.size ?? "11"}.
+        </small>
+      )}
+    />
+  );
+}`;
+
+export const afterSelectorsScenarioInitializationCode = `(() => {
+  const colorCode = "444444";
+  const size = "11";
+
+  return {
+    editingItem: {
+      // Demo shortcut: initializationData reads from skuCombinationsResponse in this playground context.
+      productName: skuCombinationsResponse.productSummary.displayName,
+      productUrl: "/products/" + skuCombinationsResponse.productSummary.productId,
+      imageUrl: skuCombinationsResponse.skuVariants.imagesByColorCode[colorCode][0],
+      colorCode,
+      size,
+    },
+  };
+})()`;
+
 # Stateless Configurable Modal
 
 This demo showcases a stateless, configurable modal architecture using
@@ -406,6 +468,28 @@ derived availability logic and render prop injection.
       EditProductPrimaryButton,
       EditProductSecondaryCta,
       EditProductErrorNotification,
+      mockData,
+    }}
+  />
+</div>
+
+<div className="demoSection">
+  <h3>After Selectors Context Copy</h3>
+  <small>Uses `renderAfterAttrsSelectors` to inject contextual copy based on the selected size.</small>
+  <LiveJsxPlayground
+    title="After Selectors Context Copy Playground"
+    initialCode={afterSelectorsScenarioPlaygroundCode}
+    initialInitializationCode={afterSelectorsScenarioInitializationCode}
+    initialDataCode={defaultScenarioPlaygroundDataCode}
+    initializationVarName="initializationData"
+    initializationTitle="Initialization Data"
+    dataVarName="skuCombinationsResponse"
+    dataTitle="Product Variants Response"
+    scope={{
+      EditProductModal,
+      useEditProductModalDemo,
+      EditProductPrimaryButton,
+      EditProductSecondaryCta,
       mockData,
     }}
   />
