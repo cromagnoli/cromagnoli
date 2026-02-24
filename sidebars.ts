@@ -4,6 +4,7 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     { type: 'doc', id: 'index', label: 'Production-Proven Case Studies' },
+    { type: 'doc', id: 'case-studies/progressive-rollout-legacy', label: 'Progressive Rollout on Legacy Systems' },
     {
       type: 'category',
       label: 'Stateless Configurable Modal',
@@ -26,7 +27,6 @@ const sidebars: SidebarsConfig = {
         },
       ],
     },
-    { type: 'doc', id: 'case-studies/progressive-rollout-legacy', label: 'Progressive Rollout on Legacy Systems' }
   ],
 };
 

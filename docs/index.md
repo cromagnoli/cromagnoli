@@ -3,6 +3,11 @@
 
 This portfolio documents production systems shipped under real-world constraints.
 
+:::note Transparency Disclaimer
+The documentation scaffolding and page implementation were generated with AI assistance and should not be evaluated as original authored product code.
+The production-proven case study code and architecture documented here are my own authored work.
+:::
+
 ## What You'll Find Here
 
 1. Real migration and scaling patterns used in production-like conditions.
@@ -11,12 +16,12 @@ This portfolio documents production systems shipped under real-world constraints
 
 ## Case Studies Index
 
-1. [Stateless Configurable Modal](/cromagnoli/case-studies/stateless-configurable-modal)  
-   Production-grade configurable modal architecture with resolver patterns and reusable render contracts.
-2. [Stateless Configurable Modal API](/cromagnoli/case-studies/stateless-configurable-modal-api)  
-   Public API surface, extension points, and implementation contracts for consumers.
-3. [Progressive Rollout from Legacy to NextGen Stack (Hybrid Routing)](/cromagnoli/case-studies/progressive-rollout-legacy)  
+1. [Progressive Rollout from Legacy to NextGen Stack (Hybrid Routing)](/cromagnoli/case-studies/progressive-rollout-legacy)  
    Dual-runtime route resolution, rollback controls, and resilience patterns for incremental modernization.
+2. [Stateless Configurable Modal](/cromagnoli/case-studies/stateless-configurable-modal)  
+   Production-grade configurable modal architecture with resolver patterns and reusable render contracts.
+3. [Stateless Configurable Modal API](/cromagnoli/case-studies/stateless-configurable-modal-api)  
+   Public API surface, extension points, and implementation contracts for consumers.
 
 ## How To Read These Docs
 
