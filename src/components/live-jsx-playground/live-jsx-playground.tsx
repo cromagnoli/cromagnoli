@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./live-jsx-playground.module.scss";
 
 type Scope = Record<string, unknown>;
@@ -96,11 +96,35 @@ const LiveJsxPlayground = ({
   );
   const [preview, setPreview] = useState<React.ReactNode>(null);
   const [error, setError] = useState<string>("");
+  const [isInView, setIsInView] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const previewResetKey = `${code}\u0000${dataCode}\u0000${initializationCode}`;
 
   const scopeEntries = useMemo(() => Object.entries(scope), [scope]);
 
   useEffect(() => {
+    const node = rootRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsInView(Boolean(entry?.isIntersecting));
+      },
+      { rootMargin: "120px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isInView) {
+      return;
+    }
+
     let cancelled = false;
     const timeoutId = setTimeout(async () => {
       try {
@@ -143,7 +167,7 @@ const LiveJsxPlayground = ({
           setError(err instanceof Error ? err.message : String(err));
         }
       }
-    }, 180);
+    }, 320);
 
     return () => {
       cancelled = true;
@@ -158,10 +182,11 @@ const LiveJsxPlayground = ({
     initializationVarName,
     initialInitializationCode,
     scopeEntries,
+    isInView,
   ]);
 
   return (
-    <div className={styles.playground}>
+    <div className={styles.playground} ref={rootRef}>
       <div className={styles.toolbar}>
         <div className={styles.title}>{title}</div>
         <button
@@ -175,6 +200,27 @@ const LiveJsxPlayground = ({
         >
           Reset
         </button>
+      </div>
+
+      {error ? (
+        <div className={styles.error}>{error}</div>
+      ) : (
+        <div className={styles.preview}>
+          <PreviewErrorBoundary resetKey={previewResetKey}>
+            {preview}
+          </PreviewErrorBoundary>
+        </div>
+      )}
+
+      <div className={styles.editorBlock}>
+        <div className={styles.editorLabel}>Component Code</div>
+        <textarea
+          className={styles.editor}
+          style={{ height: "300px" }}
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
+          spellCheck={false}
+        />
       </div>
 
       {initialInitializationCode ? (
@@ -202,27 +248,6 @@ const LiveJsxPlayground = ({
           />
         </div>
       ) : null}
-
-      <div className={styles.editorBlock}>
-        <div className={styles.editorLabel}>Component Code</div>
-      <textarea
-        className={styles.editor}
-        style={{ height: "300px" }}
-        value={code}
-        onChange={(event) => setCode(event.target.value)}
-        spellCheck={false}
-      />
-      </div>
-
-      {error ? (
-        <div className={styles.error}>{error}</div>
-      ) : (
-        <div className={styles.preview}>
-          <PreviewErrorBoundary resetKey={previewResetKey}>
-            {preview}
-          </PreviewErrorBoundary>
-        </div>
-      )}
     </div>
   );
 };

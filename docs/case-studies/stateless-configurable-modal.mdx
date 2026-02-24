@@ -272,6 +272,79 @@ export const secondScenarioInitializationCode = `(() => {
   };
 })()`;
 
+export const notifyMeScenarioPlaygroundCode = `() => {
+  const {
+    currencyCode,
+    imageUrl,
+    colorCode,
+    locale,
+    onDismiss,
+    initialSize,
+    productName,
+    skuVariants,
+  } = useEditProductModalDemo({
+    editingItem: initializationData.editingItem,
+    onModalDismiss: () => {},
+    mockModalData: skuCombinationsResponse,
+  });
+
+  return (
+    <EditProductModal
+      mainHeading={productName}
+      productName={productName}
+      initialImageUrl={imageUrl}
+      initialColorCode={colorCode}
+      initialSize={initialSize}
+      currencyCode={currencyCode}
+      skuVariants={skuVariants}
+      locale={locale}
+      onDismiss={onDismiss}
+      renderNotifications={({ isCurrentSkuAvailable }) => (
+        <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+          Sold out. Get notified or browse similar in-stock options.
+        </EditProductErrorNotification>
+      )}
+      renderPrimaryCta={({ isCurrentSkuAvailable }) => (
+        <EditProductPrimaryButton
+          label={isCurrentSkuAvailable ? "Add to cart" : "Notify me when available"}
+          disabled={false}
+          onClick={() =>
+            isCurrentSkuAvailable
+              ? alert("Added to cart!")
+              : alert("Back-in-stock notification registered!")
+          }
+        />
+      )}
+      renderSecondaryCta={({ isCurrentSkuAvailable }) => (
+        <EditProductSecondaryCta
+          label={isCurrentSkuAvailable ? "Go to product overview" : "See similar in-stock"}
+          onClick={() =>
+            isCurrentSkuAvailable
+              ? alert("Navigating to product overview")
+              : alert("Opening similar in-stock options for selected size")
+          }
+        />
+      )}
+    />
+  );
+}`;
+
+export const notifyMeScenarioInitializationCode = `(() => {
+  const colorCode = "ffffff";
+  const size = "11";
+
+  return {
+    editingItem: {
+      // Demo shortcut: initializationData reads from skuCombinationsResponse in this playground context.
+      productName: skuCombinationsResponse.productSummary.displayName,
+      productUrl: "/products/" + skuCombinationsResponse.productSummary.productId,
+      imageUrl: skuCombinationsResponse.skuVariants.imagesByColorCode[colorCode][0],
+      colorCode,
+      size,
+    },
+  };
+})()`;
+
 # Stateless Configurable Modal
 
 This demo showcases a stateless, configurable modal architecture using
@@ -287,30 +360,25 @@ derived availability logic and render prop injection.
 <div className="demoSection">
   <h3>Default Behavior</h3>
   <small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
-  <EditProductModalStatefulDemo
-    editingItem={demoItem}
-    renderAfterHeading={() => <Pill>NEW</Pill>}
+  <LiveJsxPlayground
+    title="Default Scenario Playground"
+    initialCode={defaultScenarioPlaygroundCode}
+    initialInitializationCode={defaultScenarioInitializationCode}
+    initialDataCode={defaultScenarioPlaygroundDataCode}
+    initializationVarName="initializationData"
+    initializationTitle="Initialization Data"
+    dataVarName="skuCombinationsResponse"
+    dataTitle="Product Variants Response"
+    scope={{
+      EditProductModal,
+      useEditProductModalDemo,
+      EditProductPrimaryButton,
+      EditProductSecondaryCta,
+      Pill,
+      mockData,
+    }}
   />
 </div>
-
-<LiveJsxPlayground
-  title="Default Scenario Playground"
-  initialCode={defaultScenarioPlaygroundCode}
-  initialInitializationCode={defaultScenarioInitializationCode}
-  initialDataCode={defaultScenarioPlaygroundDataCode}
-  initializationVarName="initializationData"
-  initializationTitle="Initialization Data"
-  dataVarName="skuCombinationsResponse"
-  dataTitle="Product Variants Response"
-  scope={{
-    EditProductModal,
-    useEditProductModalDemo,
-    EditProductPrimaryButton,
-    EditProductSecondaryCta,
-    Pill,
-    mockData,
-  }}
-/>
 
 <div className="demoSection">
   <h3>Low Stock Custom Notification and Logic</h3>
@@ -338,35 +406,24 @@ derived availability logic and render prop injection.
 
 <div className="demoSection">
   <h3>Notify-Me Fallback CTA</h3>
-  <small className="subtle-attention-text">When selection is out of stock, primary switches from disabled Add to cart to an active Notify me flow.</small>
-  <EditProductModalStatefulDemo
-    editingItem={demoItemNotifyMe}
-    renderNotifications={({ isCurrentSkuAvailable }) => (
-      <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-        Sold out. Get notified or browse similar in-stock options.
-      </EditProductErrorNotification>
-    )}
-    renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
-      <EditProductPrimaryButton
-        label={isCurrentSkuAvailable ? 'Add to cart' : 'Notify me when available'}
-        disabled={false}
-        onClick={() =>
-          isCurrentSkuAvailable
-            ? alert('Added to cart!')
-            : alert('Back-in-stock notification registered!')
-        }
-      />
-    )}
-    renderSecondaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
-      <EditProductSecondaryCta
-        label={isCurrentSkuAvailable ? 'Go to product overview' : 'See similar in-stock'}
-        onClick={() =>
-          isCurrentSkuAvailable
-            ? alert('Navigating to product overview')
-            : alert('Opening similar in-stock options for selected size')
-        }
-      />
-    )}
+  <small>When selection is out of stock, primary switches from disabled Add to cart to an active Notify me flow.</small>
+  <LiveJsxPlayground
+    title="Notify-Me Fallback CTA Playground"
+    initialCode={notifyMeScenarioPlaygroundCode}
+    initialInitializationCode={notifyMeScenarioInitializationCode}
+    initialDataCode={defaultScenarioPlaygroundDataCode}
+    initializationVarName="initializationData"
+    initializationTitle="Initialization Data"
+    dataVarName="skuCombinationsResponse"
+    dataTitle="Product Variants Response"
+    scope={{
+      EditProductModal,
+      useEditProductModalDemo,
+      EditProductPrimaryButton,
+      EditProductSecondaryCta,
+      EditProductErrorNotification,
+      mockData,
+    }}
   />
 </div>
 

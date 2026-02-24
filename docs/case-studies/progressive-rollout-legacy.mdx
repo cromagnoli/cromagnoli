@@ -21,15 +21,15 @@ This implementation is intentionally documented in JavaScript (`.mjs`) instead o
 
 ## Problem to Solve
 
-We needed to ship a modern stack incrementally while keeping legacy pages stable and revenue-safe.
+I needed to ship a modern stack incrementally while keeping legacy pages stable and revenue-safe.
 
-We needed surgical control over rollout blast radius:
+I needed surgical control over rollout blast radius:
 
 1. Existing URLs could not change.
 2. Legacy had to remain the source of safety.
 3. Rollout had to be reversible instantly.
 4. Failures in NextGen had to degrade gracefully.
-5. Teams needed observability to prove routing decisions in real traffic.
+5. Observability had to be explicit to prove routing decisions in real traffic.
 
 ## Main Risks Covered
 
@@ -141,7 +141,7 @@ export const resolveRouteController = (legacyController, pathDebugId) => ({
 :::note Feature-flag route metadata (conceptual)
 ```js
 // In production, this route allowlist is controlled by the feature-flag platform.
-// For demo purposes, we keep it local and explicit.
+// For demo purposes, this implementation keeps it local and explicit.
 const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
 ```
 :::
@@ -361,7 +361,7 @@ If modern rendering fails at runtime, users are automatically moved to the legac
 ## Why JavaScript (No TypeScript) in This Case
 
 1. The source system being represented is legacy-first and JS-based.
-2. Preserving `.mjs` keeps parity with real migration constraints (team tooling, runtime conventions, file contracts).
+2. Preserving `.mjs` keeps parity with real migration constraints (tooling, runtime conventions, file contracts).
 3. The goal of this case study is architectural fidelity, not a language rewrite.
 4. A TypeScript conversion can be a future step, but it is intentionally decoupled from rollout-risk mitigation.
 
