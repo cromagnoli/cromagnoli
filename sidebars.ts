@@ -4,7 +4,19 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     { type: 'doc', id: 'index', label: 'Production-Proven Case Studies' },
-    { type: 'doc', id: 'case-studies/progressive-rollout-legacy', label: 'Progressive Rollout on Legacy Systems' },
+    {
+      type: 'category',
+      label: 'Progressive Rollout on Legacy Systems',
+      collapsed: false,
+      items: [
+        { type: 'doc', id: 'case-studies/progressive-rollout-legacy', label: 'Overview' },
+        {
+          type: 'link',
+          label: 'Live Demo',
+          href: '/cromagnoli/case-studies/progressive-rollout-legacy#live-demo',
+        },
+      ],
+    },
     {
       type: 'category',
       label: 'Stateless Configurable Modal',
