@@ -1,8 +1,3 @@
-export type Locale = {
-  lang: string;
-  countryCode: string;
-};
-
 export type ColorOption = {
   colorCode: string;
   displayName?: string;

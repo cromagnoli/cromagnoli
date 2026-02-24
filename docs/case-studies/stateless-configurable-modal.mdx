@@ -47,7 +47,6 @@ export const defaultScenarioPlaygroundCode = `() => {
   const {
     imageUrl,
     colorCode,
-    locale,
     onDismiss,
     handleAddToBagClick,
     handleNavigateProductDetails,
@@ -68,7 +67,6 @@ export const defaultScenarioPlaygroundCode = `() => {
       initialColorCode={colorCode}
       initialSize={initialSize}
       skuVariants={skuVariants}
-      locale={locale}
       onDismiss={onDismiss}
       renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
         <EditProductPrimaryButton
@@ -138,7 +136,6 @@ export const highVolumeScenarioPlaygroundCode = `() => {
   const {
     imageUrl,
     colorCode,
-    locale,
     onDismiss,
     handleAddToBagClick,
     handleNavigateProductDetails,
@@ -159,7 +156,6 @@ export const highVolumeScenarioPlaygroundCode = `() => {
       initialColorCode={colorCode}
       initialSize={initialSize}
       skuVariants={skuVariants}
-      locale={locale}
       onDismiss={onDismiss}
       renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
         <EditProductPrimaryButton
@@ -200,7 +196,6 @@ export const secondScenarioPlaygroundCode = `() => {
   const {
     imageUrl,
     colorCode,
-    locale,
     onDismiss,
     handleAddToBagClick,
     handleNavigateProductDetails,
@@ -221,7 +216,6 @@ export const secondScenarioPlaygroundCode = `() => {
       initialColorCode={colorCode}
       initialSize={initialSize}
       skuVariants={skuVariants}
-      locale={locale}
       onDismiss={onDismiss}
       renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
         <EditProductPrimaryButton
@@ -270,7 +264,6 @@ export const notifyMeScenarioPlaygroundCode = `() => {
   const {
     imageUrl,
     colorCode,
-    locale,
     onDismiss,
     initialSize,
     productName,
@@ -289,7 +282,6 @@ export const notifyMeScenarioPlaygroundCode = `() => {
       initialColorCode={colorCode}
       initialSize={initialSize}
       skuVariants={skuVariants}
-      locale={locale}
       onDismiss={onDismiss}
       renderNotifications={({ isCurrentSkuAvailable }) => (
         <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
@@ -454,7 +446,6 @@ derived availability logic and render prop injection.
     initialListPrice={firstSku.listPrice}
     initialSalePrice={firstSku.salePrice}
     skuVariants={{}}
-    locale={{ lang: 'en', countryCode: 'US' }}
     onDismiss={() => {}}
   />
 </div>
@@ -473,7 +464,6 @@ derived availability logic and render prop injection.
     initialListPrice={null}
     initialSalePrice={null}
     skuVariants={{}}
-    locale={{ lang: 'en', countryCode: 'US' }}
     onDismiss={() => {}}
   />
 </div>

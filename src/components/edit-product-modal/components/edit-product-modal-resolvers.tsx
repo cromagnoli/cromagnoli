@@ -82,7 +82,6 @@ export const resolveLoadingSecondChildRender = ({
   initialListPrice,
   initialSalePrice,
   renderLoadingSecondChildHeader,
-  renderLoadingSecondChildFooterExtra,
   renderLoadingSecondChild,
   renderSpinner,
   renderLoadingHeading,
@@ -93,7 +92,6 @@ export const resolveLoadingSecondChildRender = ({
   initialListPrice?: string | null;
   initialSalePrice?: string | null;
   renderLoadingSecondChildHeader?: () => React.ReactNode;
-  renderLoadingSecondChildFooterExtra?: () => React.ReactNode;
   renderLoadingSecondChild?: () => React.ReactNode;
   renderSpinner?: () => React.ReactNode;
   renderLoadingHeading?: () => React.ReactNode;
@@ -127,10 +125,7 @@ export const resolveLoadingSecondChildRender = ({
         </EditProductScrollableFrame>
         <EditProductStickyFrame
           enableStickySecondChildFooter={enableStickySecondChildFooter}
-        >
-          {isDefinedFn(renderLoadingSecondChildFooterExtra) &&
-            renderLoadingSecondChildFooterExtra()}
-        </EditProductStickyFrame>
+        />
       </>
     );
   }
