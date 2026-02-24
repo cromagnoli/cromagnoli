@@ -52,7 +52,6 @@ export type EditProductModalProps = {
   initialSize: string | null;
   initialListPrice?: string | null;
   initialSalePrice?: string | null;
-  currencyCode?: string | null;
   skuVariants?: SkuVariants | null;
   locale: Locale;
   onDismiss: (args: { event: React.SyntheticEvent; currentMatchingSku: MaybeSku | null }) => void;
@@ -118,7 +117,6 @@ const EditProductModal = ({
   initialSize = null,
   initialListPrice = null,
   initialSalePrice = null,
-  currencyCode = null,
   skuVariants = {},
   locale,
   onDismiss,
@@ -188,7 +186,7 @@ const EditProductModal = ({
         setColorSizeMapping(colorSizeMap);
       }
     },
-    [skuVariants, initialImageUrl, initialColorCode, initialSize, currencyCode]
+    [skuVariants, initialImageUrl, initialColorCode, initialSize]
   );
 
   const { colorToSizeMap = {}, sizeToColorMap = {} } = colorSizeMapping;
@@ -214,7 +212,6 @@ const EditProductModal = ({
       mainHeading,
       initialListPrice,
       initialSalePrice,
-      currencyCode,
       renderLoadingSecondChildHeader,
       renderLoadingSecondChildFooterExtra,
       renderLoadingSecondChild,
@@ -289,7 +286,6 @@ const EditProductModal = ({
 
   const secondChild = resolveSecondChildRender({
     mainHeading,
-    currencyCode,
     commonRenderArgs,
     restRenderArgs,
     renderSecondChildHeader,

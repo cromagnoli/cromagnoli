@@ -50,7 +50,6 @@ const EditProductModalStatefulDemo = ({
   fetchDelayMs,
 }: Props) => {
   const {
-    currencyCode,
     imageUrl,
     colorCode,
     locale,
@@ -112,7 +111,6 @@ const EditProductModalStatefulDemo = ({
       initialImageUrl={imageUrl}
       initialColorCode={colorCode}
       initialSize={initialSize}
-      currencyCode={currencyCode}
       skuVariants={skuVariants}
       locale={locale}
       onDismiss={onDismiss}

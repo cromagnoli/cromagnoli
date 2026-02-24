@@ -19,10 +19,6 @@ type TrackUserInteractionArgs = {
   activeSku: MaybeSku | null | undefined;
 };
 
-type PriceInfo = {
-  currencyCode: string;
-};
-
 type UseEditProductModalDemoArgs = {
   editingItem: EditingItem;
   onModalDismiss: () => void;
@@ -51,10 +47,7 @@ const fakeModalDataFetch = ({
   new Promise((resolve) => setTimeout(() => resolve(responseData), delayMs));
 
 const useLocaleStandard = (): Locale => ({ lang: "en", countryCode: "US" });
-const usePriceInfo = (): PriceInfo => ({ currencyCode: "USD" });
 const getParsedLocale = (): Locale => ({ lang: "en", countryCode: "US" });
-const getPriceProps = (priceInfo?: PriceInfo) =>
-  priceInfo ?? { currencyCode: "USD" };
 const useRouter = () => ({ push: () => {} });
 
 export const useEditProductModalDemo = ({
@@ -64,14 +57,12 @@ export const useEditProductModalDemo = ({
   fetchDelayMs = 1200,
 }: UseEditProductModalDemoArgs) => {
   const standardLocale = useLocaleStandard();
-  const priceInfo = usePriceInfo();
   const locale = getParsedLocale();
   const router = useRouter();
   const [skuVariants, setSkuVariants] = useState<SkuVariants>({});
   const [productSummary, setProductSummary] = useState<ProductSummary>({});
   const isMount = useRef(true);
 
-  const { currencyCode } = getPriceProps(priceInfo);
   const { productName, productUrl, imageUrl, colorCode, size } = editingItem;
   void productUrl;
   void router;
@@ -180,7 +171,6 @@ export const useEditProductModalDemo = ({
   };
 
   return {
-    currencyCode,
     imageUrl,
     colorCode,
     locale,

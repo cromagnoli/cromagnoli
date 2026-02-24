@@ -7,8 +7,6 @@ type Props = {
   className?: string;
   listPrice?: string | null;
   salePrice?: string | null;
-  currencyCode?: string | null;
-  showCurrencyCode?: boolean;
   locale?: Locale | null;
 };
 

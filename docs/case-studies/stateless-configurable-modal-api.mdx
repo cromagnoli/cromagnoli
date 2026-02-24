@@ -60,7 +60,6 @@ Tradeoff:
 | --- | --- | --- | --- |
 | `initialListPrice` | `string \| null` | `null` | Header fallback list price during loading/initial state. |
 | `initialSalePrice` | `string \| null` | `null` | Header fallback sale price during loading/initial state. |
-| `currencyCode` | `string \| null` | `null` | Currency for default price rendering. |
 | `skuVariants` | `SkuVariants \| null` | `{}` | Source of colors, sizes, SKU combinations, image groups. |
 | `enableStickySecondChildFooter` | `boolean` | `true` | Controls sticky behavior of right-panel footer frame. |
 
@@ -174,7 +173,6 @@ import {
   initialImageUrl={item.imageUrl}
   initialColorCode={item.colorCode}
   initialSize={item.size}
-  currencyCode="USD"
   skuVariants={data.skuVariants}
   locale={{ lang: 'en', countryCode: 'US' }}
   onDismiss={({ currentMatchingSku }) => {

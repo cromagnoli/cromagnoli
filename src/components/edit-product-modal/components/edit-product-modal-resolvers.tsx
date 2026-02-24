@@ -93,7 +93,6 @@ export const resolveLoadingSecondChildRender = ({
   mainHeading,
   initialListPrice,
   initialSalePrice,
-  currencyCode,
   renderLoadingSecondChildHeader,
   renderLoadingSecondChildFooterExtra,
   renderLoadingSecondChild,
@@ -107,7 +106,6 @@ export const resolveLoadingSecondChildRender = ({
   mainHeading: string;
   initialListPrice?: string | null;
   initialSalePrice?: string | null;
-  currencyCode?: string | null;
   renderLoadingSecondChildHeader?: (args: CommonRenderArgs) => React.ReactNode;
   renderLoadingSecondChildFooterExtra?: (args: CommonRenderArgs) => React.ReactNode;
   renderLoadingSecondChild?: (args: CommonRenderArgs) => React.ReactNode;
@@ -132,7 +130,6 @@ export const resolveLoadingSecondChildRender = ({
               headingChildren={mainHeading}
               listPrice={initialListPrice}
               salePrice={initialSalePrice}
-              currencyCode={currencyCode}
               locale={commonRenderArgs?.locale}
               renderHeading={renderLoadingHeading}
               renderAfterHeading={renderLoadingAfterHeading}
@@ -161,7 +158,6 @@ export const resolveLoadingSecondChildRender = ({
 
 export const resolveSecondChildRender = ({
   mainHeading,
-  currencyCode,
   renderSecondChildHeader,
   renderAttrsSelectors,
   renderAfterAttrsSelectors,
@@ -177,7 +173,6 @@ export const resolveSecondChildRender = ({
   enableStickySecondChildFooter,
 }: {
   mainHeading: string;
-  currencyCode?: string | null;
   renderSecondChildHeader?: (args: CommonRenderArgs & RestRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
   renderAttrsSelectors?: (args: CommonRenderArgs & RestRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
   renderAfterAttrsSelectors?: (args: CommonRenderArgs & RestRenderArgs) => React.ReactNode;
@@ -338,7 +333,6 @@ export const resolveSecondChildRender = ({
               headingChildren={mainHeading}
               listPrice={currentMatchingSku?.listPrice}
               salePrice={currentMatchingSku?.salePrice}
-              currencyCode={currencyCode}
               locale={commonRenderArgs?.locale}
               renderHeading={renderHeading}
               renderAfterHeading={renderAfterHeading}

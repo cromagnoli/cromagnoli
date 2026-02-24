@@ -9,7 +9,6 @@ type Props = {
   headingChildren?: React.ReactNode;
   listPrice?: string | null;
   salePrice?: string | null;
-  currencyCode?: string | null;
   locale?: Locale | null;
   renderHeading?: () => React.ReactNode;
   renderAfterHeading?: () => React.ReactNode;
@@ -20,7 +19,6 @@ const EditProductHeader = ({
   headingChildren = null,
   listPrice = null,
   salePrice = null,
-  currencyCode = null,
   locale = null,
   renderHeading = null,
   renderAfterHeading = null,
@@ -41,7 +39,6 @@ const EditProductHeader = ({
       <EditProductPrice
         listPrice={listPrice}
         salePrice={salePrice}
-        currencyCode={currencyCode}
         locale={locale}
       />
     )}
