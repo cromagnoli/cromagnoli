@@ -93,7 +93,6 @@ export type EditProductModalProps = {
   }) => React.ReactNode;
   renderFirstChild?: (args: EditProductModalRenderArgs) => React.ReactNode;
   renderSecondChild?: (args: EditProductModalRenderArgs) => React.ReactNode;
-  renderSpinner?: () => React.ReactNode;
   renderHeading?: () => React.ReactNode;
   renderAfterHeading?: () => React.ReactNode;
   renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
@@ -120,7 +119,6 @@ const EditProductModal = ({
   renderSecondaryCta = null,
   renderFirstChild = null,
   renderSecondChild = null,
-  renderSpinner = null,
   renderHeading = null,
   renderAfterHeading = null,
   renderPrice = null,
@@ -197,7 +195,6 @@ const EditProductModal = ({
       initialSalePrice,
       renderLoadingSecondChildHeader,
       renderLoadingSecondChild,
-      renderSpinner,
       renderPrice,
       enableStickySecondChildFooter,
     });

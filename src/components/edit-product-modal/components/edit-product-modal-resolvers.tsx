@@ -83,7 +83,6 @@ export const resolveLoadingSecondChildRender = ({
   initialSalePrice,
   renderLoadingSecondChildHeader,
   renderLoadingSecondChild,
-  renderSpinner,
   renderPrice,
   enableStickySecondChildFooter,
 }: {
@@ -92,7 +91,6 @@ export const resolveLoadingSecondChildRender = ({
   initialSalePrice?: string | null;
   renderLoadingSecondChildHeader?: () => React.ReactNode;
   renderLoadingSecondChild?: () => React.ReactNode;
-  renderSpinner?: () => React.ReactNode;
   renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
   enableStickySecondChildFooter?: boolean;
 }) => {
@@ -114,11 +112,7 @@ export const resolveLoadingSecondChildRender = ({
             />
           )}
 
-          {isDefinedFn(renderSpinner) ? (
-            renderSpinner()
-          ) : (
-            <LoadingIndicator className={styles.loadingIndicator} color="blue" />
-          )}
+          <LoadingIndicator className={styles.loadingIndicator} color="blue" />
         </EditProductScrollableFrame>
         <EditProductStickyFrame
           enableStickySecondChildFooter={enableStickySecondChildFooter}
