@@ -55,7 +55,6 @@ export type EditProductModalProps = {
   enableStickySecondChildFooter?: boolean;
   renderLoadingSecondChild?: () => React.ReactNode;
   renderLoadingSecondChildHeader?: () => React.ReactNode;
-  renderLoadingPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
   renderSecondChildHeader?: (args: EditProductModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
   renderAttrsSelectors?: (args: EditProductModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
   renderAfterAttrsSelectors?: (args: EditProductModalRenderArgs) => React.ReactNode;
@@ -113,7 +112,6 @@ const EditProductModal = ({
   enableStickySecondChildFooter = true,
   renderLoadingSecondChild = null,
   renderLoadingSecondChildHeader = null,
-  renderLoadingPrice = null,
   renderSecondChildHeader = null,
   renderAttrsSelectors = null,
   renderAfterAttrsSelectors = null,
@@ -200,7 +198,7 @@ const EditProductModal = ({
       renderLoadingSecondChildHeader,
       renderLoadingSecondChild,
       renderSpinner,
-      renderLoadingPrice,
+      renderPrice,
       enableStickySecondChildFooter,
     });
 

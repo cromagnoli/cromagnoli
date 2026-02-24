@@ -84,7 +84,7 @@ export const resolveLoadingSecondChildRender = ({
   renderLoadingSecondChildHeader,
   renderLoadingSecondChild,
   renderSpinner,
-  renderLoadingPrice,
+  renderPrice,
   enableStickySecondChildFooter,
 }: {
   mainHeading: string;
@@ -93,7 +93,7 @@ export const resolveLoadingSecondChildRender = ({
   renderLoadingSecondChildHeader?: () => React.ReactNode;
   renderLoadingSecondChild?: () => React.ReactNode;
   renderSpinner?: () => React.ReactNode;
-  renderLoadingPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
+  renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
   enableStickySecondChildFooter?: boolean;
 }) => {
   let secondChild;
@@ -110,7 +110,7 @@ export const resolveLoadingSecondChildRender = ({
               headingChildren={mainHeading}
               listPrice={initialListPrice}
               salePrice={initialSalePrice}
-              renderPrice={renderLoadingPrice}
+              renderPrice={renderPrice}
             />
           )}
 
