@@ -1,14 +1,14 @@
 import React from "react";
 import { LoadingIndicator } from "../../stub-ui-library/loading-indicator/loading-indicator";
 import {
-  EditProductHeader,
-  EditProductImages,
-  EditProductAttrsSelectors,
-  EditProductStickyFrame,
-  EditProductScrollableFrame,
+  EditHeader,
+  EditImages,
+  EditAttrsSelectors,
+  EditStickyFrame,
+  EditScrollableFrame,
 } from "./partials";
 import { isDefinedFn, getMatchingSku } from "../utils/edit-product-modal-utils";
-import styles from "./edit-product-modal.module.scss";
+import styles from "./stateless-product-edit-modal.module.scss";
 import {
   ColorOption,
   ColorToSizeMap,
@@ -48,7 +48,7 @@ export const resolveLoadingFirstChildRender = ({
   return isDefinedFn(renderFirstChild) ? (
     renderFirstChild()
   ) : (
-    <EditProductImages
+    <EditImages
       imageUrls={currentImagesUrls}
       imagesAlt={getImagesAlt(productName)}
     />
@@ -70,7 +70,7 @@ export const resolveFirstChildRender = ({
   return isDefinedFn(renderFirstChild) ? (
     renderFirstChild(firstChildRenderArgs)
   ) : (
-    <EditProductImages
+    <EditImages
       imageUrls={currentImagesUrls}
       imagesAlt={getImagesAlt(productName)}
     />
@@ -100,11 +100,11 @@ export const resolveLoadingSecondChildRender = ({
   } else {
     secondChild = (
       <>
-        <EditProductScrollableFrame>
+        <EditScrollableFrame>
           {isDefinedFn(renderLoadingSecondChildHeader) ? (
             renderLoadingSecondChildHeader()
           ) : (
-            <EditProductHeader
+            <EditHeader
               headingChildren={mainHeading}
               listPrice={initialListPrice}
               salePrice={initialSalePrice}
@@ -113,8 +113,8 @@ export const resolveLoadingSecondChildRender = ({
           )}
 
           <LoadingIndicator className={styles.loadingIndicator} color="blue" />
-        </EditProductScrollableFrame>
-        <EditProductStickyFrame
+        </EditScrollableFrame>
+        <EditStickyFrame
           enableStickySecondChildFooter={enableStickySecondChildFooter}
         />
       </>
@@ -263,7 +263,7 @@ export const resolveSecondChildRender = ({
     secondChild = renderSecondChild(secondChildRenderArgs);
   } else {
     const defaultAttrsSelectors = (
-      <EditProductAttrsSelectors
+      <EditAttrsSelectors
         currentColorCode={currentColorDetails?.colorCode}
         currentColorName={currentColorDetails?.displayName}
         currentSize={currentSizeDetails?.size}
@@ -280,11 +280,11 @@ export const resolveSecondChildRender = ({
 
     secondChild = (
       <>
-        <EditProductScrollableFrame>
+        <EditScrollableFrame>
           {isDefinedFn(renderSecondChildHeader) ? (
             renderSecondChildHeader(secondChildHeaderRenderArgs)
           ) : (
-            <EditProductHeader
+            <EditHeader
               headingChildren={mainHeading}
               listPrice={currentMatchingSku?.listPrice}
               salePrice={currentMatchingSku?.salePrice}
@@ -300,8 +300,8 @@ export const resolveSecondChildRender = ({
 
           {isDefinedFn(renderAfterAttrsSelectors) &&
             renderAfterAttrsSelectors(afterSizeSlotRenderArgs)}
-        </EditProductScrollableFrame>
-        <EditProductStickyFrame
+        </EditScrollableFrame>
+        <EditStickyFrame
           enableStickySecondChildFooter={enableStickySecondChildFooter}
         >
           {isDefinedFn(renderNotifications) &&
@@ -310,7 +310,7 @@ export const resolveSecondChildRender = ({
           {isDefinedFn(renderPrimaryCta) && renderPrimaryCta(ctaRenderArgs)}
 
           {isDefinedFn(renderSecondaryCta) && renderSecondaryCta(ctaRenderArgs)}
-        </EditProductStickyFrame>
+        </EditStickyFrame>
       </>
     );
   }

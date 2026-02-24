@@ -1,6 +1,6 @@
 import React from "react";
 import cs from "classnames";
-import styles from "./edit-product-ctas.module.scss";
+import styles from "./edit-ctas.module.scss";
 
 type Props = {
   label: React.ReactNode;
@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-const EditProductPrimaryButton = ({
+const EditPrimaryButton = ({
   disabled = false,
   onClick,
   label,
@@ -25,4 +25,4 @@ const EditProductPrimaryButton = ({
   </button>
 );
 
-export default EditProductPrimaryButton;
+export default EditPrimaryButton;

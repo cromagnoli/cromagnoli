@@ -1,7 +1,13 @@
-import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import StatelessProductEditModal from '@site/src/components/stateless-product-edit-modal/components/stateless-product-edit-modal';
+import { useStatelessProductEditModalDemo } from '@site/src/components/demo-modal/use-edit-product-modal-demo';
 import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
 import mockData from '@site/src/components/demo-modal/mockData';
-import { EditProductErrorNotification, EditProductWarningNotification } from '@site/src/components/edit-product-modal/components/partials';
+import {
+  EditErrorNotification,
+  EditWarningNotification,
+  EditPrimaryButton,
+  EditSecondaryCta,
+} from '@site/src/components/stateless-product-edit-modal/components/partials';
 
 export const secondSku =
   mockData.skuVariants.availableSkus.find(
@@ -16,20 +22,61 @@ export const demoItemAlt = {
   size: secondSku.size,
 };
 
-export const componentCode = String.raw`<EditProductModalStatefulDemo
-  editingItem={initializationData.editingItem}
-  mockModalData={skuCombinationsResponse}
-  renderNotifications={({ isCurrentSkuAvailable, currentMatchingSkuId }) => (
-    <>
-      <EditProductWarningNotification visible={currentMatchingSkuId === "5"}>
-        Hurry up! Limited units remaining!
-      </EditProductWarningNotification>
-      <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-        Sold out. Please select another combination.
-      </EditProductErrorNotification>
-    </>
-  )}
-/>`;
+export const componentCode = String.raw`(() => {
+  const LowStockScenarioDemo = () => {
+    const {
+      imageUrl,
+      colorCode,
+      onDismiss,
+      handleAddToBagClick,
+      handleNavigateProductDetails,
+      initialSize,
+      productName,
+      skuVariants,
+    } = useStatelessProductEditModalDemo({
+      editingItem: initializationData.editingItem,
+      onModalDismiss: () => {},
+      mockModalData: skuCombinationsResponse,
+    });
+
+    return (
+      <StatelessProductEditModal
+        mainHeading={productName}
+        productName={productName}
+        initialImageUrl={imageUrl}
+        initialColorCode={colorCode}
+        initialSize={initialSize}
+        skuVariants={skuVariants}
+        onDismiss={onDismiss}
+        renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
+          <EditPrimaryButton
+            label="Add to cart"
+            disabled={!isCurrentSkuAvailable}
+            onClick={() => handleAddToBagClick(currentMatchingSku)}
+          />
+        )}
+        renderSecondaryCta={({ currentMatchingSku }) => (
+          <EditSecondaryCta
+            label="Go to product overview"
+            onClick={() => handleNavigateProductDetails(currentMatchingSku)}
+          />
+        )}
+        renderNotifications={({ isCurrentSkuAvailable, currentMatchingSkuId }) => (
+          <>
+            <EditWarningNotification visible={currentMatchingSkuId === "5"}>
+              Hurry up! Limited units remaining!
+            </EditWarningNotification>
+            <EditErrorNotification visible={!isCurrentSkuAvailable}>
+              Sold out. Please select another combination.
+            </EditErrorNotification>
+          </>
+        )}
+      />
+    );
+  };
+
+  return <LowStockScenarioDemo />;
+})()`;
 
 export const initializationCode = String.raw`(() => {
   const secondSku =
@@ -92,9 +139,12 @@ export const defaultScenarioPlaygroundDataCode = String.raw`{
   dataVarName="skuCombinationsResponse"
   dataTitle="SKU Combinations Response"
   scope={{
-    EditProductModalStatefulDemo,
-    EditProductErrorNotification,
-    EditProductWarningNotification,
+    StatelessProductEditModal,
+    useStatelessProductEditModalDemo,
+    EditErrorNotification,
+    EditWarningNotification,
+    EditPrimaryButton,
+    EditSecondaryCta,
     mockData,
   }}
 />

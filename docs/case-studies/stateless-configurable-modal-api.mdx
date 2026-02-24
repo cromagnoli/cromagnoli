@@ -1,14 +1,14 @@
 # Stateless Edit Product Modal API
 
-This page documents the public API of `EditProductModal` as consumed in this portfolio demo.
+This page documents the public API of `StatelessProductEditModal` as consumed in this portfolio demo.
 
 ## Component
 
 ```tsx
-import EditProductModal from '@site/src/components/edit-product-modal/components/edit-product-modal';
+import StatelessProductEditModal from '@site/src/components/stateless-product-edit-modal/components/stateless-product-edit-modal';
 ```
 
-`EditProductModal` is stateless regarding remote data fetching.  
+`StatelessProductEditModal` is stateless regarding remote data fetching.  
 The consumer provides initial state + `skuVariants`, and injects behavior/UI through render props.
 
 ## Architectural Rationale
@@ -142,26 +142,26 @@ For composing render props, these are available from:
 
 ```ts
 import {
-  EditProductPrimaryButton,
-  EditProductSecondaryCta,
-  EditProductHeader,
-  EditProductHeading,
-  EditProductPrice,
-  EditProductImages,
-  EditProductErrorNotification,
-  EditProductWarningNotification,
-  EditProductColorSelector,
-  EditProductSizeSelector,
-  EditProductAttrsSelectors,
-  EditProductScrollableFrame,
-  EditProductStickyFrame,
-} from '@site/src/components/edit-product-modal/components/partials';
+  EditPrimaryButton,
+  EditSecondaryCta,
+  EditHeader,
+  EditHeading,
+  EditPrice,
+  EditImages,
+  EditErrorNotification,
+  EditWarningNotification,
+  EditColorSelector,
+  EditSizeSelector,
+  EditAttrsSelectors,
+  EditScrollableFrame,
+  EditStickyFrame,
+} from '@site/src/components/stateless-product-edit-modal/components/partials';
 ```
 
 ## Minimal Usage Example
 
 ```tsx
-<EditProductModal
+<StatelessProductEditModal
   mainHeading="BuyMeNot Sneakers"
   productName="BuyMeNot Sneakers"
   initialImageUrl={item.imageUrl}

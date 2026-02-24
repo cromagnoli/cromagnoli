@@ -1,4 +1,4 @@
-import { SkuVariants as ModalSkuVariants } from "../edit-product-modal/types";
+import { SkuVariants as ModalSkuVariants } from "../stateless-product-edit-modal/types";
 import sneakersFfffff from "@site/static/images/sneakers-ffffff.png";
 import sneakersFfffff_2 from "@site/static/images/sneakers-ffffff-2.png";
 import sneakers444444 from "@site/static/images/sneakers-444444.png";

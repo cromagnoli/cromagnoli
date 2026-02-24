@@ -1,6 +1,6 @@
 import React from "react";
 import cs from "classnames";
-import styles from "./edit-product-header.module.scss";
+import styles from "./edit-header.module.scss";
 
 type Props = {
   className?: string;
@@ -9,7 +9,7 @@ type Props = {
 };
 
 // Simplification for demo – The real world implementation supports list and sale prices
-const EditProductPrice = ({ listPrice, salePrice, className }: Props) => {
+const EditPrice = ({ listPrice, salePrice, className }: Props) => {
   if (!salePrice && !listPrice) {
     return null;
   }
@@ -28,4 +28,4 @@ const EditProductPrice = ({ listPrice, salePrice, className }: Props) => {
   );
 };
 
-export default EditProductPrice;
+export default EditPrice;

@@ -1,19 +1,19 @@
 import React from "react";
-import EditProductModal, {
-  EditProductModalProps,
-} from "../edit-product-modal/components/edit-product-modal";
+import StatelessProductEditModal, {
+  StatelessProductEditModalProps,
+} from "../stateless-product-edit-modal/components/stateless-product-edit-modal";
 import {
-  EditProductPrimaryButton,
-  EditProductSecondaryCta,
-  EditProductColorSelector,
-  EditProductSizeSelector,
-  EditProductErrorNotification,
-} from "../edit-product-modal/components/partials";
+  EditPrimaryButton,
+  EditSecondaryCta,
+  EditColorSelector,
+  EditSizeSelector,
+  EditErrorNotification,
+} from "../stateless-product-edit-modal/components/partials";
 import {
   configurePanelByCurrentSelection,
   isDefinedFn,
-} from "../edit-product-modal/utils/edit-product-modal-utils";
-import { useEditProductModalDemo, EditingItem } from "./use-edit-product-modal-demo";
+} from "../stateless-product-edit-modal/utils/edit-product-modal-utils";
+import { useStatelessProductEditModalDemo, EditingItem } from "./use-edit-product-modal-demo";
 import { ModalMockData } from "./mockData";
 
 const PRIMARY_BUTTON_LABEL = "Add to cart";
@@ -21,26 +21,26 @@ const SECONDARY_CTA_LABEL = "Go to product overview";
 const OOS_NOTIFICATION = "Sold out. Please select another combination.";
 
 const defaultRenderNotifications: NonNullable<
-  EditProductModalProps["renderNotifications"]
+  StatelessProductEditModalProps["renderNotifications"]
 > = ({ isCurrentSkuAvailable }) => (
-  <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+  <EditErrorNotification visible={!isCurrentSkuAvailable}>
     {OOS_NOTIFICATION}
-  </EditProductErrorNotification>
+  </EditErrorNotification>
 );
 
 type Props = {
   editingItem: EditingItem;
   renderAfterHeading?: () => React.ReactNode;
-  renderAfterAttrsSelectors?: EditProductModalProps["renderAfterAttrsSelectors"];
-  renderNotifications?: EditProductModalProps["renderNotifications"];
-  renderPrimaryCta?: EditProductModalProps["renderPrimaryCta"];
-  renderSecondaryCta?: EditProductModalProps["renderSecondaryCta"];
+  renderAfterAttrsSelectors?: StatelessProductEditModalProps["renderAfterAttrsSelectors"];
+  renderNotifications?: StatelessProductEditModalProps["renderNotifications"];
+  renderPrimaryCta?: StatelessProductEditModalProps["renderPrimaryCta"];
+  renderSecondaryCta?: StatelessProductEditModalProps["renderSecondaryCta"];
   onModalDismiss?: () => void;
   mockModalData?: ModalMockData;
   fetchDelayMs?: number;
 };
 
-const EditProductModalStatefulDemo = ({
+const StatelessProductEditModalStatefulDemo = ({
   editingItem,
   renderAfterHeading,
   renderAfterAttrsSelectors,
@@ -61,7 +61,7 @@ const EditProductModalStatefulDemo = ({
     productName,
     skuVariants,
     trackColorSelection,
-  } = useEditProductModalDemo({
+  } = useStatelessProductEditModalDemo({
     editingItem,
     onModalDismiss,
     mockModalData,
@@ -69,9 +69,9 @@ const EditProductModalStatefulDemo = ({
   });
 
   const defaultRenderPrimaryCta: NonNullable<
-    EditProductModalProps["renderPrimaryCta"]
+    StatelessProductEditModalProps["renderPrimaryCta"]
   > = ({ isCurrentSkuAvailable, currentMatchingSku }) => (
-    <EditProductPrimaryButton
+    <EditPrimaryButton
       label={PRIMARY_BUTTON_LABEL}
       disabled={!isCurrentSkuAvailable}
       onClick={() => handleAddToBagClick(currentMatchingSku)}
@@ -79,14 +79,14 @@ const EditProductModalStatefulDemo = ({
   );
 
   const defaultRenderSecondaryCta: NonNullable<
-    EditProductModalProps["renderSecondaryCta"]
+    StatelessProductEditModalProps["renderSecondaryCta"]
   > = ({ currentMatchingSku }) => {
     const onClick = () => {
       handleNavigateProductDetails(currentMatchingSku);
     };
 
     return (
-      <EditProductSecondaryCta
+      <EditSecondaryCta
         label={SECONDARY_CTA_LABEL}
         onClick={onClick}
       />
@@ -106,7 +106,7 @@ const EditProductModalStatefulDemo = ({
     : defaultRenderSecondaryCta;
 
   return (
-    <EditProductModal
+    <StatelessProductEditModal
       mainHeading={productName}
       productName={productName}
       initialImageUrl={imageUrl}
@@ -149,13 +149,13 @@ const EditProductModalStatefulDemo = ({
 
         return (
           <>
-            <EditProductColorSelector
+            <EditColorSelector
               currentName={currentColorDetails?.displayName}
               currentIndex={currentColorIndex}
               selectorState={colorSelectorState}
               onSelectCallback={setCurrentColorIndex}
             />
-            <EditProductSizeSelector
+            <EditSizeSelector
               currentSize={currentSizeDetails?.size}
               currentIndex={currentSizeIndex}
               selectorState={sizeSelectorState}
@@ -170,4 +170,4 @@ const EditProductModalStatefulDemo = ({
   );
 };
 
-export default EditProductModalStatefulDemo;
+export default StatelessProductEditModalStatefulDemo;

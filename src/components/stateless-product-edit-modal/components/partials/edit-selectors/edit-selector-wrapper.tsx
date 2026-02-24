@@ -1,7 +1,7 @@
 import React from "react";
 import { ButtonTileGroup } from "../../../../stub-ui-library/button-tile-group/button-tile-group";
 import cs from "classnames";
-import sharedStyles from "./edit-product-selectors-shared.module.scss";
+import sharedStyles from "./edit-selectors-shared.module.scss";
 
 type Props = {
   type: string;
@@ -13,7 +13,7 @@ type Props = {
   extraGroupClassName?: string;
 };
 
-const EditProductSelectorWrapper = ({
+const EditSelectorWrapper = ({
   type,
   label,
   children,
@@ -43,4 +43,4 @@ const EditProductSelectorWrapper = ({
   );
 };
 
-export default EditProductSelectorWrapper;
+export default EditSelectorWrapper;

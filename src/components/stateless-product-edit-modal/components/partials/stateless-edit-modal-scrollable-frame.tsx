@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import styles from "../edit-product-modal.module.scss";
+import styles from "../stateless-product-edit-modal.module.scss";
 
 type Props = {
   children?: React.ReactNode;
 };
 
-const EditProductScrollableFrame = ({ children = null }: Props) => {
+const EditScrollableFrame = ({ children = null }: Props) => {
   const frameRef = useRef<HTMLDivElement | null>(null);
   const [hasOverflow, setHasOverflow] = useState(false);
 
@@ -41,4 +41,4 @@ const EditProductScrollableFrame = ({ children = null }: Props) => {
   ) : null;
 };
 
-export default EditProductScrollableFrame;
+export default EditScrollableFrame;

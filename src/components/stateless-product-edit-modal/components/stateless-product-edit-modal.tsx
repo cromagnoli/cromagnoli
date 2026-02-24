@@ -11,7 +11,7 @@ import {
   resolveLoadingFirstChildRender,
   resolveLoadingSecondChildRender,
   resolveSecondChildRender,
-} from "./edit-product-modal-resolvers";
+} from "./stateless-product-edit-modal-resolvers";
 import SplitViewModal from "../../stub-ui-library/split-view-modal/split-view-modal";
 import {
   ColorOption,
@@ -22,9 +22,9 @@ import {
   Sku,
   SkuVariants,
 } from "../types";
-import styles from "./edit-product-modal.module.scss";
+import styles from "./stateless-product-edit-modal.module.scss";
 
-export type EditProductModalRenderArgs = {
+export type StatelessProductEditModalRenderArgs = {
   currentColorIndex: number;
   prevColorIndex: number | undefined;
   currentSizeIndex: number;
@@ -42,7 +42,7 @@ export type EditProductModalRenderArgs = {
   currentSizeDetails: SizeOption | undefined;
 };
 
-export type EditProductModalProps = {
+export type StatelessProductEditModalProps = {
   mainHeading: string;
   productName: string;
   initialImageUrl: string | null;
@@ -55,9 +55,9 @@ export type EditProductModalProps = {
   enableStickySecondChildFooter?: boolean;
   renderLoadingSecondChild?: () => React.ReactNode;
   renderLoadingSecondChildHeader?: () => React.ReactNode;
-  renderSecondChildHeader?: (args: EditProductModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
-  renderAttrsSelectors?: (args: EditProductModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
-  renderAfterAttrsSelectors?: (args: EditProductModalRenderArgs) => React.ReactNode;
+  renderSecondChildHeader?: (args: StatelessProductEditModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
+  renderAttrsSelectors?: (args: StatelessProductEditModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
+  renderAfterAttrsSelectors?: (args: StatelessProductEditModalRenderArgs) => React.ReactNode;
   renderNotifications?: (args: {
     isCurrentSkuAvailable: boolean | undefined;
     currentMatchingSkuId: string | undefined;
@@ -91,14 +91,14 @@ export type EditProductModalProps = {
     prevSizeIndex: number | undefined;
     currentMatchingSku: MaybeSku;
   }) => React.ReactNode;
-  renderFirstChild?: (args: EditProductModalRenderArgs) => React.ReactNode;
-  renderSecondChild?: (args: EditProductModalRenderArgs) => React.ReactNode;
+  renderFirstChild?: (args: StatelessProductEditModalRenderArgs) => React.ReactNode;
+  renderSecondChild?: (args: StatelessProductEditModalRenderArgs) => React.ReactNode;
   renderHeading?: () => React.ReactNode;
   renderAfterHeading?: () => React.ReactNode;
   renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
 };
 
-const EditProductModal = ({
+const StatelessProductEditModal = ({
   mainHeading = "",
   productName = "",
   initialImageUrl = null,
@@ -122,7 +122,7 @@ const EditProductModal = ({
   renderHeading = null,
   renderAfterHeading = null,
   renderPrice = null,
-}: EditProductModalProps) => {
+}: StatelessProductEditModalProps) => {
   const [colorSizeMapping, setColorSizeMapping] = useState<{
     colorToSizeMap?: ColorToSizeMap;
     sizeToColorMap?: SizeToColorMap;
@@ -289,4 +289,4 @@ const EditProductModal = ({
   );
 };
 
-export default EditProductModal;
+export default StatelessProductEditModal;

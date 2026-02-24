@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import mockData from "./mockData";
-import { MaybeSku, SkuVariants } from "../edit-product-modal/types";
+import { MaybeSku, SkuVariants } from "../stateless-product-edit-modal/types";
 import { ModalMockData } from "./mockData";
 
 export type ProductSummary = Record<string, unknown>;
@@ -19,7 +19,7 @@ type TrackUserInteractionArgs = {
   activeSku: MaybeSku | null | undefined;
 };
 
-type UseEditProductModalDemoArgs = {
+type UseStatelessProductEditModalDemoArgs = {
   editingItem: EditingItem;
   onModalDismiss: () => void;
   mockModalData?: ModalMockData;
@@ -48,12 +48,12 @@ const fakeModalDataFetch = ({
 
 const useRouter = () => ({ push: () => {} });
 
-export const useEditProductModalDemo = ({
+export const useStatelessProductEditModalDemo = ({
   editingItem,
   onModalDismiss,
   mockModalData = mockData,
   fetchDelayMs = 1200,
-}: UseEditProductModalDemoArgs) => {
+}: UseStatelessProductEditModalDemoArgs) => {
   const router = useRouter();
   const [skuVariants, setSkuVariants] = useState<SkuVariants>({});
   const [productSummary, setProductSummary] = useState<ProductSummary>({});

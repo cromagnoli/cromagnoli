@@ -3,7 +3,7 @@ import cs from "classnames";
 import { Carousel } from "../../../../stub-ui-library/carousel/carousel";
 import ImageWithFallback from "../../../../stub-ui-library/image-with-fallback";
 
-import styles from "./edit-product-carousel.module.scss";
+import styles from "./edit-carousel.module.scss";
 
 type Props = {
   imageUrls: Array<string | null | undefined>;
@@ -12,7 +12,7 @@ type Props = {
   preloadedImages?: number;
 };
 
-const EditProductCarousel = ({
+const EditCarousel = ({
   imageUrls,
   imagesAlt = "Carousel image",
   fallbackElement = <></>,
@@ -64,4 +64,4 @@ const EditProductCarousel = ({
   );
 };
 
-export default EditProductCarousel;
+export default EditCarousel;

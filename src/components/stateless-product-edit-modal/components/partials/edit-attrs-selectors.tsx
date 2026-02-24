@@ -1,13 +1,13 @@
 import React from "react";
-import EditProductColorSelector from "./edit-product-color-selector";
-import EditProductSizeSelector from "./edit-product-size-selector";
-import { configurePanelByCurrentSelection } from "../../../utils/edit-product-modal-utils";
+import EditColorSelector from "./edit-selectors/edit-color-selector";
+import EditSizeSelector from "./edit-selectors/edit-size-selector";
+import { configurePanelByCurrentSelection } from "../../utils/edit-product-modal-utils";
 import {
   ColorOption,
   ColorToSizeMap,
   SizeOption,
   SizeToColorMap,
-} from "../../../types";
+} from "../../types";
 
 type Props = {
   currentColorCode?: string;
@@ -23,7 +23,7 @@ type Props = {
   sizeToColorMap: SizeToColorMap;
 };
 
-const EditProductAttrsSelectors = ({
+const EditAttrsSelectors = ({
   currentColorCode,
   currentColorName,
   currentSize,
@@ -48,13 +48,13 @@ const EditProductAttrsSelectors = ({
 
   return (
     <>
-      <EditProductColorSelector
+      <EditColorSelector
         currentName={currentColorName}
         currentIndex={currentColorIndex}
         selectorState={colorSelectorState}
         onSelectCallback={onColorSelectCallback}
       />
-      <EditProductSizeSelector
+      <EditSizeSelector
         currentSize={currentSize}
         currentIndex={currentSizeIndex}
         selectorState={sizeSelectorState}
@@ -64,4 +64,4 @@ const EditProductAttrsSelectors = ({
   );
 };
 
-export default EditProductAttrsSelectors;
+export default EditAttrsSelectors;

@@ -37,7 +37,7 @@
   background: #f5f7fb;
 }
 
-.editorBlock + .editorBlock {
+.editorBlock {
   margin-top: 10px;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .preview {
-  margin-top: 10px;
+  margin-bottom: 15px;
   border: 1px solid #d7dce8;
   border-radius: 10px;
   background: rgba(8, 10, 14, 0.72);

@@ -1,7 +1,9 @@
-import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import StatelessProductEditModal from '@site/src/components/stateless-product-edit-modal/components/stateless-product-edit-modal';
+import { useStatelessProductEditModalDemo } from '@site/src/components/demo-modal/use-edit-product-modal-demo';
 import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
 import mockData from '@site/src/components/demo-modal/mockData';
 import Pill from '@site/src/components/stub-ui-library/pill/pill';
+import { EditPrimaryButton, EditSecondaryCta } from '@site/src/components/stateless-product-edit-modal/components/partials';
 
 export const firstSku = mockData.skuVariants.availableSkus[0];
 export const demoItem = {
@@ -12,11 +14,52 @@ export const demoItem = {
   size: firstSku.size,
 };
 
-export const componentCode = String.raw`<EditProductModalStatefulDemo
-  editingItem={initializationData.editingItem}
-  mockModalData={skuCombinationsResponse}
-  renderAfterHeading={() => <Pill>NEW</Pill>}
-/>`;
+export const componentCode = String.raw`(() => {
+  const DefaultScenarioDemo = () => {
+    const {
+      imageUrl,
+      colorCode,
+      onDismiss,
+      handleAddToBagClick,
+      handleNavigateProductDetails,
+      initialSize,
+      productName,
+      skuVariants,
+    } = useStatelessProductEditModalDemo({
+      editingItem: initializationData.editingItem,
+      onModalDismiss: () => {},
+      mockModalData: skuCombinationsResponse,
+    });
+
+    return (
+      <StatelessProductEditModal
+        mainHeading={productName}
+        productName={productName}
+        initialImageUrl={imageUrl}
+        initialColorCode={colorCode}
+        initialSize={initialSize}
+        skuVariants={skuVariants}
+        onDismiss={onDismiss}
+        renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
+          <EditPrimaryButton
+            label="Add to cart"
+            disabled={!isCurrentSkuAvailable}
+            onClick={() => handleAddToBagClick(currentMatchingSku)}
+          />
+        )}
+        renderSecondaryCta={({ currentMatchingSku }) => (
+          <EditSecondaryCta
+            label="Go to product overview"
+            onClick={() => handleNavigateProductDetails(currentMatchingSku)}
+          />
+        )}
+        renderAfterHeading={() => <Pill>NEW</Pill>}
+      />
+    );
+  };
+
+  return <DefaultScenarioDemo />;
+})()`;
 
 export const initializationCode = String.raw`(() => {
   const firstSku = skuCombinationsResponse.skuVariants.availableSkus[0];
@@ -75,7 +118,14 @@ export const defaultScenarioPlaygroundDataCode = String.raw`{
   initialDataCode={defaultScenarioPlaygroundDataCode}
   dataVarName="skuCombinationsResponse"
   dataTitle="SKU Combinations Response"
-  scope={{ EditProductModalStatefulDemo, Pill, mockData }}
+  scope={{
+    StatelessProductEditModal,
+    useStatelessProductEditModalDemo,
+    EditPrimaryButton,
+    EditSecondaryCta,
+    Pill,
+    mockData,
+  }}
 />
 
 <a

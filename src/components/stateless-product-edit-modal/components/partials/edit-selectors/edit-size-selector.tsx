@@ -1,9 +1,9 @@
 import React from "react";
-import EditProductSelectorWrapper from "./edit-product-selector-wrapper";
+import EditSelectorWrapper from "./edit-selector-wrapper";
 import { ButtonTile } from "../../../../stub-ui-library/button-tile/button-tile";
 import { SizeTile } from "../../../../stub-ui-library/size-tile/size-tile";
 import cs from "classnames";
-import sharedStyles from "./edit-product-selectors-shared.module.scss";
+import sharedStyles from "./edit-selectors-shared.module.scss";
 import { SizeOption } from "../../../types";
 
 const SIZE_SELECTOR_TYPE = "size";
@@ -17,7 +17,7 @@ type Props = {
   extraLabelClassName?: string;
 };
 
-const EditProductSizeSelector = ({
+const EditSizeSelector = ({
   currentSize,
   currentIndex,
   selectorState,
@@ -26,7 +26,7 @@ const EditProductSizeSelector = ({
   extraLabelClassName,
 }: Props) => {
   return (
-    <EditProductSelectorWrapper
+    <EditSelectorWrapper
       currentIndex={currentIndex}
       onSelectCallback={onSelectCallback}
       extraLabelClassName={extraLabelClassName}
@@ -42,8 +42,8 @@ const EditProductSizeSelector = ({
           <SizeTile text={size} />
         </ButtonTile>
       ))}
-    </EditProductSelectorWrapper>
+    </EditSelectorWrapper>
   );
 };
 
-export default EditProductSizeSelector;
+export default EditSizeSelector;

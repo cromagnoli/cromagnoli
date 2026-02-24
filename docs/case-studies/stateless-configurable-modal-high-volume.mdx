@@ -1,11 +1,54 @@
-import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import StatelessProductEditModal from '@site/src/components/stateless-product-edit-modal/components/stateless-product-edit-modal';
+import { useStatelessProductEditModalDemo } from '@site/src/components/demo-modal/use-edit-product-modal-demo';
 import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
 import { highVolumeEditingItem, highVolumeModalMockData } from '@site/src/components/demo-modal/mockData';
+import { EditPrimaryButton, EditSecondaryCta } from '@site/src/components/stateless-product-edit-modal/components/partials';
 
-export const componentCode = String.raw`<EditProductModalStatefulDemo
-  editingItem={initializationData.editingItem}
-  mockModalData={skuCombinationsResponse}
-/>`;
+export const componentCode = String.raw`(() => {
+  const HighVolumeScenarioDemo = () => {
+    const {
+      imageUrl,
+      colorCode,
+      onDismiss,
+      handleAddToBagClick,
+      handleNavigateProductDetails,
+      initialSize,
+      productName,
+      skuVariants,
+    } = useStatelessProductEditModalDemo({
+      editingItem: initializationData.editingItem,
+      onModalDismiss: () => {},
+      mockModalData: skuCombinationsResponse,
+    });
+
+    return (
+      <StatelessProductEditModal
+        mainHeading={productName}
+        productName={productName}
+        initialImageUrl={imageUrl}
+        initialColorCode={colorCode}
+        initialSize={initialSize}
+        skuVariants={skuVariants}
+        onDismiss={onDismiss}
+        renderPrimaryCta={({ isCurrentSkuAvailable, currentMatchingSku }) => (
+          <EditPrimaryButton
+            label="Add to cart"
+            disabled={!isCurrentSkuAvailable}
+            onClick={() => handleAddToBagClick(currentMatchingSku)}
+          />
+        )}
+        renderSecondaryCta={({ currentMatchingSku }) => (
+          <EditSecondaryCta
+            label="Go to product overview"
+            onClick={() => handleNavigateProductDetails(currentMatchingSku)}
+          />
+        )}
+      />
+    );
+  };
+
+  return <HighVolumeScenarioDemo />;
+})()`;
 
 export const initializationCode = String.raw`({
   editingItem: highVolumeEditingItem
@@ -31,7 +74,10 @@ export const highVolumeScenarioPlaygroundDataCode = `${JSON.stringify(highVolume
   dataVarName="skuCombinationsResponse"
   dataTitle="SKU Combinations Response"
   scope={{
-    EditProductModalStatefulDemo,
+    StatelessProductEditModal,
+    useStatelessProductEditModalDemo,
+    EditPrimaryButton,
+    EditSecondaryCta,
     highVolumeEditingItem,
     highVolumeModalMockData,
   }}

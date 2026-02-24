@@ -1,11 +1,12 @@
-import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import StatelessProductEditModal from '@site/src/components/stateless-product-edit-modal/components/stateless-product-edit-modal';
+import { useStatelessProductEditModalDemo } from '@site/src/components/demo-modal/use-edit-product-modal-demo';
 import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
 import mockData from '@site/src/components/demo-modal/mockData';
 import {
-  EditProductErrorNotification,
-  EditProductPrimaryButton,
-  EditProductSecondaryCta,
-} from '@site/src/components/edit-product-modal/components/partials';
+  EditErrorNotification,
+  EditPrimaryButton,
+  EditSecondaryCta,
+} from '@site/src/components/stateless-product-edit-modal/components/partials';
 
 export const notifyMeSku =
   mockData.skuVariants.availableSkus.find(
@@ -20,36 +21,62 @@ export const demoItemNotifyMe = {
   size: notifyMeSku.size,
 };
 
-export const componentCode = String.raw`<EditProductModalStatefulDemo
-  editingItem={initializationData.editingItem}
-  mockModalData={skuCombinationsResponse}
-  renderNotifications={({ isCurrentSkuAvailable }) => (
-    <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
-      Sold out. Get notified or browse similar in-stock options.
-    </EditProductErrorNotification>
-  )}
-  renderPrimaryCta={({ isCurrentSkuAvailable }) => (
-    <EditProductPrimaryButton
-      label={isCurrentSkuAvailable ? "Add to cart" : "Notify me when available"}
-      disabled={false}
-      onClick={() =>
-        isCurrentSkuAvailable
-          ? alert("Added to cart!")
-          : alert("Back-in-stock notification registered!")
-      }
-    />
-  )}
-  renderSecondaryCta={({ isCurrentSkuAvailable }) => (
-    <EditProductSecondaryCta
-      label={isCurrentSkuAvailable ? "Go to product overview" : "See similar in-stock"}
-      onClick={() =>
-        isCurrentSkuAvailable
-          ? alert("Navigating to product overview")
-          : alert("Opening similar in-stock options for selected size")
-      }
-    />
-  )}
-/>`;
+export const componentCode = String.raw`(() => {
+  const NotifyMeScenarioDemo = () => {
+    const {
+      imageUrl,
+      colorCode,
+      onDismiss,
+      initialSize,
+      productName,
+      skuVariants,
+    } = useStatelessProductEditModalDemo({
+      editingItem: initializationData.editingItem,
+      onModalDismiss: () => {},
+      mockModalData: skuCombinationsResponse,
+    });
+
+    return (
+      <StatelessProductEditModal
+        mainHeading={productName}
+        productName={productName}
+        initialImageUrl={imageUrl}
+        initialColorCode={colorCode}
+        initialSize={initialSize}
+        skuVariants={skuVariants}
+        onDismiss={onDismiss}
+        renderNotifications={({ isCurrentSkuAvailable }) => (
+          <EditErrorNotification visible={!isCurrentSkuAvailable}>
+            Sold out. Get notified or browse similar in-stock options.
+          </EditErrorNotification>
+        )}
+        renderPrimaryCta={({ isCurrentSkuAvailable }) => (
+          <EditPrimaryButton
+            label={isCurrentSkuAvailable ? "Add to cart" : "Notify me when available"}
+            disabled={false}
+            onClick={() =>
+              isCurrentSkuAvailable
+                ? alert("Added to cart!")
+                : alert("Back-in-stock notification registered!")
+            }
+          />
+        )}
+        renderSecondaryCta={({ isCurrentSkuAvailable }) => (
+          <EditSecondaryCta
+            label={isCurrentSkuAvailable ? "Go to product overview" : "See similar in-stock"}
+            onClick={() =>
+              isCurrentSkuAvailable
+                ? alert("Navigating to product overview")
+                : alert("Opening similar in-stock options for selected size")
+            }
+          />
+        )}
+      />
+    );
+  };
+
+  return <NotifyMeScenarioDemo />;
+})()`;
 
 export const initializationCode = String.raw`(() => {
   const notifyMeSku =
@@ -112,10 +139,11 @@ export const defaultScenarioPlaygroundDataCode = String.raw`{
   dataVarName="skuCombinationsResponse"
   dataTitle="SKU Combinations Response"
   scope={{
-    EditProductModalStatefulDemo,
-    EditProductErrorNotification,
-    EditProductPrimaryButton,
-    EditProductSecondaryCta,
+    StatelessProductEditModal,
+    useStatelessProductEditModalDemo,
+    EditErrorNotification,
+    EditPrimaryButton,
+    EditSecondaryCta,
     mockData,
   }}
 />

@@ -1,7 +1,7 @@
 import React from "react";
 import cs from "classnames";
 import { Notification } from "../../../../stub-ui-library/notification/notification";
-import styles from "./edit-product-notifications.module.scss";
+import styles from "./edit-notifications.module.scss";
 
 type BaseProps = {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ type BaseProps = {
   className?: string;
 };
 
-const EditProductNotification = ({
+const EditNotification = ({
   visible,
   children,
   type,
@@ -32,26 +32,26 @@ type NotificationProps = {
   className?: string;
 };
 
-export const EditProductErrorNotification = ({
+export const EditErrorNotification = ({
   children,
   className,
   visible,
 }: NotificationProps) => (
-  <EditProductNotification className={className} type="error" visible={visible}>
+  <EditNotification className={className} type="error" visible={visible}>
     {children}
-  </EditProductNotification>
+  </EditNotification>
 );
 
-export const EditProductWarningNotification = ({
+export const EditWarningNotification = ({
   children,
   className,
   visible,
 }: NotificationProps) => (
-  <EditProductNotification
+  <EditNotification
     className={className}
     type="warning"
     visible={visible}
   >
     {children}
-  </EditProductNotification>
+  </EditNotification>
 );

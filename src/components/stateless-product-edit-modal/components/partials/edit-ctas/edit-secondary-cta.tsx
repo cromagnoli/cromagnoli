@@ -1,6 +1,6 @@
 import React from "react";
 import cs from "classnames";
-import styles from "./edit-product-ctas.module.scss";
+import styles from "./edit-ctas.module.scss";
 
 type Props = {
   label: string;
@@ -9,7 +9,7 @@ type Props = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement> &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-const EditProductSecondaryCta = ({
+const EditSecondaryCta = ({
   href = "",
   label,
   className = "",
@@ -29,4 +29,4 @@ const EditProductSecondaryCta = ({
   );
 };
 
-export default EditProductSecondaryCta;
+export default EditSecondaryCta;

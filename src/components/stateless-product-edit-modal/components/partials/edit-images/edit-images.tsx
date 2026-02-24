@@ -1,7 +1,7 @@
 import React from "react";
 import cs from "classnames";
-import EditProductCarousel from "./edit-product-carousel";
-import styles from "./edit-product-images.module.scss";
+import EditCarousel from "./edit-carousel";
+import styles from "./edit-images.module.scss";
 
 type Props = {
   imageUrls: Array<string | null | undefined> | undefined;
@@ -45,7 +45,7 @@ const getImageOrCarousel = ({ imageUrls, imagesAlt }: Props) => {
 
   return (
     <div className={styles.aspectRatioBoxChild}>
-      <EditProductCarousel
+      <EditCarousel
         imageUrls={imageUrls}
         imagesAlt={imagesAlt}
         fallbackElement={
@@ -56,7 +56,7 @@ const getImageOrCarousel = ({ imageUrls, imagesAlt }: Props) => {
   );
 };
 
-const EditProductImages = ({ imageUrls, imagesAlt }: Props) => (
+const EditImages = ({ imageUrls, imagesAlt }: Props) => (
   <div className={styles.editProductImages}>
     <div className={styles.aspectRatioBoxParent}>
       {getImageOrCarousel({ imageUrls, imagesAlt })}
@@ -64,4 +64,4 @@ const EditProductImages = ({ imageUrls, imagesAlt }: Props) => (
   </div>
 );
 
-export default EditProductImages;
+export default EditImages;

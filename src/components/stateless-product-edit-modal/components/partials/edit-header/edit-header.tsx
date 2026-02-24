@@ -1,8 +1,8 @@
 import React from "react";
 import { isDefinedFn } from "../../../utils/edit-product-modal-utils";
-import EditProductHeading from "./edit-product-heading";
-import EditProductPrice from "./edit-product-price";
-import sharedStyles from "../edit-product-selectors/edit-product-selectors-shared.module.scss";
+import EditHeading from "./edit-heading";
+import EditPrice from "./edit-price";
+import sharedStyles from "../edit-selectors/edit-selectors-shared.module.scss";
 
 type Props = {
   headingChildren?: React.ReactNode;
@@ -13,7 +13,7 @@ type Props = {
   renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
 };
 
-const EditProductHeader = ({
+const EditHeader = ({
   headingChildren = null,
   listPrice = null,
   salePrice = null,
@@ -25,7 +25,7 @@ const EditProductHeader = ({
     {isDefinedFn(renderHeading) ? (
       renderHeading()
     ) : (
-      <EditProductHeading>{headingChildren}</EditProductHeading>
+      <EditHeading>{headingChildren}</EditHeading>
     )}
 
     {isDefinedFn(renderAfterHeading) && renderAfterHeading()}
@@ -33,7 +33,7 @@ const EditProductHeader = ({
     {isDefinedFn(renderPrice) ? (
       renderPrice({ listPrice, salePrice })
     ) : (
-      <EditProductPrice
+      <EditPrice
         listPrice={listPrice}
         salePrice={salePrice}
       />
@@ -41,4 +41,4 @@ const EditProductHeader = ({
   </div>
 );
 
-export default EditProductHeader;
+export default EditHeader;

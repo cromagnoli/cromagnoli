@@ -1,10 +1,10 @@
 import React from "react";
-import EditProductSelectorWrapper from "./edit-product-selector-wrapper";
+import EditSelectorWrapper from "./edit-selector-wrapper";
 import { ButtonTile } from "../../../../stub-ui-library/button-tile/button-tile";
 import { ColorSwatch } from "../../../../stub-ui-library/color-swatch/color-swatch";
 import cs from "classnames";
-import sharedStyles from "./edit-product-selectors-shared.module.scss";
-import styles from "./edit-product-color-selector.module.scss";
+import sharedStyles from "./edit-selectors-shared.module.scss";
+import styles from "./edit-color-selector.module.scss";
 import { ColorOption } from "../../../types";
 
 const COLOR_SELECTOR_TYPE = "color";
@@ -17,7 +17,7 @@ type Props = {
   extraLabelClassName?: string;
 };
 
-const EditProductColorSelector = ({
+const EditColorSelector = ({
   currentName,
   currentIndex,
   selectorState,
@@ -27,7 +27,7 @@ const EditProductColorSelector = ({
   const label = `Color: ${currentName || "--"}`;
 
   return (
-    <EditProductSelectorWrapper
+    <EditSelectorWrapper
       currentIndex={currentIndex}
       onSelectCallback={onSelectCallback}
       extraLabelClassName={extraLabelClassName}
@@ -48,8 +48,8 @@ const EditProductColorSelector = ({
           <ColorSwatch colorCode={colorCode} name={displayName} />
         </ButtonTile>
       ))}
-    </EditProductSelectorWrapper>
+    </EditSelectorWrapper>
   );
 };
 
-export default EditProductColorSelector;
+export default EditColorSelector;
