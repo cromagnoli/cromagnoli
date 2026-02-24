@@ -17,8 +17,6 @@ This portfolio documents production systems shipped under real-world constraints
    Public API surface, extension points, and implementation contracts for consumers.
 3. [Progressive Rollout from Legacy to NextGen Stack (Hybrid Routing)](/cromagnoli/case-studies/progressive-rollout-legacy)  
    Dual-runtime route resolution, rollback controls, and resilience patterns for incremental modernization.
-4. [Transactional Email Framework](/cromagnoli/case-studies/transactional-email)  
-   Composable system for scalable, reusable transactional communications.
 
 ## How To Read These Docs
 
