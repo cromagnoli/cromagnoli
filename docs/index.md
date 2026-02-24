@@ -6,6 +6,7 @@ This portfolio documents production systems shipped under real-world constraints
 :::note Transparency Disclaimer
 The documentation scaffolding and page implementation were generated with AI assistance and should not be evaluated as original authored product code.
 The production-proven case study code and architecture documented here are my own authored work.
+All architecture and source-code excerpts shown in these case studies are from my authored implementations.
 :::
 
 ## What You'll Find Here

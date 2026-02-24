@@ -19,6 +19,15 @@ This case study shows a production-style migration strategy where one URL can be
 This implementation is intentionally documented in JavaScript (`.mjs`) instead of TypeScript to mirror the legacy codebase constraints and keep the architecture representation faithful to the original production pattern. [More details](#why-javascript-no-typescript-in-this-case).
 :::
 
+:::note Transparency Disclaimer
+The documentation scaffolding and page implementation were generated with AI assistance and should not be evaluated as original authored product code.
+In this case study, the core authored implementation is represented by:
+`server/init/routes.mjs`,
+`nextgen-app/app/routes.ts`,
+`server/app/hybrid-routing/routing.mjs`,
+and `server/app/hybrid-routing/vite.mjs`.
+:::
+
 ## Problem to Solve
 
 I needed to ship a modern stack incrementally while keeping legacy pages stable and revenue-safe.
