@@ -1,6 +1,43 @@
 # Stateless Configurable Modal
 
+:::info Core Objective
+Normalize a cross-company edit-product modal pattern behind one reusable API without removing team-level flexibility.
+:::
+
 This case study is organized into focused demo pages to reduce page weight and improve evaluation clarity; each page includes a live code editor to validate the public API, extensibility model, and behavioral variants in real time.
+
+## Architectural Rationale
+
+### Problem To Solve
+
+At company scale, multiple teams had built near-identical edit-product modals with diverging visuals and behavior. This created duplicated logic, inconsistent UX, and high maintenance cost.
+
+The goal was to normalize this cross-cutting pattern behind one reusable modal API, while preserving team-level flexibility for business rules and presentation.
+
+That is why this modal exposes a configurable render-prop surface and composable partials instead of a rigid fixed layout.
+
+:::note Why it matters
+One API reduced duplicated modal logic across teams while still allowing business-specific UX differences through controlled extension points.
+:::
+
+### Approach Taken
+
+This implementation exposes:
+
+- composable partial UI components/utilities for consumers
+- render props with rich derived args for runtime composition
+
+instead of only fixed slots with opaque internals.
+
+### Why This Is A Sound Tradeoff
+
+- Higher extensibility without forking modal internals
+- Reuse of domain-derived state (`currentMatchingSku`, maps, indexes) at integration points
+- Better fit for experimentation and business-specific behavior
+
+Tradeoff:
+
+- API surface is larger and requires stronger documentation discipline.
 
 ## Demo Index
 

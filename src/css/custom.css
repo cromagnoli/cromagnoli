@@ -81,3 +81,23 @@ h1, h2, h3, h4 {
     margin: 0 auto 10px;
   }
 }
+
+html.embedded-doc-mode .navbar,
+html.embedded-doc-mode .theme-doc-sidebar-container,
+html.embedded-doc-mode .table-of-contents,
+html.embedded-doc-mode .theme-doc-toc-desktop,
+html.embedded-doc-mode .theme-doc-toc-mobile,
+html.embedded-doc-mode .tocCollapsible_ETCw,
+html.embedded-doc-mode .tocMobile_ITEo,
+html.embedded-doc-mode .theme-doc-breadcrumbs,
+html.embedded-doc-mode .breadcrumbs {
+  display: none !important;
+}
+
+html.embedded-doc-mode .main-wrapper {
+  margin-top: 0 !important;
+}
+
+html.embedded-doc-mode .container {
+  max-width: 100% !important;
+}

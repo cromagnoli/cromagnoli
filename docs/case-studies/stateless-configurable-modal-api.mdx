@@ -1,10 +1,10 @@
+import EmbeddedPageMode from '@site/src/components/docs/embedded-page-mode';
+
 # Stateless Edit Product Modal API
 
-This page documents the public API of `StatelessProductEditModal` as consumed in this portfolio demo.
+<EmbeddedPageMode />
 
-:::info Core Objective
-Normalize a cross-company edit-product modal pattern behind one reusable API without removing team-level flexibility.
-:::
+This page documents the public API of `StatelessProductEditModal` as consumed in this portfolio demo.
 
 ## Component
 
@@ -15,38 +15,10 @@ import StatelessProductEditModal from '@site/src/components/stateless-product-ed
 `StatelessProductEditModal` is stateless regarding remote data fetching.  
 The consumer provides initial state + `skuVariants`, and injects behavior/UI through render props.
 
-## Architectural Rationale
-
-### Problem To Solve
-
-At company scale, multiple teams had built near-identical edit-product modals with diverging visuals and behavior. This created duplicated logic, inconsistent UX, and high maintenance cost.
-
-The goal was to normalize this cross-cutting pattern behind one reusable modal API, while preserving team-level flexibility for business rules and presentation.
-
-That is why this modal exposes a configurable render-prop surface and composable partials instead of a rigid fixed layout.
-
-:::note Why it matters
-One API reduced duplicated modal logic across teams while still allowing business-specific UX differences through controlled extension points.
+:::note Layout Semantics
+- *mobile-ish*: `firstChild` maps to the top content area and `secondChild` maps to the lower content area.
+- *desktop-ish*: `firstChild` maps to the left content area and `secondChild` maps to the right content area.
 :::
-
-### Approach Taken
-
-This implementation exposes:
-
-- composable partial UI components/utilities for consumers
-- render props with rich derived args for runtime composition
-
-instead of only fixed slots with opaque internals.
-
-### Why This Is A Sound Tradeoff
-
-- Higher extensibility without forking modal internals
-- Reuse of domain-derived state (`currentMatchingSku`, maps, indexes) at integration points
-- Better fit for experimentation and business-specific behavior
-
-Tradeoff:
-
-- API surface is larger and requires stronger documentation discipline (this page exists for that reason).
 
 ## Core Props
 
@@ -73,19 +45,37 @@ Tradeoff:
 ## Data Types
 
 ```ts
+type ColorOption = {
+  colorCode: string;
+  displayName?: string;
+  available?: boolean;
+};
+
+type SizeOption = {
+  size: string;
+  available?: boolean;
+};
+
+type Sku = {
+  id?: string;
+  colorCode: string;
+  size: string;
+  listPrice?: string;
+  salePrice?: string;
+  available?: boolean;
+};
+
+type MaybeSku = Sku | Record<string, unknown>;
+
 type SkuVariants = {
-  sizes?: { size: string; available?: boolean }[];
-  colors?: { colorCode: string; displayName?: string; available?: boolean }[];
-  availableSkus?: {
-    id?: string;
-    colorCode: string;
-    size: string;
-    listPrice?: string;
-    salePrice?: string;
-    available?: boolean;
-  }[];
+  sizes?: SizeOption[];
+  colors?: ColorOption[];
+  availableSkus?: Sku[];
   imagesByColorCode?: Record<string, string[]>;
 };
+
+type ColorToSizeMap = Record<string, string[]>;
+type SizeToColorMap = Record<string, string[]>;
 ```
 
 ## Render Prop API
@@ -133,16 +123,12 @@ The component renders loading experience when any of these is missing:
 - `skuVariants`
 - resolved internal color/size indexes
 
-## Default Composition (if no overrides)
+## Default Composition (without render overrides)
 
-- `firstChild`: product images carousel.
-- `secondChild` header: heading + price.
-- `secondChild` body: default color and size selectors.
-- `secondChild` sticky footer: notifications and CTAs only if provided.
-
-Layout note:
-- *mobile-ish*: `firstChild` behaves like a top content area.
-- *desktop-ish*: `firstChild` behaves like a left content area.
+- `Media area`: product image carousel.
+- `Details header`: heading + price.
+- `Details body`: default color and size selectors.
+- `Details footer`: notifications and CTAs only when provided.
 
 ## Helper UI Exports Used By Consumers
 
@@ -164,6 +150,21 @@ import {
   EditScrollableFrame,
   EditStickyFrame,
 } from '@site/src/components/stateless-product-edit-modal/components/partials';
+```
+
+Example (import one partial and inject it through a render prop):
+
+```tsx
+import { EditErrorNotification } from '@site/src/components/stateless-product-edit-modal/components/partials';
+
+<StatelessProductEditModal
+  // ...
+  renderNotifications={({ isCurrentSkuAvailable }) => (
+    <EditErrorNotification visible={!isCurrentSkuAvailable}>
+      Sold out. Please select another combination.
+    </EditErrorNotification>
+  )}
+/>
 ```
 
 ## Minimal Usage Example
