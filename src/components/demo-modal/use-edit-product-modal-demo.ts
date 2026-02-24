@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import mockData from "./mockData";
-import { Locale, MaybeSku, SkuVariants } from "../edit-product-modal/types";
+import { MaybeSku, SkuVariants } from "../edit-product-modal/types";
 import { ModalMockData } from "./mockData";
 
 export type ProductSummary = Record<string, unknown>;
@@ -46,8 +46,6 @@ const fakeModalDataFetch = ({
 }): Promise<{ skuVariants: SkuVariants; productSummary: ProductSummary }> =>
   new Promise((resolve) => setTimeout(() => resolve(responseData), delayMs));
 
-const useLocaleStandard = (): Locale => ({ lang: "en", countryCode: "US" });
-const getParsedLocale = (): Locale => ({ lang: "en", countryCode: "US" });
 const useRouter = () => ({ push: () => {} });
 
 export const useEditProductModalDemo = ({
@@ -56,8 +54,6 @@ export const useEditProductModalDemo = ({
   mockModalData = mockData,
   fetchDelayMs = 1200,
 }: UseEditProductModalDemoArgs) => {
-  const standardLocale = useLocaleStandard();
-  const locale = getParsedLocale();
   const router = useRouter();
   const [skuVariants, setSkuVariants] = useState<SkuVariants>({});
   const [productSummary, setProductSummary] = useState<ProductSummary>({});
@@ -98,13 +94,11 @@ export const useEditProductModalDemo = ({
   }, [
     colorCode,
     editingItem,
-    locale,
     onModalDismiss,
     mockModalData,
     fetchDelayMs,
     productName,
     size,
-    standardLocale,
   ]);
 
   const onDismiss = ({
@@ -173,7 +167,6 @@ export const useEditProductModalDemo = ({
   return {
     imageUrl,
     colorCode,
-    locale,
     onDismiss,
     handleAddToBagClick,
     handleNavigateProductDetails,

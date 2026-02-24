@@ -16,7 +16,6 @@ import SplitViewModal from "../../stub-ui-library/split-view-modal/split-view-mo
 import {
   ColorOption,
   ColorToSizeMap,
-  Locale,
   MaybeSku,
   SizeOption,
   SizeToColorMap,
@@ -26,7 +25,6 @@ import {
 import styles from "./edit-product-modal.module.scss";
 
 export type EditProductModalRenderArgs = {
-  locale: Locale;
   currentColorIndex: number;
   prevColorIndex: number | undefined;
   currentSizeIndex: number;
@@ -53,19 +51,17 @@ export type EditProductModalProps = {
   initialListPrice?: string | null;
   initialSalePrice?: string | null;
   skuVariants?: SkuVariants | null;
-  locale: Locale;
   onDismiss: (args: { event: React.SyntheticEvent; currentMatchingSku: MaybeSku | null }) => void;
   enableStickySecondChildFooter?: boolean;
-  renderLoadingSecondChild?: (args: { locale: Locale }) => React.ReactNode;
-  renderLoadingSecondChildHeader?: (args: { locale: Locale }) => React.ReactNode;
-  renderLoadingSecondChildFooterExtra?: (args: { locale: Locale }) => React.ReactNode;
+  renderLoadingSecondChild?: () => React.ReactNode;
+  renderLoadingSecondChildHeader?: () => React.ReactNode;
+  renderLoadingSecondChildFooterExtra?: () => React.ReactNode;
   renderLoadingHeading?: () => React.ReactNode;
   renderLoadingPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
   renderSecondChildHeader?: (args: EditProductModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
   renderAttrsSelectors?: (args: EditProductModalRenderArgs & { currentMatchingSku: MaybeSku }) => React.ReactNode;
   renderAfterAttrsSelectors?: (args: EditProductModalRenderArgs) => React.ReactNode;
   renderNotifications?: (args: {
-    locale: Locale;
     isCurrentSkuAvailable: boolean | undefined;
     currentMatchingSkuId: string | undefined;
     currentColorDetails: ColorOption | undefined;
@@ -77,7 +73,6 @@ export type EditProductModalProps = {
     availableSkus: Sku[];
   }) => React.ReactNode;
   renderPrimaryCta?: (args: {
-    locale: Locale;
     isCurrentSkuAvailable: boolean | undefined;
     currentMatchingSkuId: string | undefined;
     currentColorDetails: ColorOption | undefined;
@@ -89,7 +84,6 @@ export type EditProductModalProps = {
     currentMatchingSku: MaybeSku;
   }) => React.ReactNode;
   renderSecondaryCta?: (args: {
-    locale: Locale;
     isCurrentSkuAvailable: boolean | undefined;
     currentMatchingSkuId: string | undefined;
     currentColorDetails: ColorOption | undefined;
@@ -117,7 +111,6 @@ const EditProductModal = ({
   initialListPrice = null,
   initialSalePrice = null,
   skuVariants = {},
-  locale,
   onDismiss,
   enableStickySecondChildFooter = true,
   renderLoadingSecondChild = null,
@@ -188,7 +181,6 @@ const EditProductModal = ({
   );
 
   const { colorToSizeMap = {}, sizeToColorMap = {} } = colorSizeMapping;
-  const commonRenderArgs = { locale };
 
   const shouldRenderLoadingExperience =
     isNullOrUndef(initialImageUrl) ||
@@ -202,7 +194,6 @@ const EditProductModal = ({
     const loadingFirstChild = resolveLoadingFirstChildRender({
       productName,
       currentImagesUrls: [initialImageUrl],
-      commonRenderArgs,
       renderFirstChild,
     });
 
@@ -216,7 +207,6 @@ const EditProductModal = ({
       renderSpinner,
       renderLoadingHeading,
       renderLoadingPrice,
-      commonRenderArgs,
       enableStickySecondChildFooter,
     });
 
@@ -276,14 +266,12 @@ const EditProductModal = ({
   const firstChild = resolveFirstChildRender({
     productName,
     currentImagesUrls,
-    commonRenderArgs,
     restRenderArgs,
     renderFirstChild,
   });
 
   const secondChild = resolveSecondChildRender({
     mainHeading,
-    commonRenderArgs,
     restRenderArgs,
     renderSecondChildHeader,
     renderAttrsSelectors,

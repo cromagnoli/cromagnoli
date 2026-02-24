@@ -1,13 +1,11 @@
 import React from "react";
 import cs from "classnames";
 import styles from "./edit-product-header.module.scss";
-import { Locale } from "../../../types";
 
 type Props = {
   className?: string;
   listPrice?: string | null;
   salePrice?: string | null;
-  locale?: Locale | null;
 };
 
 // Simplification for demo – The real world implementation supports list and sale prices

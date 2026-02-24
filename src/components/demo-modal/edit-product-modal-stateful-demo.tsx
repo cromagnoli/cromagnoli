@@ -52,7 +52,6 @@ const EditProductModalStatefulDemo = ({
   const {
     imageUrl,
     colorCode,
-    locale,
     onDismiss,
     handleAddToBagClick,
     handleNavigateProductDetails,
@@ -112,7 +111,6 @@ const EditProductModalStatefulDemo = ({
       initialColorCode={colorCode}
       initialSize={initialSize}
       skuVariants={skuVariants}
-      locale={locale}
       onDismiss={onDismiss}
       renderNotifications={resolvedRenderNotifications}
       renderPrimaryCta={resolvedRenderPrimaryCta}

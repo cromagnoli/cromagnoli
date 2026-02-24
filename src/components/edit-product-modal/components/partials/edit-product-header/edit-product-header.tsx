@@ -3,13 +3,11 @@ import { isDefinedFn } from "../../../utils/edit-product-modal-utils";
 import EditProductHeading from "./edit-product-heading";
 import EditProductPrice from "./edit-product-price";
 import sharedStyles from "../edit-product-selectors/edit-product-selectors-shared.module.scss";
-import { Locale } from "../../../types";
 
 type Props = {
   headingChildren?: React.ReactNode;
   listPrice?: string | null;
   salePrice?: string | null;
-  locale?: Locale | null;
   renderHeading?: () => React.ReactNode;
   renderAfterHeading?: () => React.ReactNode;
   renderPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
@@ -19,7 +17,6 @@ const EditProductHeader = ({
   headingChildren = null,
   listPrice = null,
   salePrice = null,
-  locale = null,
   renderHeading = null,
   renderAfterHeading = null,
   renderPrice = null,
@@ -39,7 +36,6 @@ const EditProductHeader = ({
       <EditProductPrice
         listPrice={listPrice}
         salePrice={salePrice}
-        locale={locale}
       />
     )}
   </div>
