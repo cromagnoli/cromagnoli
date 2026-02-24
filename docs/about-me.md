@@ -1,5 +1,5 @@
 
-# About
+# About Me
 
 I’m a senior web engineer with 16+ years of experience building and evolving large-scale web applications across retail, media, marketplaces, and enterprise environments.
 

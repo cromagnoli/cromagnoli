@@ -33,7 +33,7 @@ const config: Config = {
       items: [
         { to: '/', label: 'Case Studies', position: 'left' },
 
-        { to: '/about', label: 'About', position: 'left' },
+        { to: '/about-me', label: 'About Me', position: 'left' },
         {
           href: 'https://www.linkedin.com/in/cristianromagnoli/',
           label: 'LinkedIn',

@@ -19,8 +19,7 @@ const sidebars: SidebarsConfig = {
       ],
     },
     { type: 'doc', id: 'case-studies/progressive-rollout-legacy', label: 'Progressive Rollout on Legacy Systems' },
-    { type: 'doc', id: 'case-studies/transactional-email', label: 'Transactional Email Framework' },
-    { type: 'doc', id: 'about', label: 'About' },
+    { type: 'doc', id: 'case-studies/transactional-email', label: 'Transactional Email Framework' }
   ],
 };
 
