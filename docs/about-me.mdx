@@ -1,0 +1,26 @@
+import CurrentAge from "@site/src/components/profile/current-age";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+# About Me
+
+<div className="about-layout">
+  <div className="about-photo-wrap">
+    <img
+      src={useBaseUrl("/img/profile.jpg")}
+      alt="Cristian Romagnoli"
+      className="about-photo"
+    />
+  </div>
+
+  <div className="about-content">
+    <p>I am Cristian Romagnoli, a Senior Web Engineer based in Argentina with 16+ years of experience building and evolving large-scale frontend systems across retail, media, marketplaces, and enterprise products.</p>
+
+    <p>I am currently <CurrentAge /> years old. I work in both Spanish and English environments.</p>
+
+    <p>My core focus is React architecture and resilient product delivery, with frequent ownership of server-adjacent runtime integration code across key product flows.</p>
+
+    <p>Outside work, I train in swimming (since I was a little kid), and I also enjoy aviation, architecture, cars, and hands-on DIY projects at home. I also enjoy mate and craft beer.</p>
+
+    <p>LinkedIn: <a href="https://www.linkedin.com/in/cristianromagnoli/">linkedin.com/in/cristianromagnoli</a></p>
+  </div>
+</div>

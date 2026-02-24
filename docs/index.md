@@ -38,4 +38,4 @@ Each case is structured to evaluate:
 
 ## Profile
 
-- [About](/cromagnoli/about): Engineering profile, scope, and approach across large-scale frontend systems.
+- [About](/cromagnoli/about-me): Engineering profile, scope, and approach across large-scale frontend systems.
