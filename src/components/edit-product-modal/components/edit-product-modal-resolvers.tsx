@@ -98,7 +98,6 @@ export const resolveLoadingSecondChildRender = ({
   renderLoadingSecondChild,
   renderSpinner,
   renderLoadingHeading,
-  renderLoadingAfterHeading,
   renderLoadingPrice,
   commonRenderArgs,
   enableStickySecondChildFooter,
@@ -111,7 +110,6 @@ export const resolveLoadingSecondChildRender = ({
   renderLoadingSecondChild?: (args: CommonRenderArgs) => React.ReactNode;
   renderSpinner?: () => React.ReactNode;
   renderLoadingHeading?: () => React.ReactNode;
-  renderLoadingAfterHeading?: () => React.ReactNode;
   renderLoadingPrice?: (args: { listPrice?: string | null; salePrice?: string | null }) => React.ReactNode;
   commonRenderArgs: CommonRenderArgs;
   enableStickySecondChildFooter?: boolean;
@@ -132,7 +130,6 @@ export const resolveLoadingSecondChildRender = ({
               salePrice={initialSalePrice}
               locale={commonRenderArgs?.locale}
               renderHeading={renderLoadingHeading}
-              renderAfterHeading={renderLoadingAfterHeading}
               renderPrice={renderLoadingPrice}
             />
           )}
