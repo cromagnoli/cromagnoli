@@ -2,6 +2,10 @@
 
 This page documents the public API of `StatelessProductEditModal` as consumed in this portfolio demo.
 
+:::info Core Objective
+Normalize a cross-company edit-product modal pattern behind one reusable API without removing team-level flexibility.
+:::
+
 ## Component
 
 ```tsx
@@ -15,11 +19,15 @@ The consumer provides initial state + `skuVariants`, and injects behavior/UI thr
 
 ### Problem To Solve
 
-In product contexts, a single modal shape usually needs multiple behavioral variants:
+At company scale, multiple teams had built near-identical edit-product modals with diverging visuals and behavior. This created duplicated logic, inconsistent UX, and high maintenance cost.
 
-- Different notification policies (`sold out`, `low stock`, campaign copy)
-- Different CTA rules (disable vs notify-me vs alternate flow)
-- Different header/media compositions by surface or experiment
+The goal was to normalize this cross-cutting pattern behind one reusable modal API, while preserving team-level flexibility for business rules and presentation.
+
+That is why this modal exposes a configurable render-prop surface and composable partials instead of a rigid fixed layout.
+
+:::note Why it matters
+One API reduced duplicated modal logic across teams while still allowing business-specific UX differences through controlled extension points.
+:::
 
 ### Approach Taken
 
