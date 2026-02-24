@@ -93,6 +93,11 @@
   padding: 10px;
 }
 
+.previewPlaceholder {
+  width: 100%;
+  min-height: inherit;
+}
+
 .preview > * {
   width: 100%;
   margin-inline: auto;

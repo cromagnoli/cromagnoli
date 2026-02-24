@@ -1,0 +1,128 @@
+import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
+import mockData from '@site/src/components/demo-modal/mockData';
+import {
+  EditProductErrorNotification,
+  EditProductPrimaryButton,
+  EditProductSecondaryCta,
+} from '@site/src/components/edit-product-modal/components/partials';
+
+export const notifyMeSku =
+  mockData.skuVariants.availableSkus.find(
+    (sku) => sku.colorCode === 'ffffff' && sku.size === '11'
+  ) ?? mockData.skuVariants.availableSkus[1];
+
+export const demoItemNotifyMe = {
+  productName: mockData.productSummary.displayName,
+  productUrl: `/products/${mockData.productSummary.productId}`,
+  imageUrl: mockData.skuVariants.imagesByColorCode[notifyMeSku.colorCode][0],
+  colorCode: notifyMeSku.colorCode,
+  size: notifyMeSku.size,
+};
+
+export const componentCode = String.raw`<EditProductModalStatefulDemo
+  editingItem={initializationData.editingItem}
+  mockModalData={skuCombinationsResponse}
+  renderNotifications={({ isCurrentSkuAvailable }) => (
+    <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+      Sold out. Get notified or browse similar in-stock options.
+    </EditProductErrorNotification>
+  )}
+  renderPrimaryCta={({ isCurrentSkuAvailable }) => (
+    <EditProductPrimaryButton
+      label={isCurrentSkuAvailable ? "Add to cart" : "Notify me when available"}
+      disabled={false}
+      onClick={() =>
+        isCurrentSkuAvailable
+          ? alert("Added to cart!")
+          : alert("Back-in-stock notification registered!")
+      }
+    />
+  )}
+  renderSecondaryCta={({ isCurrentSkuAvailable }) => (
+    <EditProductSecondaryCta
+      label={isCurrentSkuAvailable ? "Go to product overview" : "See similar in-stock"}
+      onClick={() =>
+        isCurrentSkuAvailable
+          ? alert("Navigating to product overview")
+          : alert("Opening similar in-stock options for selected size")
+      }
+    />
+  )}
+/>`;
+
+export const initializationCode = String.raw`(() => {
+  const notifyMeSku =
+    skuCombinationsResponse.skuVariants.availableSkus.find(
+      (sku) => sku.colorCode === "ffffff" && sku.size === "11"
+    ) ?? skuCombinationsResponse.skuVariants.availableSkus[1];
+
+  return {
+    editingItem: {
+      productName: skuCombinationsResponse.productSummary.displayName,
+      productUrl: "/products/" + skuCombinationsResponse.productSummary.productId,
+      imageUrl: skuCombinationsResponse.skuVariants.imagesByColorCode[notifyMeSku.colorCode][0],
+      colorCode: notifyMeSku.colorCode,
+      size: notifyMeSku.size,
+    },
+  };
+})()`;
+
+export const defaultScenarioPlaygroundDataCode = String.raw`{
+  productSummary: {
+    productId: "${mockData.productSummary.productId}",
+    displayName: "BuyMeNot Sneakers",
+  },
+  skuVariants: {
+    colors: [
+      { colorCode: "ffffff", displayName: "White", available: true },
+      { colorCode: "444444", displayName: "Graphite", available: true },
+    ],
+    sizes: [
+      { size: "10", available: true },
+      { size: "11", available: true },
+      { size: "12", available: true },
+    ],
+    availableSkus: [
+      { id: "1", colorCode: "ffffff", size: "10", listPrice: "128.00", salePrice: "98.00", available: true },
+      { id: "2", colorCode: "ffffff", size: "11", listPrice: "128.00", available: false },
+      { id: "3", colorCode: "ffffff", size: "12", listPrice: "128.00", available: true },
+      { id: "4", colorCode: "444444", size: "10", listPrice: "128.00", available: false },
+      { id: "5", colorCode: "444444", size: "11", listPrice: "128.00", available: true },
+      { id: "6", colorCode: "444444", size: "12", listPrice: "128.00", available: true },
+    ],
+    imagesByColorCode: {
+      "ffffff": [...mockData.skuVariants.imagesByColorCode["ffffff"]],
+      "444444": [...mockData.skuVariants.imagesByColorCode["444444"]],
+    },
+  },
+}`;
+
+# Stateless Configurable Modal – Notify-Me Fallback CTA
+
+<small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
+
+<LiveJsxPlayground
+  title="Live Demo"
+  initialCode={componentCode}
+  initialInitializationCode={initializationCode}
+  initializationVarName="initializationData"
+  initializationTitle="Initialization Data"
+  initialDataCode={defaultScenarioPlaygroundDataCode}
+  dataVarName="skuCombinationsResponse"
+  dataTitle="SKU Combinations Response"
+  scope={{
+    EditProductModalStatefulDemo,
+    EditProductErrorNotification,
+    EditProductPrimaryButton,
+    EditProductSecondaryCta,
+    mockData,
+  }}
+/>
+
+<a
+  href="/cromagnoli/case-studies/stateless-configurable-modal"
+  style={{ display: 'inline-block', marginTop: 20 }}
+>
+  « Back to Stateless Configurable Modal index
+</a>

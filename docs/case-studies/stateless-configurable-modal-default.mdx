@@ -1,0 +1,86 @@
+import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
+import mockData from '@site/src/components/demo-modal/mockData';
+import Pill from '@site/src/components/stub-ui-library/pill/pill';
+
+export const firstSku = mockData.skuVariants.availableSkus[0];
+export const demoItem = {
+  productName: mockData.productSummary.displayName,
+  productUrl: `/products/${mockData.productSummary.productId}`,
+  imageUrl: mockData.skuVariants.imagesByColorCode[firstSku.colorCode][0],
+  colorCode: firstSku.colorCode,
+  size: firstSku.size,
+};
+
+export const componentCode = String.raw`<EditProductModalStatefulDemo
+  editingItem={initializationData.editingItem}
+  mockModalData={skuCombinationsResponse}
+  renderAfterHeading={() => <Pill>NEW</Pill>}
+/>`;
+
+export const initializationCode = String.raw`(() => {
+  const firstSku = skuCombinationsResponse.skuVariants.availableSkus[0];
+
+  return {
+    editingItem: {
+      productName: skuCombinationsResponse.productSummary.displayName,
+      productUrl: "/products/" + skuCombinationsResponse.productSummary.productId,
+      imageUrl: skuCombinationsResponse.skuVariants.imagesByColorCode[firstSku.colorCode][0],
+      colorCode: firstSku.colorCode,
+      size: firstSku.size,
+    },
+  };
+})()`;
+
+export const defaultScenarioPlaygroundDataCode = String.raw`{
+  productSummary: {
+    productId: "${mockData.productSummary.productId}",
+    displayName: "BuyMeNot Sneakers",
+  },
+  skuVariants: {
+    colors: [
+      { colorCode: "ffffff", displayName: "White", available: true },
+      { colorCode: "444444", displayName: "Graphite", available: true },
+    ],
+    sizes: [
+      { size: "10", available: true },
+      { size: "11", available: true },
+      { size: "12", available: true },
+    ],
+    availableSkus: [
+      { id: "1", colorCode: "ffffff", size: "10", listPrice: "128.00", salePrice: "98.00", available: true },
+      { id: "2", colorCode: "ffffff", size: "11", listPrice: "128.00", available: false },
+      { id: "3", colorCode: "ffffff", size: "12", listPrice: "128.00", available: true },
+      { id: "4", colorCode: "444444", size: "10", listPrice: "128.00", available: false },
+      { id: "5", colorCode: "444444", size: "11", listPrice: "128.00", available: true },
+      { id: "6", colorCode: "444444", size: "12", listPrice: "128.00", available: true },
+    ],
+    imagesByColorCode: {
+      "ffffff": [...mockData.skuVariants.imagesByColorCode["ffffff"]],
+      "444444": [...mockData.skuVariants.imagesByColorCode["444444"]],
+    },
+  },
+}`;
+
+# Stateless Configurable Modal – Default Behavior
+
+<small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
+
+<LiveJsxPlayground
+  title="Live Demo"
+  initialCode={componentCode}
+  initialInitializationCode={initializationCode}
+  initializationVarName="initializationData"
+  initializationTitle="Initialization Data"
+  initialDataCode={defaultScenarioPlaygroundDataCode}
+  dataVarName="skuCombinationsResponse"
+  dataTitle="SKU Combinations Response"
+  scope={{ EditProductModalStatefulDemo, Pill, mockData }}
+/>
+
+<a
+  href="/cromagnoli/case-studies/stateless-configurable-modal"
+  style={{ display: 'inline-block', marginTop: 20 }}
+>
+  « Back to Stateless Configurable Modal index
+</a>

@@ -13,9 +13,16 @@
 }
 
 .subtle-attention-text {
-  color: #3f5a91;
+  color: #8fb0f2;
   display: inline-block;
   font-size: 12px;
   letter-spacing: 0.2px;
   margin-bottom: 10px;
+  animation: subtle-text-blink 1.4s steps(1, end) infinite;
+}
+
+@keyframes subtle-text-blink {
+  50% {
+    opacity: 0.72;
+  }
 }

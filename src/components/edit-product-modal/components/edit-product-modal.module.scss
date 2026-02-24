@@ -5,6 +5,7 @@
 }
 
 .editProductModalInfo {
+  position: relative;
   overflow: auto;
   padding-top: rem(8);
   padding-right: rem(8);
@@ -45,6 +46,14 @@
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     flex-basis: rem(490);
   }
+}
+
+.hasScrollHint::after {
+  content: none;
+}
+
+.hasScrollHint {
+  box-shadow: inset 0 rem(-10) rem(8) rem(-10) rgba(0, 0, 0, 0.24);
 }
 
 // Double class to avoid specificity issue on build time.

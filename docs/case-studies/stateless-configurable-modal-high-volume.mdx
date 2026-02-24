@@ -1,0 +1,45 @@
+import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
+import { highVolumeEditingItem, highVolumeModalMockData } from '@site/src/components/demo-modal/mockData';
+
+export const componentCode = String.raw`<EditProductModalStatefulDemo
+  editingItem={initializationData.editingItem}
+  mockModalData={skuCombinationsResponse}
+/>`;
+
+export const initializationCode = String.raw`({
+  editingItem: highVolumeEditingItem
+})`;
+
+export const highVolumeScenarioPlaygroundDataCode = `${JSON.stringify(highVolumeModalMockData, null, 2)}`;
+
+# Stateless Configurable Modal – High-Volume Options Demo
+
+<small>
+  Fake fetch with 12 colors x 25 sizes (US 5.0-9.5, then whole sizes 10-24) to stress selector overflow and composition.
+</small>
+
+<small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
+
+<LiveJsxPlayground
+  title="Live Demo"
+  initialCode={componentCode}
+  initialInitializationCode={initializationCode}
+  initializationVarName="initializationData"
+  initializationTitle="Initialization Data"
+  initialDataCode={highVolumeScenarioPlaygroundDataCode}
+  dataVarName="skuCombinationsResponse"
+  dataTitle="SKU Combinations Response"
+  scope={{
+    EditProductModalStatefulDemo,
+    highVolumeEditingItem,
+    highVolumeModalMockData,
+  }}
+/>
+
+<a
+  href="/cromagnoli/case-studies/stateless-configurable-modal"
+  style={{ display: 'inline-block', marginTop: 20 }}
+>
+  « Back to Stateless Configurable Modal index
+</a>

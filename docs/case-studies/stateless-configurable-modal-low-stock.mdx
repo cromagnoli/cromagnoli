@@ -1,0 +1,107 @@
+import EditProductModalStatefulDemo from '@site/src/components/demo-modal/edit-product-modal-stateful-demo';
+import LiveJsxPlayground from '@site/src/components/live-jsx-playground/live-jsx-playground';
+import mockData from '@site/src/components/demo-modal/mockData';
+import { EditProductErrorNotification, EditProductWarningNotification } from '@site/src/components/edit-product-modal/components/partials';
+
+export const secondSku =
+  mockData.skuVariants.availableSkus.find(
+    (sku) => sku.colorCode === '444444' && sku.size === '11'
+  ) ?? mockData.skuVariants.availableSkus[1];
+
+export const demoItemAlt = {
+  productName: mockData.productSummary.displayName,
+  productUrl: `/products/${mockData.productSummary.productId}`,
+  imageUrl: mockData.skuVariants.imagesByColorCode[secondSku.colorCode][0],
+  colorCode: secondSku.colorCode,
+  size: secondSku.size,
+};
+
+export const componentCode = String.raw`<EditProductModalStatefulDemo
+  editingItem={initializationData.editingItem}
+  mockModalData={skuCombinationsResponse}
+  renderNotifications={({ isCurrentSkuAvailable, currentMatchingSkuId }) => (
+    <>
+      <EditProductWarningNotification visible={currentMatchingSkuId === "5"}>
+        Hurry up! Limited units remaining!
+      </EditProductWarningNotification>
+      <EditProductErrorNotification visible={!isCurrentSkuAvailable}>
+        Sold out. Please select another combination.
+      </EditProductErrorNotification>
+    </>
+  )}
+/>`;
+
+export const initializationCode = String.raw`(() => {
+  const secondSku =
+    skuCombinationsResponse.skuVariants.availableSkus.find(
+      (sku) => sku.colorCode === "444444" && sku.size === "11"
+    ) ?? skuCombinationsResponse.skuVariants.availableSkus[1];
+
+  return {
+    editingItem: {
+      productName: skuCombinationsResponse.productSummary.displayName,
+      productUrl: "/products/" + skuCombinationsResponse.productSummary.productId,
+      imageUrl: skuCombinationsResponse.skuVariants.imagesByColorCode[secondSku.colorCode][0],
+      colorCode: secondSku.colorCode,
+      size: secondSku.size,
+    },
+  };
+})()`;
+
+export const defaultScenarioPlaygroundDataCode = String.raw`{
+  productSummary: {
+    productId: "${mockData.productSummary.productId}",
+    displayName: "BuyMeNot Sneakers",
+  },
+  skuVariants: {
+    colors: [
+      { colorCode: "ffffff", displayName: "White", available: true },
+      { colorCode: "444444", displayName: "Graphite", available: true },
+    ],
+    sizes: [
+      { size: "10", available: true },
+      { size: "11", available: true },
+      { size: "12", available: true },
+    ],
+    availableSkus: [
+      { id: "1", colorCode: "ffffff", size: "10", listPrice: "128.00", salePrice: "98.00", available: true },
+      { id: "2", colorCode: "ffffff", size: "11", listPrice: "128.00", available: false },
+      { id: "3", colorCode: "ffffff", size: "12", listPrice: "128.00", available: true },
+      { id: "4", colorCode: "444444", size: "10", listPrice: "128.00", available: false },
+      { id: "5", colorCode: "444444", size: "11", listPrice: "128.00", available: true },
+      { id: "6", colorCode: "444444", size: "12", listPrice: "128.00", available: true },
+    ],
+    imagesByColorCode: {
+      "ffffff": [...mockData.skuVariants.imagesByColorCode["ffffff"]],
+      "444444": [...mockData.skuVariants.imagesByColorCode["444444"]],
+    },
+  },
+}`;
+
+# Stateless Configurable Modal – Low Stock Custom Notification and Logic
+
+<small className="subtle-attention-text">Resize to see responsive behavior from mobile through desktop.</small>
+
+<LiveJsxPlayground
+  title="Live Demo"
+  initialCode={componentCode}
+  initialInitializationCode={initializationCode}
+  initializationVarName="initializationData"
+  initializationTitle="Initialization Data"
+  initialDataCode={defaultScenarioPlaygroundDataCode}
+  dataVarName="skuCombinationsResponse"
+  dataTitle="SKU Combinations Response"
+  scope={{
+    EditProductModalStatefulDemo,
+    EditProductErrorNotification,
+    EditProductWarningNotification,
+    mockData,
+  }}
+/>
+
+<a
+  href="/cromagnoli/case-studies/stateless-configurable-modal"
+  style={{ display: 'inline-block', marginTop: 20 }}
+>
+  « Back to Stateless Configurable Modal index
+</a>

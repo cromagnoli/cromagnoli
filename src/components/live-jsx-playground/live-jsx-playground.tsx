@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./live-jsx-playground.module.scss";
 
 type Scope = Record<string, unknown>;
@@ -14,6 +14,7 @@ type LiveJsxPlaygroundProps = {
   initializationTitle?: string;
   scope?: Scope;
   minEditorHeight?: number;
+  minPreviewHeight?: number;
 };
 
 type PreviewErrorBoundaryProps = {
@@ -88,6 +89,7 @@ const LiveJsxPlayground = ({
   initializationTitle = "Initialization Data",
   scope = {},
   minEditorHeight = 190,
+  minPreviewHeight = 420,
 }: LiveJsxPlaygroundProps) => {
   const [code, setCode] = useState(initialCode.trim());
   const [dataCode, setDataCode] = useState(initialDataCode?.trim() ?? "");
@@ -96,35 +98,11 @@ const LiveJsxPlayground = ({
   );
   const [preview, setPreview] = useState<React.ReactNode>(null);
   const [error, setError] = useState<string>("");
-  const [isInView, setIsInView] = useState(false);
-  const rootRef = useRef<HTMLDivElement | null>(null);
   const previewResetKey = `${code}\u0000${dataCode}\u0000${initializationCode}`;
 
   const scopeEntries = useMemo(() => Object.entries(scope), [scope]);
 
   useEffect(() => {
-    const node = rootRef.current;
-    if (!node) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setIsInView(Boolean(entry?.isIntersecting));
-      },
-      { rootMargin: "120px" }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isInView) {
-      return;
-    }
-
     let cancelled = false;
     const timeoutId = setTimeout(async () => {
       try {
@@ -182,11 +160,10 @@ const LiveJsxPlayground = ({
     initializationVarName,
     initialInitializationCode,
     scopeEntries,
-    isInView,
   ]);
 
   return (
-    <div className={styles.playground} ref={rootRef}>
+    <div className={styles.playground}>
       <div className={styles.toolbar}>
         <div className={styles.title}>{title}</div>
         <button
@@ -205,9 +182,12 @@ const LiveJsxPlayground = ({
       {error ? (
         <div className={styles.error}>{error}</div>
       ) : (
-        <div className={styles.preview}>
+        <div
+          className={styles.preview}
+          style={{ minHeight: `${minPreviewHeight}px` }}
+        >
           <PreviewErrorBoundary resetKey={previewResetKey}>
-            {preview}
+            {preview ?? <div className={styles.previewPlaceholder} />}
           </PreviewErrorBoundary>
         </div>
       )}
