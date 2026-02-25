@@ -31,7 +31,7 @@ const config: Config = {
     navbar: {
       title: 'Cristian Romagnoli',
       items: [
-        { to: '/', label: 'Case Studies', position: 'left' },
+        { to: '/', label: 'Production-Proven Case Studies', position: 'left' },
 
         { to: '/about-me', label: 'About Me', position: 'left' },
         {
