@@ -2,9 +2,6 @@ import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./progressive-routing-demo.module.scss";
 import { RoutingMode, RoutingPayload } from "./routing-simulator";
 
-const ROUTE_EXAMPLE = "/pdp/{productCategory}/{productName}/{productId}";
-const LANDING_ROUTE_EXAMPLE =
-  "/cdp/{productCategory}/{productName}/{productId}";
 const PRODUCT_CATEGORY = "running-sneakers";
 const PRODUCT_SLUG = "white-loop-runner";
 const PRODUCT_ID = "prod1234";
@@ -30,9 +27,7 @@ const buildPdpSrc = (sessionId: string) => {
 };
 
 const buildLandingSrc = (sessionId: string) => {
-  const url = new URL(
-    `${API_BASE}/cdp/${PRODUCT_CATEGORY}/${PRODUCT_SLUG}/${PRODUCT_ID}/`
-  );
+  const url = new URL(`${API_BASE}/cdp/${PRODUCT_CATEGORY}/`);
   url.searchParams.set("demoSessionId", sessionId);
   return url.toString();
 };
@@ -347,12 +342,12 @@ const ProgressiveRoutingDemo = () => {
   }, [currentIframeUrl, reloadToken]);
 
   const displayUrl = useMemo(() => {
-    const url = new URL(currentIframeUrl);
+    const url = new URL(effectiveUrl);
     url.searchParams.delete("demoSessionId");
     url.searchParams.delete("__reload");
     url.searchParams.delete("routingMode");
     return url.toString();
-  }, [currentIframeUrl]);
+  }, [effectiveUrl]);
 
   const submitExternalPost = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -384,6 +379,7 @@ const ProgressiveRoutingDemo = () => {
       return;
     }
     const baseUrl = iframeObservedUrl || currentIframeUrl;
+    setIframeObservedUrl(baseUrl);
     setCurrentIframeUrl(() => {
       try {
         const url = new URL(baseUrl);
@@ -405,7 +401,9 @@ const ProgressiveRoutingDemo = () => {
       return;
     }
     setPostPending(true);
-    setCurrentIframeUrl(buildLandingSrc(sessionId));
+    const landingUrl = buildLandingSrc(sessionId);
+    setIframeObservedUrl(landingUrl);
+    setCurrentIframeUrl(landingUrl);
     setPostFeedback("Navigated back to category page.");
   };
 
@@ -438,12 +436,7 @@ const ProgressiveRoutingDemo = () => {
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      if (event.source !== iframeRef.current?.contentWindow) {
-        return;
-      }
-
-      const expectedOrigin = new URL(displayUrl).origin;
-      if (event.origin !== apiOrigin && event.origin !== expectedOrigin) {
+      if (event.origin !== apiOrigin) {
         return;
       }
 
@@ -476,7 +469,7 @@ const ProgressiveRoutingDemo = () => {
 
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [apiOrigin, displayUrl]);
+  }, [apiOrigin]);
 
   const copyAddress = async () => {
     try {
@@ -547,6 +540,7 @@ const ProgressiveRoutingDemo = () => {
       if (!response.ok) {
         throw new Error("POST failed");
       }
+      setIframeObservedUrl(nextPdpUrl);
       setCurrentIframeUrl(nextPdpUrl);
       setSimulateFailure(true);
       setReloadToken((prev) => prev + 1);

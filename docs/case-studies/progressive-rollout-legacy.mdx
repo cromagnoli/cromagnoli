@@ -84,7 +84,7 @@ All files below live in the companion runtime repo used by this demo ([`hybrid-r
 const routes = [
   {
     method: "GET",
-    path: "/cdp/{productCategory}/{productName}/{productId}/",
+    path: "/cdp/{productCategory}/",
     config: cdp.get,
   },
   {
@@ -97,7 +97,7 @@ const routes = [
   },
   {
     method: "GET",
-    path: "/checkout/{productId}/",
+    path: "/checkout/",
     config: checkout.get,
   },
   {
