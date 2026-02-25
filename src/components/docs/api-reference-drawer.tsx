@@ -54,9 +54,13 @@ const ApiReferenceDrawer = ({
       </button>
 
       {shouldRenderDrawer ? (
-        <aside className={styles.drawer}>
+        <aside
+          className={`${styles.drawer} ${open ? styles.drawerActive : styles.drawerInactive}`}
+          onClick={() => setOpen(false)}
+        >
           <div
             className={`${styles.drawerPanel} ${open ? styles.drawerOpen : styles.drawerClosed}`}
+            onClick={(event) => event.stopPropagation()}
           >
             <div className={styles.header}>
             <strong>Stateless Modal API</strong>

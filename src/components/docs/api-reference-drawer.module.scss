@@ -60,15 +60,26 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: min(560px, 92vw);
+  left: 0;
+  width: 100vw;
   height: 100vh;
   z-index: 1199;
   pointer-events: none;
   overflow: hidden;
+  background: rgba(3, 8, 16, 0.14);
+}
+
+.drawerActive {
+  pointer-events: auto;
+}
+
+.drawerInactive {
+  pointer-events: none;
 }
 
 .drawerPanel {
-  width: 100%;
+  width: min(560px, 92vw);
+  margin-left: auto;
   height: 100%;
   background: #0f1c36;
   border-left: 1px solid #2d426f;
