@@ -656,6 +656,11 @@
 }
 
 .sessionNotice {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
   margin: 10px 0;
   padding: 7px 10px;
   border: 1px solid #7a5a2c;
@@ -663,9 +668,6 @@
   color: #ffdca8;
   border-radius: 8px;
   font-size: 0.76rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .sessionCountdown {
@@ -676,6 +678,22 @@
   border: 1px solid rgba(255, 220, 168, 0.4);
   border-radius: 6px;
   padding: 2px 6px;
+}
+
+.sessionNoticeClose {
+  border: 1px solid rgba(255, 220, 168, 0.4);
+  background: rgba(0, 0, 0, 0.18);
+  color: #ffe7bf;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sessionNoticeClose:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .address {

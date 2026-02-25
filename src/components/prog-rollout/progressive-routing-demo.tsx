@@ -110,6 +110,7 @@ const ProgressiveRoutingDemo = () => {
   const [error, setError] = useState<string | null>(null);
   const [sessionNotice, setSessionNotice] = useState<string | null>(null);
   const [nowTick, setNowTick] = useState(() => Date.now());
+  const [showExpiredNotice, setShowExpiredNotice] = useState(false);
   const lastRoutingEventIdRef = useRef(0);
   const sessionId = useMemo(
     () =>
@@ -121,15 +122,62 @@ const ProgressiveRoutingDemo = () => {
   const [currentIframeUrl, setCurrentIframeUrl] = useState(() =>
     buildLandingSrc(sessionId)
   );
+  const expiredNoticeStorageKey = useMemo(
+    () => `progressive-rollout-expired-notice:${sessionId}`,
+    [sessionId]
+  );
+  const expiredNoticeLockedRef = useRef(false);
+
+  const persistExpiredNotice = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      window.sessionStorage.setItem(expiredNoticeStorageKey, "1");
+    } catch {
+      // noop
+    }
+  }, [expiredNoticeStorageKey]);
+
+  const clearPersistedExpiredNotice = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      window.sessionStorage.removeItem(expiredNoticeStorageKey);
+    } catch {
+      // noop
+    }
+  }, [expiredNoticeStorageKey]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      if (window.sessionStorage.getItem(expiredNoticeStorageKey) === "1") {
+        expiredNoticeLockedRef.current = true;
+        setShowExpiredNotice(true);
+      }
+    } catch {
+      // noop
+    }
+  }, [expiredNoticeStorageKey]);
+
+  const markExpiredNotice = useCallback(() => {
+    expiredNoticeLockedRef.current = true;
+    setShowExpiredNotice(true);
+    persistExpiredNotice();
+  }, [persistExpiredNotice]);
 
   const getSessionNotice = useCallback((payload: RoutingPayload) => {
     if (payload.sessionExpired) {
-      return "Demo session expired, restored defaults.";
+      return "Demo session expired. Defaults restored, including feature flag state.";
     }
     if (typeof payload.sessionExpiresAt === "number") {
       const remainingMs = payload.sessionExpiresAt - Date.now();
       if (remainingMs <= 0) {
-        return "Demo session expired, restored defaults.";
+        return "Demo session expired. Defaults restored, including feature flag state.";
       }
       if (remainingMs <= SESSION_WARNING_THRESHOLD_MS) {
         return "Demo session will expire soon, please refresh the session to continue.";
@@ -150,9 +198,12 @@ const ProgressiveRoutingDemo = () => {
       if (typeof payload.simulateFailure === "boolean") {
         setSimulateFailure(payload.simulateFailure);
       }
+      if (payload.sessionExpired) {
+        markExpiredNotice();
+      }
       setSessionNotice(getSessionNotice(payload));
     },
-    [getSessionNotice]
+    [getSessionNotice, markExpiredNotice]
   );
 
   const resolveRoutingState = useCallback(async () => {
@@ -208,8 +259,42 @@ const ProgressiveRoutingDemo = () => {
   }, [getSessionNotice, serverPayload]);
 
   useEffect(() => {
+    if (!serverPayload) {
+      return;
+    }
+    setSessionNotice(getSessionNotice(serverPayload));
+  }, [getSessionNotice, nowTick, serverPayload]);
+
+  useEffect(() => {
+    if (expiredNoticeLockedRef.current) {
+      return;
+    }
+    if (typeof serverPayload?.sessionExpiresAt !== "number") {
+      return;
+    }
+    if (nowTick < serverPayload.sessionExpiresAt) {
+      return;
+    }
+    markExpiredNotice();
+    setSessionNotice(
+      "Demo session expired. Defaults restored, including feature flag state."
+    );
+  }, [markExpiredNotice, nowTick, serverPayload?.sessionExpiresAt]);
+
+  useEffect(() => {
     const touchSession = async () => {
       if (document.visibilityState !== "visible") {
+        return;
+      }
+      if (expiredNoticeLockedRef.current) {
+        return;
+      }
+      // If local expiry was already reached, avoid extending the session via touch.
+      // Let /resolve report expiration first so the UI can surface the expired state.
+      if (
+        typeof serverPayload?.sessionExpiresAt === "number" &&
+        Date.now() >= serverPayload.sessionExpiresAt
+      ) {
         return;
       }
       try {
@@ -224,6 +309,10 @@ const ProgressiveRoutingDemo = () => {
           sessionExpiresAt?: number;
         };
         if (payload.sessionExpired) {
+          markExpiredNotice();
+          setSessionNotice(
+            "Demo session expired. Defaults restored, including feature flag state."
+          );
           await resolveRoutingState();
           return;
         }
@@ -244,7 +333,7 @@ const ProgressiveRoutingDemo = () => {
     touchSession();
     const timer = window.setInterval(touchSession, SESSION_TOUCH_INTERVAL_MS);
     return () => window.clearInterval(timer);
-  }, [resolveRoutingState, sessionId]);
+  }, [markExpiredNotice, resolveRoutingState, serverPayload?.sessionExpiresAt, sessionId]);
 
   useEffect(() => {
     const onVisibilityChange = () => {
@@ -745,15 +834,34 @@ const ProgressiveRoutingDemo = () => {
             </div>
           </div>
 
-          {sessionNotice ? (
-              <div className={styles.sessionNotice}>
-                <span>{sessionNotice}</span>
-                {sessionCountdownLabel ? (
-                  <span className={styles.sessionCountdown}>
-                    {sessionCountdownLabel}
-                  </span>
-                ) : null}
-              </div>
+          {showExpiredNotice ? (
+            <div className={styles.sessionNotice}>
+              <span>
+                Demo session expired. Defaults restored, including feature flag
+                state.
+              </span>
+              <button
+                type="button"
+                className={styles.sessionNoticeClose}
+                aria-label="Dismiss session notice"
+                onClick={() => {
+                  expiredNoticeLockedRef.current = false;
+                  setShowExpiredNotice(false);
+                  clearPersistedExpiredNotice();
+                }}
+              >
+                ×
+              </button>
+            </div>
+          ) : sessionNotice ? (
+            <div className={styles.sessionNotice}>
+              <span>{sessionNotice}</span>
+              {sessionCountdownLabel ? (
+                <span className={styles.sessionCountdown}>
+                  {sessionCountdownLabel}
+                </span>
+              ) : null}
+            </div>
           ) : null}
         </div>
 
