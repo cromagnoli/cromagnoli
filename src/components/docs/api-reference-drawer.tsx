@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./api-reference-drawer.module.scss";
-import StatelessModalApiDoc from "@site/docs/case-studies/stateless-configurable-modal-api.mdx";
+import StatelessModalApiContent from "./stateless-modal-api-content.mdx";
 
 type Props = {
   label?: string;
@@ -74,7 +74,7 @@ const ApiReferenceDrawer = ({
             </button>
             </div>
             <div className={styles.content}>
-              <StatelessModalApiDoc />
+              <StatelessModalApiContent />
             </div>
           </div>
         </aside>

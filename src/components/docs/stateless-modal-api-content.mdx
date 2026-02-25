@@ -1,0 +1,167 @@
+:::note Layout Semantics
+- *mobile-ish*: `firstChild` maps to the top content area and `secondChild` maps to the lower content area.
+- *desktop-ish*: `firstChild` maps to the left content area and `secondChild` maps to the right content area.
+:::
+
+## Core Props
+
+### Required
+
+| Prop | Type | Purpose |
+| --- | --- | --- |
+| `mainHeading` | `string` | Main heading shown in modal header. |
+| `productName` | `string` | Product label used in UI and image alt fallback. |
+| `initialImageUrl` | `string \| null` | Initial image while data state is being resolved. |
+| `initialColorCode` | `string \| null` | Initial selected color code (must match `skuVariants.colors`). |
+| `initialSize` | `string \| null` | Initial selected size (must match `skuVariants.sizes`). |
+| `onDismiss` | `({ event, currentMatchingSku }) => void` | Close handler; receives the currently matched SKU in ready state. |
+
+### Optional Base Data
+
+| Prop | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `initialListPrice` | `string \| null` | `null` | Header fallback list price during loading/initial state. |
+| `initialSalePrice` | `string \| null` | `null` | Header fallback sale price during loading/initial state. |
+| `skuVariants` | `SkuVariants \| null` | `{}` | Source of colors, sizes, SKU combinations, image groups. |
+| `enableStickySecondChildFooter` | `boolean` | `true` | Controls sticky behavior of right-panel footer frame. |
+
+## Data Types
+
+```ts
+type ColorOption = {
+  colorCode: string;
+  displayName?: string;
+  available?: boolean;
+};
+
+type SizeOption = {
+  size: string;
+  available?: boolean;
+};
+
+type Sku = {
+  id?: string;
+  colorCode: string;
+  size: string;
+  listPrice?: string;
+  salePrice?: string;
+  available?: boolean;
+};
+
+type MaybeSku = Sku | Record<string, unknown>;
+
+type SkuVariants = {
+  sizes?: SizeOption[];
+  colors?: ColorOption[];
+  availableSkus?: Sku[];
+  imagesByColorCode?: Record<string, string[]>;
+};
+
+type ColorToSizeMap = Record<string, string[]>;
+type SizeToColorMap = Record<string, string[]>;
+```
+
+## Render Prop API
+
+### Loading-phase slots
+
+| Render prop | Signature | Purpose |
+| --- | --- | --- |
+| `renderLoadingSecondChild` | `() => ReactNode` | Full override of lower section (*mobile-ish*) or right section (*desktop-ish*), i.e. loading `secondChild` area. |
+| `renderLoadingSecondChildHeader` | `() => ReactNode` | Override the loading header in lower section (*mobile-ish*) or right section header (*desktop-ish*), i.e. `secondChild` header. |
+
+### Ready-phase structure slots
+
+| Render prop | Signature | Purpose |
+| --- | --- | --- |
+| `renderFirstChild` | `(args: { currentColorIndex; prevColorIndex; currentSizeIndex; prevSizeIndex; setCurrentColorIndex; setCurrentSizeIndex; availableSkus; colors; sizes; colorToSizeMap; sizeToColorMap; imagesByColorCode; currentImagesUrls; currentColorDetails; currentSizeDetails }) => ReactNode` | Full override of top section (*mobile-ish*) or left section (*desktop-ish*), i.e. `firstChild` area (typically media). |
+| `renderSecondChild` | `(args: { currentColorIndex; prevColorIndex; currentSizeIndex; prevSizeIndex; setCurrentColorIndex; setCurrentSizeIndex; availableSkus; colors; sizes; colorToSizeMap; sizeToColorMap; imagesByColorCode; currentImagesUrls; currentColorDetails; currentSizeDetails }) => ReactNode` | Full override of lower section (*mobile-ish*) or right section (*desktop-ish*), i.e. `secondChild` area. Bypasses default composition. |
+| `renderSecondChildHeader` | `(args: { currentColorIndex; prevColorIndex; currentSizeIndex; prevSizeIndex; setCurrentColorIndex; setCurrentSizeIndex; availableSkus; colors; sizes; colorToSizeMap; sizeToColorMap; imagesByColorCode; currentImagesUrls; currentColorDetails; currentSizeDetails; currentMatchingSku }) => ReactNode` | Override the header in lower section (*mobile-ish*) or right section header (*desktop-ish*), i.e. `secondChild` header. |
+| `renderAttrsSelectors` | `(args: { currentColorIndex; prevColorIndex; currentSizeIndex; prevSizeIndex; setCurrentColorIndex; setCurrentSizeIndex; availableSkus; colors; sizes; colorToSizeMap; sizeToColorMap; imagesByColorCode; currentImagesUrls; currentColorDetails; currentSizeDetails; currentMatchingSku }) => ReactNode` | Override selector block (color/size controls). |
+| `renderAfterAttrsSelectors` | `(args: { currentColorIndex; prevColorIndex; currentSizeIndex; prevSizeIndex; setCurrentColorIndex; setCurrentSizeIndex; availableSkus; colors; sizes; colorToSizeMap; sizeToColorMap; imagesByColorCode; currentImagesUrls; currentColorDetails; currentSizeDetails }) => ReactNode` | Insert content after selectors in lower section (*mobile-ish*) or right section (*desktop-ish*), before `secondChild` sticky footer. |
+
+### Ready-phase interaction/content slots
+
+| Render prop | Signature | Purpose |
+| --- | --- | --- |
+| `renderNotifications` | `(args: { isCurrentSkuAvailable; currentMatchingSkuId; currentColorDetails; currentColorIndex; currentSizeDetails; currentSizeIndex; prevColorIndex; prevSizeIndex; availableSkus }) => ReactNode` | Show status messages in lower section footer (*mobile-ish*) or right section footer (*desktop-ish*), e.g. `sold out` / `low stock`. |
+| `renderPrimaryCta` | `(args: { isCurrentSkuAvailable; currentMatchingSkuId; currentColorDetails; currentColorIndex; currentSizeDetails; currentSizeIndex; prevColorIndex; prevSizeIndex; currentMatchingSku }) => ReactNode` | Render primary action in lower section footer (*mobile-ish*) or right section footer (*desktop-ish*). |
+| `renderSecondaryCta` | `(args: { isCurrentSkuAvailable; currentMatchingSkuId; currentColorDetails; currentColorIndex; currentSizeDetails; currentSizeIndex; prevColorIndex; prevSizeIndex; currentMatchingSku }) => ReactNode` | Render secondary action in lower section footer (*mobile-ish*) or right section footer (*desktop-ish*). |
+| `renderHeading` | `() => ReactNode` | Replace default heading component in ready header. |
+| `renderAfterHeading` | `() => ReactNode` | Inject badge/tag/meta under heading in lower section header (*mobile-ish*) or right section header (*desktop-ish*). |
+| `renderPrice` | `(args: { listPrice?: string \| null; salePrice?: string \| null }) => ReactNode` | Replace default price renderer in lower section header (*mobile-ish*) or right section header (*desktop-ish*). |
+
+## Dismiss Semantics
+
+- In loading mode, `onDismiss` receives `currentMatchingSku: null`.
+- In ready mode, `onDismiss` receives the currently matched SKU object (or empty object when unmatched).
+
+## Loading vs Ready Trigger
+
+The component renders loading experience when any of these is missing:
+
+- `initialImageUrl`
+- `initialColorCode`
+- `initialSize`
+- `skuVariants`
+- resolved internal color/size indexes
+
+## Default Composition (without render overrides)
+
+- `Media area`: product image carousel.
+- `Details header`: heading + price.
+- `Details body`: default color and size selectors.
+- `Details footer`: notifications and CTAs only when provided.
+
+## Helper UI Exports Used By Consumers
+
+For composing render props, these are available from:
+
+```ts
+import {
+  EditPrimaryButton,
+  EditSecondaryCta,
+  EditHeader,
+  EditHeading,
+  EditPrice,
+  EditImages,
+  EditErrorNotification,
+  EditWarningNotification,
+  EditColorSelector,
+  EditSizeSelector,
+  EditAttrsSelectors,
+  EditScrollableFrame,
+  EditStickyFrame,
+} from '@site/src/components/stateless-product-edit-modal/components/partials';
+```
+
+Example (import one partial and inject it through a render prop):
+
+```tsx
+import { EditErrorNotification } from '@site/src/components/stateless-product-edit-modal/components/partials';
+
+<StatelessProductEditModal
+  // ...
+  renderNotifications={({ isCurrentSkuAvailable }) => (
+    <EditErrorNotification visible={!isCurrentSkuAvailable}>
+      Sold out. Please select another combination.
+    </EditErrorNotification>
+  )}
+/>
+```
+
+## Minimal Usage Example
+
+```tsx
+<StatelessProductEditModal
+  mainHeading="BuyMeNot Sneakers"
+  productName="BuyMeNot Sneakers"
+  initialImageUrl={item.imageUrl}
+  initialColorCode={item.colorCode}
+  initialSize={item.size}
+  skuVariants={data.skuVariants}
+  onDismiss={({ currentMatchingSku }) => {
+    // handle close
+  }}
+/>
+```
