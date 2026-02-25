@@ -348,6 +348,14 @@ const ProgressiveRoutingDemo = () => {
     url.searchParams.delete("routingMode");
     return url.toString();
   }, [effectiveUrl]);
+  const displayAddressPath = useMemo(() => {
+    try {
+      const url = new URL(displayUrl);
+      return `...${url.pathname}${url.search}${url.hash}`;
+    } catch {
+      return `...${displayUrl}`;
+    }
+  }, [displayUrl]);
 
   const submitExternalPost = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -645,7 +653,11 @@ const ProgressiveRoutingDemo = () => {
                   </div>
                 </div>
                 <div className={styles.addressRow}>
-                  <code className={styles.address}>{displayUrl}</code>
+                  <code className={styles.address}>
+                    <span className={styles.addressPath}>
+                      {displayAddressPath}
+                    </span>
+                  </code>
                   <button
                     type="button"
                     className={`${styles.copyButton} ${

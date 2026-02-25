@@ -671,6 +671,14 @@
   flex: 1;
 }
 
+.addressPath {
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #d7e1f6;
+}
+
 .copyButton {
   border: 1px solid #27344f;
   border-left: 0;
@@ -696,6 +704,7 @@
   grid-area: hint;
   font-size: 0.68rem;
   color: #8ea1c9;
+  padding: 2px 5px;
   margin-top: -2px;
   animation: hintPulse 1.8s ease-in-out infinite;
 }
