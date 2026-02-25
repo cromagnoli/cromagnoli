@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./live-jsx-playground.module.scss";
+import ApiReferenceDrawer from "../docs/api-reference-drawer";
 
 type Scope = Record<string, unknown>;
 
@@ -166,17 +167,20 @@ const LiveJsxPlayground = ({
     <div className={styles.playground}>
       <div className={styles.toolbar}>
         <div className={styles.title}>{title}</div>
-        <button
-          type="button"
-          className={styles.button}
-          onClick={() => {
-            setCode(initialCode.trim());
-            setDataCode(initialDataCode?.trim() ?? "");
-            setInitializationCode(initialInitializationCode?.trim() ?? "");
-          }}
-        >
-          Reset
-        </button>
+        <div className={styles.actions}>
+          <ApiReferenceDrawer inline />
+          <button
+            type="button"
+            className={styles.button}
+            onClick={() => {
+              setCode(initialCode.trim());
+              setDataCode(initialDataCode?.trim() ?? "");
+              setInitializationCode(initialInitializationCode?.trim() ?? "");
+            }}
+          >
+            Reset
+          </button>
+        </div>
       </div>
 
       {error ? (

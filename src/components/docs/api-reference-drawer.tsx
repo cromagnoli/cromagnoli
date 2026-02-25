@@ -5,11 +5,13 @@ import styles from "./api-reference-drawer.module.scss";
 type Props = {
   path?: string;
   label?: string;
+  inline?: boolean;
 };
 
 const ApiReferenceDrawer = ({
   path = "/case-studies/stateless-configurable-modal-api",
   label = "API",
+  inline = false,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const apiUrl = useBaseUrl(`${path}?embedded=1`);
@@ -18,7 +20,7 @@ const ApiReferenceDrawer = ({
     <>
       <button
         type="button"
-        className={styles.trigger}
+        className={`${styles.trigger} ${inline ? styles.triggerInline : ""}`}
         onClick={() => setOpen((prev) => !prev)}
       >
         {open ? "Close API" : `${label} Reference`}

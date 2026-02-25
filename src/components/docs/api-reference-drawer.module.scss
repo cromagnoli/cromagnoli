@@ -16,6 +16,25 @@
     transform 140ms ease;
 }
 
+.triggerInline {
+  position: static;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
+  border-radius: 8px;
+  background: #ffffff;
+  border-color: #cfd5e3;
+  color: #4e4e4e;
+  padding: 6px 10px;
+  font-weight: 600;
+  animation: none;
+}
+
+.triggerInline:hover {
+  background: #f5f7fb;
+  border-color: #b9c1d3;
+}
+
 .trigger:hover {
   background: #264583;
   border-color: #4e6ea9;
