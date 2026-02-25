@@ -513,6 +513,21 @@ const ProgressiveRoutingDemo = () => {
       setPostFeedback(
         `Routing mode updated to ${nextRoutingMode}. Click reload to apply in iframe.`
       );
+      setServerPayload((prev) =>
+        prev
+          ? {
+              ...prev,
+              route: nextRoutingMode,
+              routingMode: nextRoutingMode,
+              fallback: false,
+              queryLegacy: false,
+              reason:
+                nextRoutingMode === "legacy"
+                  ? "feature-flag-off"
+                  : "nextgen-active",
+            }
+          : prev
+      );
     } catch {
       setRoutingMode((prev) => (prev === "nextgen" ? "legacy" : "nextgen"));
       setPostFeedback("Routing mode POST failed. Check service availability.");
@@ -553,6 +568,18 @@ const ProgressiveRoutingDemo = () => {
       setSimulateFailure(true);
       setReloadToken((prev) => prev + 1);
       setPostFeedback("Failure trigger accepted. Reloading iframe...");
+      setServerPayload((prev) =>
+        prev
+          ? {
+              ...prev,
+              route: "legacy",
+              fallback: true,
+              reason: "nextgen-error",
+              queryLegacy: true,
+              simulateFailure: true,
+            }
+          : prev
+      );
     } catch {
       setPostPending(false);
       setPostFeedback("Failure trigger POST failed. Check service availability.");
