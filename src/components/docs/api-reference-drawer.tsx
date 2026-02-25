@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import styles from "./api-reference-drawer.module.scss";
+import StatelessModalApiDoc from "@site/docs/case-studies/stateless-configurable-modal-api.mdx";
 
 type Props = {
-  path?: string;
   label?: string;
   inline?: boolean;
 };
 
 const ApiReferenceDrawer = ({
-  path = "/case-studies/stateless-configurable-modal-api",
   label = "API",
   inline = false,
 }: Props) => {
   const DRAWER_ANIMATION_MS = 220;
   const [open, setOpen] = useState(false);
   const [shouldRenderDrawer, setShouldRenderDrawer] = useState(false);
-  const apiUrl = useBaseUrl(`${path}?embedded=1`);
 
   useEffect(() => {
     if (open) {
       setShouldRenderDrawer(true);
+      return;
+    }
+    if (!shouldRenderDrawer) {
       return;
     }
     const timeoutId = window.setTimeout(
@@ -28,7 +28,7 @@ const ApiReferenceDrawer = ({
       DRAWER_ANIMATION_MS
     );
     return () => window.clearTimeout(timeoutId);
-  }, [open]);
+  }, [open, shouldRenderDrawer]);
 
   useEffect(() => {
     if (!open) {
@@ -69,7 +69,9 @@ const ApiReferenceDrawer = ({
               ×
             </button>
             </div>
-            <iframe title="API Reference" src={apiUrl} className={styles.frame} />
+            <div className={styles.content}>
+              <StatelessModalApiDoc />
+            </div>
           </div>
         </aside>
       ) : null}
