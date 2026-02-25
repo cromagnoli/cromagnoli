@@ -1,10 +1,19 @@
-import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styles from "./progressive-routing-demo.module.scss";
 import { RoutingMode, RoutingPayload } from "./routing-simulator";
 
 const PRODUCT_CATEGORY = "running-sneakers";
 const PRODUCT_SLUG = "white-loop-runner";
 const PRODUCT_ID = "prod1234";
+const SESSION_WARNING_THRESHOLD_MS = 15 * 60 * 1000;
+const SESSION_TOUCH_INTERVAL_MS = 3 * 60 * 1000;
 const LOCAL_API_BASE = "http://localhost:4001";
 const REMOTE_API_BASE = "https://hybrid-routing-demo.onrender.com";
 const resolveApiBase = () => {
@@ -99,6 +108,8 @@ const ProgressiveRoutingDemo = () => {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sessionNotice, setSessionNotice] = useState<string | null>(null);
+  const [nowTick, setNowTick] = useState(() => Date.now());
   const lastRoutingEventIdRef = useRef(0);
   const sessionId = useMemo(
     () =>
@@ -111,51 +122,141 @@ const ProgressiveRoutingDemo = () => {
     buildLandingSrc(sessionId)
   );
 
+  const getSessionNotice = useCallback((payload: RoutingPayload) => {
+    if (payload.sessionExpired) {
+      return "Demo session expired, restored defaults.";
+    }
+    if (typeof payload.sessionExpiresAt === "number") {
+      const remainingMs = payload.sessionExpiresAt - Date.now();
+      if (remainingMs <= 0) {
+        return "Demo session expired, restored defaults.";
+      }
+      if (remainingMs <= SESSION_WARNING_THRESHOLD_MS) {
+        return "Demo session will expire soon, please refresh the session to continue.";
+      }
+    }
+    return null;
+  }, []);
+
+  const applyResolvePayload = useCallback(
+    (payload: RoutingPayload) => {
+      setServerPayload(payload);
+      if (typeof payload.productName === "string" && payload.productName.trim()) {
+        setProductNameDraft(payload.productName);
+      }
+      if (payload.routingMode === "nextgen" || payload.routingMode === "legacy") {
+        setRoutingMode(payload.routingMode);
+      }
+      if (typeof payload.simulateFailure === "boolean") {
+        setSimulateFailure(payload.simulateFailure);
+      }
+      setSessionNotice(getSessionNotice(payload));
+    },
+    [getSessionNotice]
+  );
+
+  const resolveRoutingState = useCallback(async () => {
+    const fetchUrl = new URL(`${API_BASE}/resolve/${PRODUCT_ID}`);
+    fetchUrl.searchParams.set("demoSessionId", sessionId);
+    fetchUrl.searchParams.set("legacy", "false");
+
+    const res = await fetch(fetchUrl.toString());
+    if (!res.ok) {
+      throw new Error("Server unreachable");
+    }
+    const payload = (await res.json()) as RoutingPayload;
+    applyResolvePayload(payload);
+  }, [applyResolvePayload, sessionId]);
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
 
-    const fetchUrl = new URL(`${API_BASE}/resolve/${PRODUCT_ID}`);
-    fetchUrl.searchParams.set("demoSessionId", sessionId);
-    fetchUrl.searchParams.set("legacy", "false");
-
-    fetch(fetchUrl.toString())
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Server unreachable");
-        }
-        return res.json();
-      })
-      .then((payload: RoutingPayload) => {
-        if (cancelled) {
-          return;
-        }
-        setServerPayload(payload);
-        if (typeof payload.productName === "string" && payload.productName.trim()) {
-          setProductNameDraft(payload.productName);
-        }
-        if (payload.routingMode === "nextgen" || payload.routingMode === "legacy") {
-          setRoutingMode(payload.routingMode);
-        }
-        if (typeof payload.simulateFailure === "boolean") {
-          setSimulateFailure(payload.simulateFailure);
-        }
-        setLoading(false);
-      })
+    resolveRoutingState()
       .catch(() => {
         if (cancelled) {
           return;
         }
         setError("Hybrid routing service unreachable.");
         setServerPayload(null);
-        setLoading(false);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [reloadToken, sessionId]);
+  }, [reloadToken, resolveRoutingState]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNowTick(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!serverPayload) {
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setSessionNotice(getSessionNotice(serverPayload));
+    }, 30000);
+    return () => window.clearInterval(timer);
+  }, [getSessionNotice, serverPayload]);
+
+  useEffect(() => {
+    const touchSession = async () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+      try {
+        const touchUrl = new URL(`${API_BASE}/session-touch`);
+        touchUrl.searchParams.set("demoSessionId", sessionId);
+        const response = await fetch(touchUrl.toString(), { method: "POST" });
+        if (!response.ok) {
+          return;
+        }
+        const payload = (await response.json()) as {
+          sessionExpired?: boolean;
+          sessionExpiresAt?: number;
+        };
+        if (payload.sessionExpired) {
+          await resolveRoutingState();
+          return;
+        }
+        setServerPayload((prev) =>
+          prev
+            ? {
+                ...prev,
+                sessionExpired: false,
+                sessionExpiresAt: payload.sessionExpiresAt ?? prev.sessionExpiresAt,
+              }
+            : prev
+        );
+      } catch {
+        // noop
+      }
+    };
+
+    touchSession();
+    const timer = window.setInterval(touchSession, SESSION_TOUCH_INTERVAL_MS);
+    return () => window.clearInterval(timer);
+  }, [resolveRoutingState, sessionId]);
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        resolveRoutingState().catch(() => {
+          // noop
+        });
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, [resolveRoutingState]);
 
   const activeLabel = useMemo(() => {
     if (serverPayload?.queryLegacy) {
@@ -356,6 +457,21 @@ const ProgressiveRoutingDemo = () => {
       return `...${displayUrl}`;
     }
   }, [displayUrl]);
+
+  const sessionCountdownLabel = useMemo(() => {
+    if (
+      !sessionNotice ||
+      !sessionNotice.startsWith("Demo session will expire soon") ||
+      typeof serverPayload?.sessionExpiresAt !== "number"
+    ) {
+      return null;
+    }
+    const remainingMs = Math.max(0, serverPayload.sessionExpiresAt - nowTick);
+    const totalSeconds = Math.floor(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  }, [nowTick, serverPayload?.sessionExpiresAt, sessionNotice]);
 
   const submitExternalPost = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -628,6 +744,17 @@ const ProgressiveRoutingDemo = () => {
               Current experience: {activeLabel}
             </div>
           </div>
+
+          {sessionNotice ? (
+              <div className={styles.sessionNotice}>
+                <span>{sessionNotice}</span>
+                {sessionCountdownLabel ? (
+                  <span className={styles.sessionCountdown}>
+                    {sessionCountdownLabel}
+                  </span>
+                ) : null}
+              </div>
+          ) : null}
         </div>
 
         <div className={styles.cardBody}>

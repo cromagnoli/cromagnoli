@@ -63,6 +63,8 @@ export type RoutingPayload = RoutingEvaluation & {
   productName?: string;
   routingMode?: RoutingMode;
   simulateFailure?: boolean;
+  sessionExpired?: boolean;
+  sessionExpiresAt?: number;
 };
 
 export const buildPayload = ({ productId, ...context }: RoutingContext): RoutingPayload => {
