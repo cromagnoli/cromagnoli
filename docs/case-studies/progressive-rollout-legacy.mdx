@@ -177,8 +177,8 @@ const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
     href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L133"
 />
 ```ts
-const shouldUseNextGenRouter = (request) => {
-  const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
+export const shouldUseNextGenRouter = (request: HapiRequest): boolean => {
+  const hasLegacyFallbackQuery = request?.url?.searchParams?.get('legacy');
 
   if (hasLegacyFallbackQuery) {
     return false;
