@@ -15,17 +15,15 @@ Short on time? Jump directly to the [interactive demo](#live-demo).
 
 This case study shows a production-style migration strategy where one URL can be served by either a legacy Hapi controller or a NextGen React Router runtime, with controlled rollout and safe fallback.
 
-:::note
-This implementation is intentionally documented in JavaScript (`.mjs`) instead of TypeScript to mirror the legacy codebase constraints and keep the architecture representation faithful to the original production pattern. [More details](#why-javascript-no-typescript-in-this-case).
-:::
-
 :::note Transparency Disclaimer
 The documentation scaffolding and page implementation were generated with AI assistance and should not be evaluated as original authored product code.
 In this case study, the core authored implementation is represented by:
 `server/init/routes.mjs`,
 `nextgen-app/routes.ts`,
-`nextgen-app/hybrid-routing/routing.mjs`,
-and `nextgen-app/hybrid-routing/vite.mjs`.
+`nextgen-app/hybrid-routing/paths.ts`,
+`nextgen-app/hybrid-routing/routing.ts`,
+`nextgen-app/hybrid-routing/vite.ts`,
+`nextgen-app/hybrid-routing/fake-feature-flag.ts`
 :::
 
 ## Problem to Solve
@@ -117,8 +115,8 @@ Only dual-stack routes use `resolveRouteController()`; legacy-only routes keep d
 #### 2.1) Main entry point (`resolveRouteController`)
 
 <CodeHeader
-  path="server/app/hybrid-routing/routing.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs#L99"
+  path="nextgen-app/hybrid-routing/routing.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
 />
 ```js
 export const resolveRouteController = (legacyController, pathDebugId) => ({
@@ -156,8 +154,8 @@ const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
 :::
 
 <CodeHeader
-    path="server/app/hybrid-routing/routing.mjs"
-    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs"
+    path="nextgen-app/hybrid-routing/routing.ts"
+    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
 />
 ```js
 const shouldUseNextGenRouter = (request) => {
@@ -184,7 +182,7 @@ const shouldUseNextGenRouter = (request) => {
 :::
 
 :::note
-`ProductDetail` is a route key (not a URL literal). It maps to the declarative path contract in `paths.mjs`, and in production this enablement metadata is typically sourced from the feature-flag tool.
+`ProductDetail` is a route key (not a URL literal). It maps to the declarative path contract in `paths.ts`, and in production this enablement metadata is typically sourced from the feature-flag tool.
 :::
 
 ### 3) Hapi ↔ React Router adapter
@@ -192,8 +190,8 @@ const shouldUseNextGenRouter = (request) => {
 #### 3.1) Runtime handler bridge
 
 <CodeHeader
-    path="server/app/hybrid-routing/routing.mjs"
-    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs"
+    path="nextgen-app/hybrid-routing/routing.ts"
+    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
 />
 ```js
 const createReactRouterRoutesHandler = async (request) => {
@@ -223,8 +221,8 @@ This is the runtime bridge used by `resolveRouteController` to defer NextGen han
 #### 3.2) Hapi request/response adapter
 
 <CodeHeader
-  path="server/app/hybrid-routing/react-router-request-response.adapter.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/react-router-request-response.adapter.mjs#L42"
+  path="nextgen-app/hybrid-routing/react-router-request-response.adapter.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/react-router-request-response.adapter.ts"
 />
 ```js
 export const createRequestHandler = ({ build, getLoadContext, mode = process.env.NODE_ENV }) => {
@@ -247,8 +245,8 @@ This makes NextGen runtime pluggable without replacing Hapi server infrastructur
 ### 4) Vite runtime service layer
 
 <CodeHeader
-  path="server/app/hybrid-routing/vite.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/vite.mjs#L35"
+  path="nextgen-app/hybrid-routing/vite.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/vite.ts"
 />
 ```js
 let vite = null;
@@ -286,8 +284,8 @@ The companion demo runtime intentionally runs only the Vite dev-server branch fo
 ### 5) Route capability map
 
 <CodeHeader
-  path="server/app/hybrid-routing/paths.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/paths.mjs#L1"
+  path="nextgen-app/hybrid-routing/paths.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/paths.ts"
 />
 
 ```js
@@ -317,8 +315,8 @@ An explicit allowlist of dual-stack pages prevents accidental routing to NextGen
 #### 1) Explicit operator fallback short-circuit
 
 <CodeHeader
-  path="server/app/hybrid-routing/routing.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/app/hybrid-routing/routing.mjs#L146"
+  path="nextgen-app/hybrid-routing/routing.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
 />
 
 ```js
@@ -340,8 +338,8 @@ This guarantees deterministic rollback behavior from the edge of the routing dec
 #### 2) NextGen runtime failure boundary -> legacy redirect
 
 <CodeHeader
-  path="app/routes/pdp.tsx"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/app/routes/pdp.tsx#L102"
+  path="nextgen-app/routes/pdp.tsx"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/routes/pdp.tsx"
 />
 
 ```tsx
@@ -367,12 +365,11 @@ class RedirectToLegacyBoundary extends React.Component {
 If modern rendering fails at runtime, users are automatically moved to the legacy path instead of getting a dead-end error screen.
 :::
 
-## Why JavaScript (No TypeScript) in This Case
+## Why Mixed TS + JS in This Case
 
-1. The source system being represented is legacy-first and JS-based.
-2. Preserving `.mjs` keeps parity with real migration constraints (tooling, runtime conventions, file contracts).
-3. The goal of this case study is architectural fidelity, not a language rewrite.
-4. A TypeScript conversion can be a future step, but it is intentionally decoupled from rollout-risk mitigation.
+1. NextGen routing/runtime modules are authored in TypeScript (`nextgen-app/hybrid-routing/*.ts`) and compiled before server start.
+2. Legacy controllers and runtime orchestration remain JavaScript (`.mjs`) to mirror the production migration constraints.
+3. This preserves architectural fidelity while still demonstrating typed contracts in the new runtime layer.
 
 ## Product Value
 
