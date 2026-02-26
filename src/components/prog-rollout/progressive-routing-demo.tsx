@@ -41,6 +41,16 @@ const buildLandingSrc = (sessionId: string) => {
   return url.toString();
 };
 
+const normalizeHistoryUrl = (value: string) => {
+  try {
+    const url = new URL(value);
+    url.searchParams.delete("__reload");
+    return url.toString();
+  } catch {
+    return value;
+  }
+};
+
 const formatIframeHtml = (html: string) => {
   const maxChars = 12000;
   return html.length > maxChars ? `${html.slice(0, maxChars)}\n<!-- truncated -->` : html;
@@ -122,11 +132,20 @@ const ProgressiveRoutingDemo = () => {
   const [currentIframeUrl, setCurrentIframeUrl] = useState(() =>
     buildLandingSrc(sessionId)
   );
+  const [iframeHistory, setIframeHistory] = useState<string[]>(() => [
+    buildLandingSrc(sessionId),
+  ]);
+  const [iframeHistoryIndex, setIframeHistoryIndex] = useState(0);
+  const iframeHistoryIndexRef = useRef(0);
   const expiredNoticeStorageKey = useMemo(
     () => `progressive-rollout-expired-notice:${sessionId}`,
     [sessionId]
   );
   const expiredNoticeLockedRef = useRef(false);
+
+  useEffect(() => {
+    iframeHistoryIndexRef.current = iframeHistoryIndex;
+  }, [iframeHistoryIndex]);
 
   const persistExpiredNotice = useCallback(() => {
     if (typeof window === "undefined") {
@@ -492,6 +511,7 @@ const ProgressiveRoutingDemo = () => {
   }, []);
 
   const effectiveUrl = iframeObservedUrl || currentIframeUrl;
+  const canGoBack = iframeHistoryIndex > 0;
 
   const isOnCategoryPage = useMemo(() => {
     try {
@@ -609,15 +629,45 @@ const ProgressiveRoutingDemo = () => {
     setReloadToken((prev) => prev + 1);
   };
 
+  const syncIframeHistory = useCallback((nextHref: string) => {
+    setIframeHistory((prev) => {
+      const currentIndex = iframeHistoryIndexRef.current;
+      const current = prev[currentIndex];
+      if (current === nextHref) {
+        return prev;
+      }
+      const next = [...prev.slice(0, currentIndex + 1), nextHref];
+      setIframeHistoryIndex(next.length - 1);
+      return next;
+    });
+  }, []);
+
   const goBackToCategory = () => {
-    if (postSubmitting || isOnCategoryPage) {
+    if (postSubmitting || !canGoBack) {
+      return;
+    }
+    const currentNormalized = normalizeHistoryUrl(effectiveUrl);
+    let targetIndex = iframeHistoryIndex - 1;
+    while (targetIndex >= 0) {
+      const candidate = iframeHistory[targetIndex];
+      if (candidate && normalizeHistoryUrl(candidate) !== currentNormalized) {
+        break;
+      }
+      targetIndex -= 1;
+    }
+    if (targetIndex < 0) {
+      return;
+    }
+    const previousUrl = iframeHistory[targetIndex];
+    if (!previousUrl) {
       return;
     }
     setPostPending(true);
-    const landingUrl = buildLandingSrc(sessionId);
-    setIframeObservedUrl(landingUrl);
-    setCurrentIframeUrl(landingUrl);
-    setPostFeedback("Navigated back to category page.");
+    setIframeHistoryIndex(targetIndex);
+    setIframeObservedUrl(previousUrl);
+    setCurrentIframeUrl(previousUrl);
+    setReloadToken((prev) => prev + 1);
+    setPostFeedback("Navigated back.");
   };
 
   const handleIframeLoad = () => {
@@ -626,7 +676,9 @@ const ProgressiveRoutingDemo = () => {
     try {
       const href = iframeRef.current?.contentWindow?.location?.href;
       if (href) {
-        setIframeObservedUrl(href);
+        const normalizedHref = normalizeHistoryUrl(href);
+        setIframeObservedUrl(normalizedHref);
+        syncIframeHistory(normalizedHref);
       }
       const docTitle = iframeRef.current?.contentDocument?.title;
       if (docTitle) {
@@ -663,7 +715,9 @@ const ProgressiveRoutingDemo = () => {
       }
 
       if (typeof data.href === "string" && data.href) {
-        setIframeObservedUrl(data.href);
+        const normalizedHref = normalizeHistoryUrl(data.href);
+        setIframeObservedUrl(normalizedHref);
+        syncIframeHistory(normalizedHref);
       }
 
       // Do not mutate iframe src from snapshot events; it can cause double navigations/flicker.
@@ -683,6 +737,16 @@ const ProgressiveRoutingDemo = () => {
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, [apiOrigin]);
+
+  useEffect(() => {
+    if (!postPending) {
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setPostPending(false);
+    }, 12000);
+    return () => window.clearTimeout(timer);
+  }, [postPending]);
 
   const copyAddress = async () => {
     try {
@@ -884,7 +948,7 @@ const ProgressiveRoutingDemo = () => {
                         className={styles.backButton}
                         onClick={goBackToCategory}
                         title="Back to category"
-                        disabled={postSubmitting || isOnCategoryPage}
+                        disabled={postSubmitting || !canGoBack}
                       >
                         <svg
                           viewBox="0 0 16 16"
