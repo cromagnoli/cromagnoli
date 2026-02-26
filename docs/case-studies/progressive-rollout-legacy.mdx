@@ -119,27 +119,45 @@ Only dual-stack routes use `resolveRouteController()`; legacy-only routes keep d
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
 />
 ```js
-export const resolveRouteController = (legacyController, pathDebugId) => ({
+export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
   ...legacyController,
   handler: async (...handlerArgs) => {
     try {
       const [request] = handlerArgs;
 
       if (shouldUseNextGenRouter(request)) {
+        logger.info('resolveRouteController', 'Running modern routing for', [
+          request?.method?.toUpperCase(),
+          request?.url?.href,
+          serializeLogSegment({ pathDebugId })
+        ]);
+
         const reactRouterRoutesHandler = await getReactRouterRoutesHandler(request);
 
         return reactRouterRoutesHandler(...handlerArgs);
       }
 
-      if (typeof legacyController.handler === "function") {
+      logger.info('resolveRouteController', 'Running legacy routing for', [
+        request?.method?.toUpperCase(),
+        request?.url?.href,
+        serializeLogSegment({ pathDebugId })
+      ]);
+
+      if (typeof legacyController.handler === 'function') {
         return legacyController.handler(...handlerArgs);
       }
 
-      throw new Error("Handler is undefined for legacyController");
+      throw new Error('Handler is undefined for legacyController');
     } catch (error) {
+      logger.error(
+        'resolveRouteController',
+        'Failure resolving Hapi/ReactRouter route handler. Routing to Hapi 404 page...',
+        [serializeLogSegment(error)]
+      );
+
       return notFound.handler(...handlerArgs);
     }
-  },
+  }
 });
 ```
 
@@ -168,7 +186,6 @@ const shouldUseNextGenRouter = (request) => {
   const context = parseContext(request);
   const isPathAvailable = isNextGenPathAvailable(request.path, NEXTGEN_ENABLED_ROUTES);
 
-  // ...
   return isNextGenRoutingEnabled(context) && isPathAvailable;
 };
 ```
@@ -194,18 +211,18 @@ const shouldUseNextGenRouter = (request) => {
     href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
 />
 ```js
-const createReactRouterRoutesHandler = async (request) => {
+const createReactRouterRoutesHandler = async (request: HapiRequest) => {
   const build = await getViteBuild();
 
   return createRequestHandler({
     build,
     getLoadContext: async () => ({
-      request,
-    }),
+      request
+    })
   });
 };
 
-export const getReactRouterRoutesHandler = async (request) => {
+export const getReactRouterRoutesHandler = async (request: HapiRequest): Promise<ReturnType<typeof createRequestHandler>> => {
   return await createReactRouterRoutesHandler(request);
 };
 ```
@@ -225,15 +242,35 @@ This is the runtime bridge used by `resolveRouteController` to defer NextGen han
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/react-router-request-response.adapter.ts"
 />
 ```js
-export const createRequestHandler = ({ build, getLoadContext, mode = process.env.NODE_ENV }) => {
+export const createRequestHandler = ({
+  build,
+  getLoadContext,
+  mode = process.env.NODE_ENV
+}: {
+  build: ServerBuild;
+  getLoadContext?: GetLoadContextFunction;
+  mode?: string;
+}) => {
   const handleRequest = createReactRouterRequestHandler(build, mode);
 
-  return async (hapiReq, h) => {
-    const request = createReactRouterRequest(hapiReq);
-    const loadContext = await getLoadContext?.(hapiReq, h);
-    const response = await handleRequest(request, loadContext);
+  return async (hapiReq: HapiRequest, h: ResponseToolkit) => {
+    try {
+      const request = createReactRouterRequest(hapiReq);
+      const loadContext = await getLoadContext?.(hapiReq, h);
+      const response = await handleRequest(request, loadContext);
 
-    return await sendReactRouterResponse(h, response);
+      return await sendReactRouterResponse(h, response);
+    } catch (error) {
+      logger.error("createRequestHandler", "Failure adapting request to React Router", [
+        serializeLogSegment({
+          method: hapiReq?.method?.toUpperCase?.() ?? hapiReq?.method,
+          path: hapiReq?.path,
+        }),
+        serializeLogSegment(error)
+      ]);
+
+      throw error;
+    }
   };
 };
 ```
@@ -248,13 +285,14 @@ This makes NextGen runtime pluggable without replacing Hapi server infrastructur
   path="nextgen-app/hybrid-routing/vite.ts"
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/vite.ts"
 />
-```js
-let vite = null;
+```ts
+let vite: ViteDevServer | null = null;
 
 const viteDevServerSingleton = async () => {
   if (!vite) {
     vite = await createViteServer();
   }
+
   return vite;
 };
 
@@ -264,10 +302,10 @@ export const getViteBuild = async () => {
   if (shouldRunViteDevServer()) {
     const viteDevServer = await getViteDevServer();
 
-    return await viteDevServer.ssrLoadModule("virtual:react-router/server-build");
+    return await viteDevServer.ssrLoadModule('virtual:react-router/server-build') as ServerBuild;
   }
 
-  const viteStaticBuild = await import("../../build/server/index.mjs");
+  const viteStaticBuild = await import('../../build/server/index.mjs');
 
   return viteStaticBuild.importBuild();
 };
@@ -279,6 +317,49 @@ Singleton lifecycle avoids per-request boot cost and keeps dev/prod demo behavio
 
 :::note Demo scope
 The companion demo runtime intentionally runs only the Vite dev-server branch for simplicity. The static-build branch is shown here to preserve the full production control-flow shape.
+:::
+
+#### 4.1) Hapi `onRequest` bridge for Vite middleware
+
+<CodeHeader
+  path="server/demo-runtime-services.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/server/server/demo-runtime-services.mjs"
+/>
+
+```js
+// ...
+
+if (shouldRunViteDevServer()) {
+    /**
+     * Register Vite middleware directly instead of using `Hecks.toPlugin(viteDevServer.middlewares, 'viteDevServer')`
+     * avoiding catch-all duplicate route issues like:
+     * "Error: New route /{expressPath*} conflicts with existing /{any*} at..."
+     */
+    hapiServer.ext(
+      'onRequest',
+      async (request, handler) => await registerViteDevMiddlewares({ hapiRequest: request, hapiHandler: handler })
+    );
+} else {
+    hapiServer.route({
+      method: 'GET',
+      path: '/nextgen-assets/{param*}', // Needs to match assets config at vite.config.mts
+      handler: {
+        directory: {
+          path: './build/client/nextgen-assets' // Needs to match assets directory structure at build/client
+        }
+      }
+    });
+}
+
+registerRoutes(hapiServer);
+
+await hapiServer.start();
+
+// ...
+```
+
+:::note Why it matters
+`registerViteDevMiddlewares` is a key integration point: it mounts Vite directly in Hapi request lifecycle and avoids catch-all route conflicts during dual-stack rollout.
 :::
 
 ### 5) Route capability map
@@ -293,6 +374,7 @@ const DualPaths = {
   ProductDetail: "/pdp/:productCategory/:productName/:productId",
 };
 
+// Exclude RR internal paths from legacy resolver.
 const InternalPaths = {
   ReactRouterManifest: "/__manifest",
 };
