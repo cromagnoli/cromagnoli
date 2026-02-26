@@ -119,7 +119,7 @@ Only dual-stack routes use `resolveRouteController()`; legacy-only routes keep d
   path="nextgen-app/hybrid-routing/routing.ts"
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L78"
 />
-```js
+```ts
 export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
   ...legacyController,
   handler: async (...handlerArgs) => {
@@ -165,7 +165,7 @@ export const resolveRouteController = (legacyController: ServerRoute, pathDebugI
 #### 2.2) Eligibility gate used by the resolver
 
 :::note Feature-flag route metadata (conceptual)
-```js
+```ts
 // In production, this route allowlist is controlled by the feature-flag platform.
 // For demo purposes, this implementation keeps it local and explicit.
 const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
@@ -176,7 +176,7 @@ const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
     path="nextgen-app/hybrid-routing/routing.ts"
     href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L133"
 />
-```js
+```ts
 const shouldUseNextGenRouter = (request) => {
   const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
 
@@ -191,12 +191,10 @@ const shouldUseNextGenRouter = (request) => {
 };
 ```
 
-:::note Why `hasLegacyFallbackQuery` matters
-`?legacy=true` is an explicit operator/support override. It short-circuits NextGen eligibility and guarantees a deterministic fallback path when rollback is needed without redeploying.
-:::
-
 :::note Why it matters
-`resolveRouteController` is the core entry point. `shouldUseNextGenRouter` is a focused dependency used only to decide eligibility.
+`resolveRouteController` is the core entry point, and `shouldUseNextGenRouter` is the focused eligibility gate.
+
+`?legacy=true` acts as an explicit resolver-level override to force legacy. Read more in [Resilience in Code](#resilience-in-code).
 :::
 
 :::note
@@ -211,7 +209,7 @@ const shouldUseNextGenRouter = (request) => {
     path="nextgen-app/hybrid-routing/routing.ts"
     href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L146"
 />
-```js
+```ts
 const createReactRouterRoutesHandler = async (request: HapiRequest) => {
   const build = await getViteBuild();
 
@@ -242,7 +240,7 @@ This is the runtime bridge used by `resolveRouteController` to defer NextGen han
   path="nextgen-app/hybrid-routing/react-router-request-response.adapter.ts"
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/react-router-request-response.adapter.ts#L23"
 />
-```js
+```ts
 export const createRequestHandler = ({
   build,
   getLoadContext,
@@ -327,7 +325,7 @@ The companion demo runtime intentionally runs only the Vite dev-server branch fo
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/server/demo-runtime-services.mjs#L601"
 />
 
-```js
+```ts
 // ...
 
 if (shouldRunViteDevServer()) {
@@ -370,7 +368,7 @@ await hapiServer.start();
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/paths.ts#L1"
 />
 
-```js
+```ts
 const DualPaths = {
   ProductDetail: "/pdp/:productCategory/:productName/:productId",
 };
@@ -402,7 +400,7 @@ An explicit allowlist of dual-stack pages prevents accidental routing to NextGen
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L133"
 />
 
-```js
+```ts
 const shouldUseNextGenRouter = (request) => {
   const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
 
