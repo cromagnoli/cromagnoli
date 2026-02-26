@@ -23,9 +23,9 @@ This implementation is intentionally documented in JavaScript (`.mjs`) instead o
 The documentation scaffolding and page implementation were generated with AI assistance and should not be evaluated as original authored product code.
 In this case study, the core authored implementation is represented by:
 `server/init/routes.mjs`,
-`nextgen-app/app/routes.ts`,
-`server/app/hybrid-routing/routing.mjs`,
-and `server/app/hybrid-routing/vite.mjs`.
+`nextgen-app/routes.ts`,
+`nextgen-app/hybrid-routing/routing.mjs`,
+and `nextgen-app/hybrid-routing/vite.mjs`.
 :::
 
 ## Problem to Solve
@@ -340,8 +340,8 @@ This guarantees deterministic rollback behavior from the edge of the routing dec
 #### 2) NextGen runtime failure boundary -> legacy redirect
 
 <CodeHeader
-  path="nextgen-app/app/routes/pdp.tsx"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/nextgen-app/app/routes/pdp.tsx#L102"
+  path="app/routes/pdp.tsx"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/app/routes/pdp.tsx#L102"
 />
 
 ```tsx
