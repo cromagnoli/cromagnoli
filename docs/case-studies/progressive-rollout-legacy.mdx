@@ -76,7 +76,7 @@ All files below live in the companion runtime repo used by this demo ([`hybrid-r
 
 <CodeHeader
   path="server/init/routes.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/60d7d5c2cc758aa17bcd65da18c4cb81fbc56614/server/init/routes.mjs#L10"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/server/init/routes.mjs#L20"
 />
 
 ```js
@@ -117,7 +117,7 @@ Only dual-stack routes use `resolveRouteController()`; legacy-only routes keep d
 
 <CodeHeader
   path="nextgen-app/hybrid-routing/routing.ts"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L78"
 />
 ```js
 export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
@@ -174,7 +174,7 @@ const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
 
 <CodeHeader
     path="nextgen-app/hybrid-routing/routing.ts"
-    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
+    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L133"
 />
 ```js
 const shouldUseNextGenRouter = (request) => {
@@ -209,7 +209,7 @@ const shouldUseNextGenRouter = (request) => {
 
 <CodeHeader
     path="nextgen-app/hybrid-routing/routing.ts"
-    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
+    href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L146"
 />
 ```js
 const createReactRouterRoutesHandler = async (request: HapiRequest) => {
@@ -240,7 +240,7 @@ This is the runtime bridge used by `resolveRouteController` to defer NextGen han
 
 <CodeHeader
   path="nextgen-app/hybrid-routing/react-router-request-response.adapter.ts"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/react-router-request-response.adapter.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/react-router-request-response.adapter.ts#L23"
 />
 ```js
 export const createRequestHandler = ({
@@ -284,7 +284,7 @@ This makes NextGen runtime pluggable without replacing Hapi server infrastructur
 
 <CodeHeader
   path="nextgen-app/hybrid-routing/vite.ts"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/vite.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/vite.ts#L35"
 />
 ```ts
 let vite: ViteDevServer | null = null;
@@ -324,7 +324,7 @@ The companion demo runtime intentionally runs only the Vite dev-server branch fo
 
 <CodeHeader
   path="server/demo-runtime-services.mjs"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/server/server/demo-runtime-services.mjs"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/server/demo-runtime-services.mjs#L601"
 />
 
 ```js
@@ -367,7 +367,7 @@ await hapiServer.start();
 
 <CodeHeader
   path="nextgen-app/hybrid-routing/paths.ts"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/paths.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/paths.ts#L1"
 />
 
 ```js
@@ -399,7 +399,7 @@ An explicit allowlist of dual-stack pages prevents accidental routing to NextGen
 
 <CodeHeader
   path="nextgen-app/hybrid-routing/routing.ts"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L133"
 />
 
 ```js
@@ -422,11 +422,15 @@ This guarantees deterministic rollback behavior from the edge of the routing dec
 
 <CodeHeader
   path="nextgen-app/routes/pdp.tsx"
-  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/routes/pdp.tsx"
+  href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/routes/pdp.tsx#L100"
 />
 
 ```tsx
 const redirectToLegacyFromBoundary = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
   const url = new URL(window.location.href);
   url.searchParams.set("legacy", "true");
   url.searchParams.set("fallbackReason", "error-boundary");
