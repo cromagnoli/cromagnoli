@@ -28,8 +28,7 @@ All architecture and source-code excerpts shown in these case studies are from m
 
 1. `Summary`: Understand the problem and target outcome quickly.
 2. `Key Files`: Inspect the core implementation surfaces and contracts.
-3. `Resilience`: Validate failure handling and rollback strategy.
-4. `Live Demo`: Confirm behavior interactively.
+3. `Live Demo`: Confirm behavior interactively.
 
 ## What This Demonstrates
 
