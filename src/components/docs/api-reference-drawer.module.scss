@@ -22,12 +22,12 @@
   bottom: auto;
   z-index: auto;
   border-radius: 8px;
-  background: #ffffff;
+  background: #fbfcff;
   border-color: #cfd5e3;
   color: #4e4e4e;
   padding: 6px 10px;
   font-weight: 600;
-  animation: none;
+  animation: api-inline-hint 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   box-shadow: none;
 }
 
@@ -40,6 +40,12 @@
 .triggerInline:focus-visible {
   outline: 2px solid #b9c1d3;
   outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .triggerInline {
+    animation: none;
+  }
 }
 
 .trigger:hover {
@@ -183,5 +189,19 @@
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@keyframes api-inline-hint {
+  0%,
+  100% {
+    border-color: #cfd5e3;
+    background: #fbfcff;
+    box-shadow: 0 0 0 0 rgba(83, 120, 189, 0);
+  }
+  50% {
+    border-color: #8ca8dd;
+    background: #e9f1ff;
+    box-shadow: 0 0 0 3px rgba(157, 190, 248, 0.42);
   }
 }
