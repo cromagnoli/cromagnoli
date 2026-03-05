@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&display=swap");
 @import "./demo-overrides.css";
 
-html[data-theme='dark'] {
+:root {
   --ifm-background-color: #0b1220;
   --ifm-background-surface-color: #111827;
   --ifm-navbar-background-color: #172950;
@@ -10,12 +10,12 @@ html[data-theme='dark'] {
   --ifm-link-color: #60a5fa;
 }
 
-html[data-theme='dark'] .navbar {
+.navbar {
   background: #172950;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-html[data-theme='dark'] .navbar__title {
+.navbar__title {
   font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   font-size: 1.02rem;
   font-weight: 700;
@@ -27,15 +27,10 @@ html[data-theme='dark'] .navbar__title {
   margin-right: 8px;
 }
 
-html[data-theme='dark'] .navbar__title::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.22);
+.navbar__inner .navbar__brand + .navbar__item::before {
+  content: "|";
+  margin-right: 10px;
+  color: rgba(255, 255, 255, 0.22);
 }
 
 .menu {
