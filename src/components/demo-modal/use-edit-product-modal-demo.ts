@@ -46,22 +46,17 @@ const fakeModalDataFetch = ({
 }): Promise<{ skuVariants: SkuVariants; productSummary: ProductSummary }> =>
   new Promise((resolve) => setTimeout(() => resolve(responseData), delayMs));
 
-const useRouter = () => ({ push: () => {} });
-
 export const useStatelessProductEditModalDemo = ({
   editingItem,
   onModalDismiss,
   mockModalData = mockData,
   fetchDelayMs = 1200,
 }: UseStatelessProductEditModalDemoArgs) => {
-  const router = useRouter();
   const [skuVariants, setSkuVariants] = useState<SkuVariants>({});
   const [productSummary, setProductSummary] = useState<ProductSummary>({});
   const isMount = useRef(true);
 
-  const { productName, productUrl, imageUrl, colorCode, size } = editingItem;
-  void productUrl;
-  void router;
+  const { imageUrl, colorCode, size } = editingItem;
 
   useEffect(() => {
     if (!isMount.current) {
@@ -93,11 +88,9 @@ export const useStatelessProductEditModalDemo = ({
       });
   }, [
     colorCode,
-    editingItem,
     onModalDismiss,
     mockModalData,
     fetchDelayMs,
-    productName,
     size,
   ]);
 
@@ -171,7 +164,7 @@ export const useStatelessProductEditModalDemo = ({
     handleAddToBagClick,
     handleNavigateProductDetails,
     initialSize: size,
-    productName,
+    productName: editingItem.productName,
     skuVariants,
     trackColorSelection,
   };
