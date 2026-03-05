@@ -26,7 +26,7 @@ const sidebars: SidebarsConfig = {
         { type: 'doc', id: 'case-studies/stateless-configurable-modal-api', label: 'API Reference' },
         {
           type: 'category',
-          label: 'Variants (Live Code Editing Demo)',
+          label: 'Variants Live Code Editing Demo',
           collapsed: false,
           items: [
             { type: 'doc', id: 'case-studies/stateless-configurable-modal-default', label: 'Default Behavior' },
