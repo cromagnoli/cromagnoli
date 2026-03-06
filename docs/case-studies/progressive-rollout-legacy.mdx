@@ -120,7 +120,10 @@ Only dual-stack routes use `resolveRouteController()`; legacy-only routes keep d
   href="https://github.com/cromagnoli/hybrid-routing-demo/blob/main/nextgen-app/hybrid-routing/routing.ts#L78"
 />
 ```ts
-export const resolveRouteController = (legacyController: ServerRoute, pathDebugId: string) => ({
+export const resolveRouteController = (
+  legacyController: ServerRoute,
+  pathDebugId: string
+): ServerRoute => ({
   ...legacyController,
   handler: async (...handlerArgs) => {
     try {
@@ -184,7 +187,7 @@ const NEXTGEN_ENABLED_ROUTES = ["ProductDetail"];
 />
 ```ts
 export const shouldUseNextGenRouter = (request: HapiRequest): boolean => {
-  const hasLegacyFallbackQuery = request?.url?.searchParams?.get('legacy');
+  const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
 
   if (hasLegacyFallbackQuery) {
     return false;
@@ -227,9 +230,10 @@ const createReactRouterRoutesHandler = async (request: HapiRequest) => {
   });
 };
 
-export const getReactRouterRoutesHandler = async (request: HapiRequest): Promise<ReturnType<typeof createRequestHandler>> => {
-  return await createReactRouterRoutesHandler(request);
-};
+export const getReactRouterRoutesHandler = async (
+  request: HapiRequest
+): Promise<ReturnType<typeof createRequestHandler>> =>
+  await createReactRouterRoutesHandler(request);
 ```
 
 :::note Why it matters
@@ -293,7 +297,7 @@ This makes NextGen runtime pluggable without replacing Hapi server infrastructur
 ```ts
 let vite: ViteDevServer | null = null;
 
-const viteDevServerSingleton = async () => {
+const viteDevServerSingleton = async (): Promise<ViteDevServer> => {
   if (!vite) {
     vite = await createViteServer();
   }
@@ -303,16 +307,18 @@ const viteDevServerSingleton = async () => {
 
 export const getViteDevServer = viteDevServerSingleton;
 
-export const getViteBuild = async () => {
-  if (shouldRunViteDevServer()) {
+export const getViteBuild = async (): Promise<ServerBuild> => {
+  // if (shouldRunViteDevServer()) {
     const viteDevServer = await getViteDevServer();
 
-    return await viteDevServer.ssrLoadModule('virtual:react-router/server-build') as ServerBuild;
-  }
+    return (await viteDevServer.ssrLoadModule(
+      "virtual:react-router/server-build"
+    )) as ServerBuild;
+  // }
 
-  const viteStaticBuild = await import('../../build/server/index.mjs');
+  // const viteStaticBuild = await import('../../build/server/index.mjs');
 
-  return viteStaticBuild.importBuild();
+  // return viteStaticBuild.importBuild();
 };
 ```
 
@@ -340,9 +346,11 @@ if (shouldRunViteDevServer()) {
      * avoiding catch-all duplicate route issues like:
      * "Error: New route /{expressPath*} conflicts with existing /{any*} at..."
      */
-    hapiServer.ext(
-      'onRequest',
-      async (request, handler) => await registerViteDevMiddlewares({ hapiRequest: request, hapiHandler: handler })
+    hapiServer.ext("onRequest", async (request, handler) =>
+      await registerViteDevMiddlewares({
+        hapiRequest: request,
+        hapiHandler: handler,
+      })
     );
 } else {
     hapiServer.route({
@@ -375,14 +383,14 @@ await hapiServer.start();
 />
 
 ```ts
-const DualPaths = {
-  ProductDetail: "/pdp/:productCategory/:productName/:productId",
-};
+export enum DualPaths {
+  ProductDetail = "/pdp/:productCategory/:productName/:productId",
+}
 
 // Exclude RR internal paths from legacy resolver.
-const InternalPaths = {
-  ReactRouterManifest: "/__manifest",
-};
+export enum InternalPaths {
+  ReactRouterManifest = "/__manifest",
+}
 ```
 
 :::note Why it matters
@@ -407,7 +415,7 @@ An explicit allowlist of dual-stack pages prevents accidental routing to NextGen
 />
 
 ```ts
-const shouldUseNextGenRouter = (request) => {
+export const shouldUseNextGenRouter = (request: HapiRequest): boolean => {
   const hasLegacyFallbackQuery = request?.url?.searchParams?.get("legacy");
 
   if (hasLegacyFallbackQuery) {
@@ -441,7 +449,10 @@ const redirectToLegacyFromBoundary = () => {
   window.location.assign(url.toString());
 };
 
-class RedirectToLegacyBoundary extends React.Component {
+class RedirectToLegacyBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
   static getDerivedStateFromError() {
     return { hasError: true };
   }
